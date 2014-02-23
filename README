@@ -116,4 +116,8 @@ $ sudo ./usbrelay PSUIS_2=0
 $ sudo ./usbrelay PSUIS_2=1 PSUIS_1=0
 $ sudo ./usbrelay PSUIS_2=0 PSUIS_1=1
 
+If for some reason the USB id changes, (ie other than 16c0:05df) set the USBID environment variable to the correct ID
+$sudo USBID=16c0:05df ./usbrelay
 
+
+Enjoy
