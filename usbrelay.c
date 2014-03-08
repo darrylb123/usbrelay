@@ -85,9 +85,8 @@ int main( int argc, char *argv[]) {
 			if (buf[7] == 0) printf("%s_1=0\n%s_2=0\n",buf,buf );
 			else if (buf[7] == 1) printf("%s_1=1\n%s_2=0\n",buf,buf);
 			else if (buf[7] == 2) printf("%s_1=0\n%s_2=1\n",buf,buf);
-			else if (buf[7] == 3) printf("%s_1=1\n%s_2=1\n",buf,buf);
-			
-			fprintf(stderr,"Usage: %s %s_1=0  %s\n",argv[0],buf);
+			else if (buf[7] == 3) printf("%s_1=1\n%s_2=1\n",buf,buf);			
+			/* fprintf(stderr,"Usage: %s %s_1=0  %s\n",argv[0],buf); */
 		}
 			
 		/* loop through the supplied command line and try to match the serial */
