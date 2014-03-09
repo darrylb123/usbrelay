@@ -1,3 +1,5 @@
+![alt text](usbrelay.jpg "USB Relay")
+
 USB Relay driver for linux
 
 A cheap USB relay available from Ebay has either single or dual relay output.
@@ -9,6 +11,7 @@ This code was tested under linux both on x86 and Raspberry Pi ARM.
 The program is command line only as it is likely to be used by shell scripts.
 
 The output of lsusb for the device is:
+```
 Bus 001 Device 003: ID 16c0:05df Van Ooijen Technische Informatica HID device except mice, keyboards, and joysticks
 
 # lsusb -v -d 16c0:05df 
@@ -71,8 +74,9 @@ Device Descriptor:
         bInterval              20
 Device Status:     0x0000
   (Bus Powered)
-
+```
 HIDAPI
+
 http://www.signal11.us/oss/hidapi
 
 HIDAPI is a fairly recent addition to linux and is available as a package for Fedora 20 but not for Pidora (F18). 
@@ -84,11 +88,13 @@ The HID serial is matched and the ON/OFF command is sent to the chosen relay.
 
 Building the code:
 Assuming the hidapi and hidapi-devel packages have been installed
+```
 # gcc -o usbrelay usbrelay.c -lhidapi-hidraw
-
+```
 Usage:
 The code needs to run with root privileges so sudo is your friend:
 Running the program will display each module that matches device 16c0:05df the debug information is sent to stderr while the state is sent to stdout for use in scripts.
+```
 $ sudo ./usbrelay
 Device Found
   type: 16c0 05df
@@ -100,24 +106,28 @@ Device Found
   Interface:    0
 PSUIS_1=1
 PSUIS_2=0
-
+```
 To get the relay state
+```
 $ sudo ./usbrelay 2>/dev/null
 PSUIS_1=1
 PSUIS_2=0
-
+```
 To use the state in a script:
+```
 $ eval $(sudo ./usbrelay 2>/dev/null)
 $ echo $PSUIS_2
 0
-
+```
 To set the relay state:
+```
 $ sudo ./usbrelay PSUIS_2=0
 $ sudo ./usbrelay PSUIS_2=1 PSUIS_1=0
 $ sudo ./usbrelay PSUIS_2=0 PSUIS_1=1
-
+```
 If for some reason the USB id changes, (ie other than 16c0:05df) set the USBID environment variable to the correct ID
+```
 $sudo USBID=16c0:05df ./usbrelay
-
+```
 
 Enjoy
