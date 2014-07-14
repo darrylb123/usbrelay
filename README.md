@@ -87,9 +87,13 @@ The relay modules does not set the USB serial number but has a unique serial whe
 The HID serial is matched and the ON/OFF command is sent to the chosen relay.
 
 Building the code:
-Assuming the hidapi and hidapi-devel packages have been installed
+Assuming the hidapi and hidapi-devel packages have been installed. Note that there are two options for the hidapi library: hidapi-hidraw or hidapi-libusb. Different distributions have better results with one or the other. YMMV.
+
 ```
+### hidapi-hidraw 
 # gcc -o usbrelay usbrelay.c -lhidapi-hidraw
+### hidapi-libusb
+# gcc -o usbrelay usbrelay.c -lhidapi-libusb
 ```
 Usage:
 The code needs to run with root privileges so sudo is your friend:
