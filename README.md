@@ -96,7 +96,13 @@ Assuming the hidapi and hidapi-devel packages have been installed. Note that the
 # gcc -o usbrelay usbrelay.c -lhidapi-libusb
 ```
 Usage:
-The code needs to run with root privileges so sudo is your friend:
+The code needs to access the device. This can be achieved either by running the program with root privileges (so sudo is your friend) or by putting
+```
+SUBSYSTEM=="usb", ATTR{idVendor}=="16c0",ATTR{idProduct}=="05df", MODE="0666"
+KERNEL=="hidraw*", ATTRS{busnum}=="1", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="05df", MODE="0666"
+```
+to `/etc/udev/rules.d/50-dct-tech-usb-relay-2.rules`.
+
 Running the program will display each module that matches device 16c0:05df the debug information is sent to stderr while the state is sent to stdout for use in scripts.
 ```
 $ sudo ./usbrelay
