@@ -77,8 +77,13 @@ int main( int argc, char *argv[]) {
          fprintf(stderr,"unable to open device\n");
          return 1;
       }
-      hid_get_feature_report(handle,buf,sizeof(buf));
-		
+      buf[0] = 0x01;
+      int ret = hid_get_feature_report(handle,buf,sizeof(buf));
+      if (ret == -1) {
+	      perror("hid_get_feature_report");
+	      exit(1);
+      }
+
 		
       if (debug){
          if (buf[7] == 0) printf("%s_1=0\n%s_2=0\n",buf,buf );
