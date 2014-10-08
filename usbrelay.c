@@ -53,7 +53,7 @@ int main( int argc, char *argv[]) {
              relays[i].state = OFF;
          }
       }
-      printf("Orig: %s, Serial: %s, Relay: %d State: %x\n",arg_t,relays[i].this_serial,relays[i].relay_num,relays[i].state);
+      fprintf(stderr,"Orig: %s, Serial: %s, Relay: %d State: %x\n",arg_t,relays[i].this_serial,relays[i].relay_num,relays[i].state);
       relays[i].found = 0; 
    }
 
@@ -101,16 +101,16 @@ int main( int argc, char *argv[]) {
 
       /* loop through the supplied command line and try to match the serial */
       for (i=1;i<argc;i++) {
-         printf("Serial: %s, Relay: %d State: %x \n",relays[i].this_serial,relays[i].relay_num,relays[i].state);
+         fprintf(stderr,"Serial: %s, Relay: %d State: %x \n",relays[i].this_serial,relays[i].relay_num,relays[i].state);
          if (!strcmp(relays[i].this_serial, (const char *) buf)) {
-            printf("%d HID Serial: %s ", i, buf);
-            printf("Serial: %s, Relay: %d State: %x\n",relays[i].this_serial,relays[i].relay_num,relays[i].state);
+            fprintf(stderr,"%d HID Serial: %s ", i, buf);
+            fprintf(stderr,"Serial: %s, Relay: %d State: %x\n",relays[i].this_serial,relays[i].relay_num,relays[i].state);
             operate_relay(handle,relays[i].relay_num,relays[i].state);
             relays[i].found = 1;
          }
       }
       hid_close(handle);
-      printf("\n");
+      fprintf(stderr,"\n");
       cur_dev = cur_dev->next;
    }
    hid_free_enumeration(devs);
@@ -119,11 +119,11 @@ int main( int argc, char *argv[]) {
    hid_exit();
 
    for (i=1;i<argc;i++){
-      printf("Serial: %s, Relay: %d State: %x ",relays[i].this_serial,relays[i].relay_num,relays[i].state);
+      fprintf(stderr,"Serial: %s, Relay: %d State: %x ",relays[i].this_serial,relays[i].relay_num,relays[i].state);
       if (relays[i].found )
-         printf("--- Found\n");
+         fprintf(stderr,"--- Found\n");
       else
-         printf("--- Not Found\n");
+         fprintf(stderr,"--- Not Found\n");
    }
 
    if (relays)
@@ -146,8 +146,8 @@ int operate_relay(hid_device *handle,unsigned char relay, unsigned char state){
    buf[8] = 0x00;
    res = hid_write(handle, buf, sizeof(buf));
    if (res < 0) {
-      printf("Unable to write()\n");
-      printf("Error: %ls\n", hid_error(handle));
+      fprintf(stderr,"Unable to write()\n");
+      fprintf(stderr,"Error: %ls\n", hid_error(handle));
    }
    return(res);
 }
