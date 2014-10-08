@@ -103,7 +103,7 @@ KERNEL=="hidraw*", ATTRS{busnum}=="1", ATTRS{idVendor}=="16c0", ATTRS{idProduct}
 ```
 to `/etc/udev/rules.d/50-dct-tech-usb-relay-2.rules`.
 
-Running the program will display each module that matches device 16c0:05df the debug information is sent to stderr while the state is sent to stdout for use in scripts.
+Running the program will display each module that matches device 16c0:05df the debug information is sent to stderr while the state is sent to stdout for use in scripts. The only limit to the number of these relays that can be plugged in and operated at once is the number of USB ports.
 ```
 $ sudo ./usbrelay
 Device Found
@@ -129,11 +129,11 @@ $ eval $(sudo ./usbrelay 2>/dev/null)
 $ echo $PSUIS_2
 0
 ```
-To set the relay state:
+To set the relay state of 1 or more modules at once:
 ```
 $ sudo ./usbrelay PSUIS_2=0
 $ sudo ./usbrelay PSUIS_2=1 PSUIS_1=0
-$ sudo ./usbrelay PSUIS_2=0 PSUIS_1=1
+$ sudo ./usbrelay PSUIS_2=0 PSUIS_1=1 0U70M_1=0 0U70M_2=1
 ```
 If for some reason the USB id changes, (ie other than 16c0:05df) set the USBID environment variable to the correct ID
 ```
