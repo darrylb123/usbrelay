@@ -108,11 +108,13 @@ int main( int argc, char *argv[]) {
 
 
       if (debug) {
-         if (buf[7] == 0) printf("%s_1=0\n%s_2=0\n",buf,buf );
-         else if (buf[7] == 1) printf("%s_1=1\n%s_2=0\n",buf,buf);
-         else if (buf[7] == 2) printf("%s_1=0\n%s_2=1\n",buf,buf);
-         else if (buf[7] == 3) printf("%s_1=1\n%s_2=1\n",buf,buf);
-         /* fprintf(stderr,"Usage: %s %s_1=0  %s\n",argv[0],buf); */
+        for ( i = 0; i < 8 ; i++ ) {
+          if (buf[7] & 1 << i) {
+            printf("%s_%d=1\n",buf,i+1);
+          } else {
+            printf("%s_%d=0\n",buf,i+1); 
+	  }
+	}
       }
 
       /* loop through the supplied command line and try to match the serial */
