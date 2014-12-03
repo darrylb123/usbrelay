@@ -32,6 +32,7 @@ int main( int argc, char *argv[]) {
    unsigned char buf[9];// 1 extra byte for the report ID
    char arg_t[20] = {'\0'};
    int debug = 0;
+   int num_relays = 2;
    char *token;
    const char delimiters[] = "_=";
    int i;
@@ -93,7 +94,11 @@ int main( int argc, char *argv[]) {
       fprintf(stderr,"  Product:      %ls\n", cur_dev->product_string);
       fprintf(stderr,"  Release:      %hx\n", cur_dev->release_number);
       fprintf(stderr,"  Interface:    %d\n",  cur_dev->interface_number);
-
+      
+      // The product string is USBRelayx where x is ASCII number of relays
+      num_relays = (int)(cur_dev->product_string[8] - 48 );
+      fprintf(stderr,"  Number of Relays = %d\n",num_relays);
+      
       handle = hid_open_path(cur_dev->path);
       if (!handle) {
          fprintf(stderr,"unable to open device\n");
@@ -108,7 +113,7 @@ int main( int argc, char *argv[]) {
 
 
       if (debug) {
-        for ( i = 0; i < 8 ; i++ ) {
+        for ( i = 0; i < num_relays ; i++ ) {
           if (buf[7] & 1 << i) {
             printf("%s_%d=1\n",buf,i+1);
           } else {
