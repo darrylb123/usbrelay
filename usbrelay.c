@@ -95,8 +95,8 @@ int main( int argc, char *argv[]) {
       fprintf(stderr,"  Release:      %hx\n", cur_dev->release_number);
       fprintf(stderr,"  Interface:    %d\n",  cur_dev->interface_number);
       
-      // The product string is USBRelayx where x is ASCII number of relays
-      num_relays = (int)(cur_dev->product_string[8] - 48 );
+      // The product string is USBRelayx where x is number of relays read to the \0 in case there are more than 9
+      num_relays = atoi((const char *)&cur_dev->product_string[8] );
       fprintf(stderr,"  Number of Relays = %d\n",num_relays);
       
       handle = hid_open_path(cur_dev->path);
