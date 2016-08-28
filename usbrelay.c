@@ -42,6 +42,7 @@ int main( int argc, char *argv[]) {
    unsigned short vendor_id  = 0x16c0;
    unsigned short product_id = 0x05df;
    char *vendor, *product;
+   int exit_code = 0;
 
    /* allocate the memeory for all the relays */
    if (argc > 1) {
@@ -128,7 +129,8 @@ int main( int argc, char *argv[]) {
          if (!strcmp(relays[i].this_serial, (const char *) buf)) {
             fprintf(stderr,"%d HID Serial: %s ", i, buf);
             fprintf(stderr,"Serial: %s, Relay: %d State: %x\n",relays[i].this_serial,relays[i].relay_num,relays[i].state);
-            operate_relay(handle,relays[i].relay_num,relays[i].state);
+            if (operate_relay(handle,relays[i].relay_num,relays[i].state) < 0 )
+		exit_code++;
             relays[i].found = 1;
          }
       }
@@ -145,13 +147,15 @@ int main( int argc, char *argv[]) {
       fprintf(stderr,"Serial: %s, Relay: %d State: %x ",relays[i].this_serial,relays[i].relay_num,relays[i].state);
       if (relays[i].found )
          fprintf(stderr,"--- Found\n");
-      else
+      else {
          fprintf(stderr,"--- Not Found\n");
+         exit_code++;
+      }
    }
 
    if (relays)
       free(relays);
-   exit(0);
+   exit(exit_code);
 }
 
 int operate_relay(hid_device *handle,unsigned char relay, unsigned char state){
