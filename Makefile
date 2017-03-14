@@ -5,7 +5,7 @@ LDFLAGS = -lhidapi-$(HIDAPI)
 all: usbrelay
 
 usbrelay: usbrelay.c
-	$(CC) $(CFLAGS) -o $@ $< -lhidapi-hidraw
+	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
 clean:
 	rm -f usbrelay
