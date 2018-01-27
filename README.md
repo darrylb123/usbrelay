@@ -82,6 +82,15 @@ http://www.signal11.us/oss/hidapi
 HIDAPI is a fairly recent addition to linux and is available as a package for Fedora 20 but not for Pidora (F18). 
 The package was built for Pidora (Fedora 18) using the F20 hidapi source package.
 
+Installing Debian Packages:
+This code is a maintained package in Debian (and Raspian). Use normal apt-get commands
+
+---
+# apt-get install usbrelay
+---
+
+Other Linux platforms will need to build the source, see below
+
 Protocol:
 The relay modules does not set the USB serial number but has a unique serial when the HID device is queried, the current state of the relays is also sent with the serial.
 The HID serial is matched and the ON/OFF command is sent to the chosen relay.
