@@ -83,11 +83,11 @@ HIDAPI is a fairly recent addition to linux and is available as a package for Fe
 The package was built for Pidora (Fedora 18) using the F20 hidapi source package.
 
 Installing Debian Packages:
-This code is a maintained package in Debian (and Raspian). Use normal apt-get commands
+This code is a maintained package in Debian (and Raspian). Use normal apt-get commands:
 
-...
+```
 $ sudo apt-get install usbrelay
-...
+```
 
 Other Linux platforms will need to build the source, see below
 
