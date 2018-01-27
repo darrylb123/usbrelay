@@ -84,6 +84,7 @@ The package was built for Pidora (Fedora 18) using the F20 hidapi source package
 
 Installing Debian Packages:
 This code is a maintained package in Debian (and Raspian). Use normal apt-get commands
+
 ...
 $ sudo apt-get install usbrelay
 ...
