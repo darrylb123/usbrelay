@@ -44,7 +44,7 @@ int main( int argc, char *argv[]) {
    char *vendor, *product;
    int exit_code = 0;
 
-   /* allocate the memeory for all the relays */
+   /* allocate the memory for all the relays */
    if (argc > 1) {
       relays = malloc(size*(argc+1)); /* Yeah, I know. Not using the first member */
       relays[0].this_serial[0] = '\0';
@@ -64,11 +64,17 @@ int main( int argc, char *argv[]) {
          relays[i].relay_num = atoi(token);
       }
       token = strtok(NULL, delimiters); 
-      if (token != NULL) {
-         if (atoi(token)) {
-             relays[i].state = ON;
-         } else {
-             relays[i].state = OFF;
+      if (relays[i].relay_num == 0) { /* command to change the serial - remaining token is the new serial */
+         if (token != NULL) {
+	    strcpy(relays[i].new_serial,token);
+         }
+      } else {
+         if (token != NULL) {
+            if (atoi(token)) {
+                relays[i].state = ON;
+            } else {
+                relays[i].state = OFF;
+            }
          }
       }
       fprintf(stderr,"Orig: %s, Serial: %s, Relay: %d State: %x\n",arg_t,relays[i].this_serial,relays[i].relay_num,relays[i].state);
@@ -128,10 +134,14 @@ int main( int argc, char *argv[]) {
          fprintf(stderr,"Serial: %s, Relay: %d State: %x \n",relays[i].this_serial,relays[i].relay_num,relays[i].state);
          if (!strcmp(relays[i].this_serial, (const char *) buf)) {
             fprintf(stderr,"%d HID Serial: %s ", i, buf);
-            fprintf(stderr,"Serial: %s, Relay: %d State: %x\n",relays[i].this_serial,relays[i].relay_num,relays[i].state);
-            if (operate_relay(handle,relays[i].relay_num,relays[i].state) < 0 )
-		exit_code++;
-            relays[i].found = 1;
+	    if (relays[i].relay_num == 0 ) {
+                set_serial(handle,relays[i].new_serial);
+            } else {
+               fprintf(stderr,"Serial: %s, Relay: %d State: %x\n",relays[i].this_serial,relays[i].relay_num,relays[i].state);
+               if (operate_relay(handle,relays[i].relay_num,relays[i].state) < 0 )
+		   exit_code++;
+               relays[i].found = 1;
+           }
          }
       }
       hid_close(handle);
@@ -178,3 +188,25 @@ int operate_relay(hid_device *handle,unsigned char relay, unsigned char state){
    }
    return(res);
 }
+
+int set_serial(hid_device *handle,char *newserial){
+   unsigned char buf[9];// 1 extra byte for the report ID
+   int res;
+
+   buf[0] = 0x0; //report number
+   buf[1] = CMD_SET_SERIAL;
+   buf[2] = newserial[0];
+   buf[3] = newserial[1];
+   buf[4] = newserial[2];
+   buf[5] = newserial[3];
+   buf[6] = newserial[4];
+   buf[7] = 0x00;
+   buf[8] = 0x00;
+   res = hid_write(handle, buf, sizeof(buf));
+   if (res < 0) {
+      fprintf(stderr,"Unable to write()\n");
+      fprintf(stderr,"Error: %ls\n", hid_error(handle));
+   }
+   return(res);
+}
+

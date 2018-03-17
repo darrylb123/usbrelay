@@ -149,4 +149,53 @@ If for some reason the USB id changes, (ie other than 16c0:05df) set the USBID e
 $sudo USBID=16c0:05df ./usbrelay
 ```
 
+Change the serial permanently
+
+Use the fictitious relay 0 to set the serial permanently. If you have duplicate serials, make sure only one is plugged in when you change it.
+Maximum of 5 character serial probably sensible to change one at a time.
+
+```
+$ sudo ./usbrelay
+Device Found
+  type: 16c0 05df
+  path: /dev/hidraw4
+  serial_number: 
+  Manufacturer: www.dcttech.com
+  Product:      USBRelay2
+  Release:      100
+  Interface:    0
+  Number of Relays = 2
+ZXCV_1=0
+ZXCV_2=0
+
+$ sudo ./usbrelay ZXCV_0=ZAQ12
+Orig: ZXCV, Serial: ZXCV, Relay: 0 State: 0
+Device Found
+  type: 16c0 05df
+  path: /dev/hidraw4
+  serial_number: 
+  Manufacturer: www.dcttech.com
+  Product:      USBRelay2
+  Release:      100
+  Interface:    0
+  Number of Relays = 2
+Serial: ZXCV, Relay: 0 State: 0 
+1 HID Serial: ZXCV 
+Serial: ZXCV, Relay: 0 State: 0 --- Not Found
+
+$ sudo ./usbrelay
+Device Found
+  type: 16c0 05df
+  path: /dev/hidraw4
+  serial_number: 
+  Manufacturer: www.dcttech.com
+  Product:      USBRelay2
+  Release:      100
+  Interface:    0
+  Number of Relays = 2
+ZAQ12_1=0
+ZAQ12_2=0
+```
+
+
 Enjoy

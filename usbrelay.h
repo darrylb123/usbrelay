@@ -20,13 +20,16 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #define ON 0xff
 #define OFF 0xfd
+#define CMD_SET_SERIAL 0xfa
 
 int operate_relay(hid_device *handle,unsigned char relay, unsigned char state);
+int set_serial(hid_device *handle,char *newserial);
 
 struct  relay {
 	char this_serial[10];
 	unsigned char relay_num;
 	unsigned char state;
 	int found;
+	char new_serial[10];
 };
 	
