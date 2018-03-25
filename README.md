@@ -104,6 +104,15 @@ Assuming the hidapi and hidapi-devel packages have been installed. Note that the
 ### hidapi-libusb
 # gcc -o usbrelay usbrelay.c -lhidapi-libusb
 ```
+
+You can also build using Docker. Assuming you have Docker installed, execute the build script:
+
+```
+$ ./build.sh
+```
+
+The usbrelay binary will be built in the root directory of the repo.
+
 Usage:
 The code needs to access the device. This can be achieved either by running the program with root privileges (so sudo is your friend) or by putting
 ```
