@@ -135,7 +135,11 @@ int main( int argc, char *argv[]) {
          if (!strcmp(relays[i].this_serial, (const char *) buf)) {
             fprintf(stderr,"%d HID Serial: %s ", i, buf);
 	    if (relays[i].relay_num == 0 ) {
-                set_serial(handle,relays[i].new_serial);
+                if ( ! relays[i].new_serial[0] ) {
+                    fprintf(stderr,"\n \n New serial can't be empty!\n");
+                } else {
+                    set_serial(handle,relays[i].new_serial);
+                }
             } else {
                fprintf(stderr,"Serial: %s, Relay: %d State: %x\n",relays[i].this_serial,relays[i].relay_num,relays[i].state);
                if (operate_relay(handle,relays[i].relay_num,relays[i].state) < 0 )
