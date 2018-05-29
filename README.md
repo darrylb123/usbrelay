@@ -2,7 +2,7 @@
 
 USB Relay driver for linux
 
-A cheap USB relay available from Ebay has either single or dual relay output.
+A cheap USB relay available from Ebay with 1,2,4 or 8 relay output.
 The double throw relay ratings are 10A 250VAC each.
 
 The USB device is HID compatible and comes with Windows control software.
@@ -161,7 +161,7 @@ $sudo USBID=16c0:05df ./usbrelay
 Change the serial permanently
 
 Use the fictitious relay 0 to set the serial permanently. If you have duplicate serials, make sure only one is plugged in when you change it.
-Maximum of 5 character serial probably sensible to change one at a time.
+Maximum of 5 character serial. It is probably sensible to change one module at a time to avoid serial collisions.
 
 ```
 $ sudo ./usbrelay
