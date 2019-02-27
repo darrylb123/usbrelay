@@ -1,6 +1,8 @@
 /*
 usbrelay: Control USB HID connected electrical relay modules
 Copyright (C) 2014  Darryl Bond
+Library version
+Copyright (C) 2019  Sean Mollet
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -32,6 +34,8 @@ int enumerate_relay_boards(char *product);
 int operate_relay(char *path,unsigned char relay, unsigned char state);
 int set_serial(char *path,char *newserial);
 char *board_path(char *serial);
+int get_relay_board_count();
+void shutdown();
 
 
 typedef struct relay_board {
