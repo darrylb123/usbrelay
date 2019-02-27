@@ -18,18 +18,28 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 /* relay.h */
 
+#ifndef __USBRELAY_H
+#define __USBRELAY_H
+
 #define ON 0xff
 #define OFF 0xfd
 #define CMD_SET_SERIAL 0xfa
+#define DEBUG 0
 
-int operate_relay(hid_device *handle,unsigned char relay, unsigned char state);
-int set_serial(hid_device *handle,char *newserial);
+#define Serial_Length 5
 
-struct  relay {
-	char this_serial[10];
-	unsigned char relay_num;
+int enumerate_relay_boards(char *product);
+int operate_relay(char *path,unsigned char relay, unsigned char state);
+int set_serial(char *path,char *newserial);
+char *board_path(char *serial);
+
+
+typedef struct relay_board {
+	//+1 for the \0 string terminator
+	char serial[Serial_Length+1];
+	unsigned char relay_count;
 	unsigned char state;
-	int found;
-	char new_serial[10];
-};
-	
+	char *path;
+} relay_board;
+
+#endif
