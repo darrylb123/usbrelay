@@ -1,5 +1,5 @@
 /*
-usbrelay: Control USB HID connected electrical relay modules
+libusbrelay: Control USB HID connected electrical relay modules
 Copyright (C) 2014  Darryl Bond
 Library version
 Copyright (C) 2019  Sean Mollet
@@ -23,6 +23,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #ifndef __USBRELAY_H
 #define __USBRELAY_H
 
+//Configuration
 #define ON 0xff
 #define OFF 0xfd
 #define CMD_SET_SERIAL 0xfa
@@ -30,14 +31,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #define Serial_Length 5
 
-int enumerate_relay_boards(char *product);
-int operate_relay(char *path,unsigned char relay, unsigned char state);
-int set_serial(char *path,char *newserial);
-char *board_path(char *serial);
-int get_relay_board_count();
-void shutdown();
-
-
+//Struct for relay boards
 typedef struct relay_board {
 	//+1 for the \0 string terminator
 	char serial[Serial_Length+1];
@@ -45,5 +39,17 @@ typedef struct relay_board {
 	unsigned char state;
 	char *path;
 } relay_board;
+
+//Public methods
+int enumerate_relay_boards(const char *product);
+int operate_relay(const char *path,unsigned char relay, unsigned char state);
+int set_serial(const char *path,char *newserial);
+char *board_path(const char *serial);
+int get_relay_board_count(void);
+relay_board* get_relay_boards(void);
+void shutdown(void);
+
+
+
 
 #endif

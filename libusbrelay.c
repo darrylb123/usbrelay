@@ -1,5 +1,5 @@
 /*
-usbrelay: Control USB HID connected electrical relay modules
+libusbrelay: Control USB HID connected electrical relay modules
 Copyright (C) 2014  Darryl Bond
 Library version
 Copyright (C) 2019  Sean Mollet
@@ -27,6 +27,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <hidapi/hidapi.h>
 #include "libusbrelay.h"
 
+
 unsigned short vendor_id = 0x16c0;
 unsigned short product_id = 0x05df;
 relay_board *relay_boards = 0;
@@ -35,7 +36,7 @@ int relay_board_count = 0;
 /**
  * Enumerate all possible relay devices in the system
  */
-int enumerate_relay_boards(char *product)
+int enumerate_relay_boards(const char *product)
 {
    char *vendor;
    unsigned char buf[9];
@@ -45,7 +46,7 @@ int enumerate_relay_boards(char *product)
    //If we were given a product code, use it
    if (product != NULL)
    {
-      vendor = strsep(&product, ":");
+      vendor = strsep((char**) &product, ":");
       if (vendor && *vendor)
       {
          vendor_id = strtol(vendor, NULL, 16);
@@ -144,7 +145,7 @@ int enumerate_relay_boards(char *product)
 /**
  * Command a relay at a particular /dev path to switch to a given state
  */
-int operate_relay(char *path, unsigned char relay, unsigned char target_state)
+int operate_relay(const char *path, unsigned char relay, unsigned char target_state)
 {
    unsigned char buf[9]; // 1 extra byte for the report ID
    int res;
@@ -180,7 +181,7 @@ int operate_relay(char *path, unsigned char relay, unsigned char target_state)
    return (res);
 }
 
-int set_serial(char *path, char *newserial)
+int set_serial(const char *path, char *newserial)
 {
    unsigned char buf[9]; // 1 extra byte for the report ID
    int res;
@@ -219,7 +220,7 @@ int set_serial(char *path, char *newserial)
 /**
  * Find a board path given a relay board serial
  */
-char *board_path(char *serial)
+char *board_path(const char *serial)
 {
    for (int i = 0; i < relay_board_count; i++)
    {
@@ -237,6 +238,14 @@ char *board_path(char *serial)
 int get_relay_board_count()
 {
    return relay_board_count;
+}
+
+/** 
+ * Return the actual relay_board structs
+ */
+relay_board* get_relay_boards()
+{
+   return relay_boards;
 }
 
 /**
