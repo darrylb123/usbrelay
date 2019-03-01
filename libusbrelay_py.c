@@ -61,7 +61,7 @@ static struct PyModuleDef usb_relaymodule = {
 PyMODINIT_FUNC PyInit_usbrelay_py(void)
 {
     //Attempt to enumerate the relays while we're here
-    enumerate_relay_boards(NULL);
+    enumerate_relay_boards(NULL,0,0);
 
     //Give Python our API
     return PyModule_Create(&usb_relaymodule);
@@ -79,7 +79,7 @@ static PyObject *usbrelay_init(PyObject *self, PyObject *args)
     //If there is no argument, product will remain null
     //Which is fine
     PyArg_ParseTuple(args, "s", &product);
-    result = enumerate_relay_boards(product);
+    result = enumerate_relay_boards(product,0,0);
 
     return Py_BuildValue("i", result);
 }
@@ -95,7 +95,7 @@ static PyObject *usbrelay_board_count(PyObject *self, PyObject *args)
     //Just in case they didn't initialize, we'll try once to get a different result
     if (board_count == 0)
     {
-        enumerate_relay_boards(NULL);
+        enumerate_relay_boards(NULL,0,0);
         board_count = get_relay_board_count();
     }
 
@@ -172,26 +172,21 @@ static PyObject *usbrelay_board_details(PyObject *self, PyObject *args)
  */
 static PyObject *usbrelay_board_control(PyObject *self, PyObject *args)
 {
-    const char *board;
-    char *boardpath = NULL;
+    const char *serial;
     int relay;
     int status;
     int result = -1;
 
-    //If there is no argument, product will remain null
-    //Which is fine
-    if (PyArg_ParseTuple(args, "sii", &board, &relay, &status))
+    //If there is no argument, or it's ill formed, we just refuse to do anything
+    if (PyArg_ParseTuple(args, "sii", &serial, &relay, &status))
     {
-        boardpath = board_path(board);
-        if (boardpath)
+        char target_state = CMD_OFF;
+        if (status)
         {
-            char target_state=OFF;
-            if(status){
-                target_state = ON;
-            }
-
-            result = operate_relay(boardpath, relay, target_state);
+            target_state = CMD_ON;
         }
+
+        result = operate_relay(serial, relay, target_state);
     }
 
     return Py_BuildValue("i", result);

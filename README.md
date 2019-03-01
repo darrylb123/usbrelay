@@ -99,10 +99,10 @@ Building the code:
 Assuming the hidapi and hidapi-devel packages have been installed. Note that there are two options for the hidapi library: hidapi-hidraw or hidapi-libusb. Different distributions have better results with one or the other. YMMV.
 
 ```
-### hidapi-hidraw 
-# gcc -o usbrelay usbrelay.c -lhidapi-hidraw
+### hidapi-hidraw - This is the default if no option is given
+# make HIDAPI=hidraw
 ### hidapi-libusb
-# gcc -o usbrelay usbrelay.c -lhidapi-libusb
+# make HIDAPI=libusb
 ```
 
 You can also build using Docker. Assuming you have Docker installed, execute the build script:
@@ -111,7 +111,7 @@ You can also build using Docker. Assuming you have Docker installed, execute the
 $ ./build.sh
 ```
 
-The usbrelay binary will be built in the root directory of the repo.
+The usbrelay binary and libusbrelay.so library will be built in the root directory of the repo.
 
 Usage:
 The code needs to access the device. This can be achieved either by running the program with root privileges (so sudo is your friend) or by putting
@@ -206,5 +206,55 @@ ZAQ12_1=0
 ZAQ12_2=0
 ```
 
+This also optionally includes a python extension. In order to build the python extension, you must have the Python 3 development libraries installed.
 
+Debian:
+```
+##Install Python3 dev pacakage
+# sudo apt install libpython3.5-dev
+```
+
+Fedora:
+```
+##Install Python3 dev pacakage
+# yum install python3-devel
+```
+
+With the dependency installed, the library can be built and installed with:
+```
+##Build libusbrelay_py.so
+# make python
+##Install to global python
+# make install_py
+```
+
+Once installed, the library can be used by any python script, assuming it is running as a user with suitable permissions per the changed to udev above.
+
+The following is a test script included as test.py, showing how to use the library:
+```
+import usbrelay_py
+import time
+
+count = usbrelay_py.board_count()
+print("Count: ",count)
+
+boards = usbrelay_py.board_details()
+print("Boards: ",boards)
+
+if(len(boards)>0):
+    board = boards[0]
+    print("Board: ",board)
+    relay = 1
+    while(relay < board[1]+1):
+        result = usbrelay_py.board_control(board[0],relay,1)
+        print("Result: ",result)
+        relay += 1
+        
+    relay = 1
+    while(relay < board[1]+1):
+        result = usbrelay_py.board_control(board[0],relay,0)
+        print("Result: ",result)
+        relay += 1
+```
+        
 Enjoy
