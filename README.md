@@ -223,12 +223,12 @@ Fedora:
 With the dependency installed, the library can be built and installed with:
 ```
 ##Build libusbrelay_py.so
-# make python
+$ make python
 ##Install to global python
-# make install_py
+$ sudo make install_py
 ```
 
-Once installed, the library can be used by any python script, assuming it is running as a user with suitable permissions per the changed to udev above.
+Once installed, the library can be used by any python script, assuming it is running as a user with suitable permissions per the changes to udev above.
 
 The following is a test script included as test.py, showing how to use the library:
 ```
@@ -256,5 +256,11 @@ if(len(boards)>0):
         print("Result: ",result)
         relay += 1
 ```
-        
+
+Once the library is installed, you can run the test script in python as follows:
+```
+$ python3 test.py
+```
+It will turn on and then off every relay attached to every board on your system.
+
 Enjoy
