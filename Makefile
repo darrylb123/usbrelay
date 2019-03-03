@@ -17,11 +17,11 @@ libusbrelay.so: libusbrelay.c libusbrelay.h
 	$(CC) -shared -fPIC $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $<
 
 usbrelay: usbrelay.c libusbrelay.h libusbrelay.so
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -lusbrelay -L./ -o $@ $<
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -L./ -lusbrelay -o $@ $<
 
 #We build this once directly for error checking purposes, then let python do the real build
 libusbrelay_py.so: libusbrelay_py.c libusbrelay.so
-	$(CC) -shared -fPIC -I/usr/include/python3.5m $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -lusbrelay -L./ -o $@ $<
+	$(CC) -shared -fPIC -I/usr/include/python3.5m $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -L./ -lusbrelay -o $@ $<
 	python3 setup.py build
 
 clean:
