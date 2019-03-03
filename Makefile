@@ -1,6 +1,14 @@
 CFLAGS += -O2 -Wall
 HIDAPI = hidraw
 LDFLAGS += -lhidapi-$(HIDAPI)
+MACHINE := $(shell uname -m)
+
+#Default 32 bit x86, raspberry pi, etc..
+LIBDIR = /usr/lib
+#Catch x86_64 machines that use /usr/lib64
+ifeq ($(MACHINE), x86_64)
+LIBDIR = /usr/lib64
+endif
 
 all: usbrelay libusbrelay.so
 python: usbrelay libusbrelay.so libusbrelay_py.so
@@ -23,7 +31,7 @@ clean:
 
 
 install: usbrelay libusbrelay.so
-	install -d $(DESTDIR)/usr/lib
+	install -d $(DESTDIR)$(LIBDIR)
 	install -m 0755 libusbrelay.so $(DESTDIR)/usr/lib
 	install -d $(DESTDIR)/usr/bin
 	install -m 0755 usbrelay $(DESTDIR)/usr/bin

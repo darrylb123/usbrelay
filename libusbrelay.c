@@ -32,6 +32,7 @@ unsigned short vendor_id = 0x16c0;
 unsigned short product_id = 0x05df;
 relay_board *relay_boards = 0;
 int relay_board_count = 0;
+int i, k;
 
 //Private function prototypes
 static int get_board_features(relay_board *board, hid_device *handle);
@@ -75,7 +76,7 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
 
    //Fill the relay structs
    cur_dev = devs;
-   for (int i = 0; i < relay_board_count; i++)
+   for (i = 0; i < relay_board_count; i++)
    {
       //Save the path to this device
       relay_boards[i].path = malloc(strlen(cur_dev->path));
@@ -113,7 +114,7 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
          //If verbose and debug are on, output individual relay details
          if (debug)
          {
-            for (int k = 0; k < relay_boards[i].relay_count; k++)
+            for (k = 0; k < relay_boards[i].relay_count; k++)
             {
                if (relay_boards[i].state & 1 << k)
                {
@@ -232,7 +233,7 @@ int set_serial(const char *serial, char *newserial)
  */
 relay_board *find_board(const char *serial)
 {
-   for (int i = 0; i < relay_board_count; i++)
+   for (i = 0; i < relay_board_count; i++)
    {
       if (strcmp(relay_boards[i].serial, serial) == 0)
       {
@@ -267,7 +268,7 @@ void shutdown()
    /* Free static HIDAPI objects. */
    hid_exit();
 
-   for (int i = 0; i < relay_board_count; i++)
+   for (i = 0; i < relay_board_count; i++)
    {
       free(relay_boards[i].path);
    }
