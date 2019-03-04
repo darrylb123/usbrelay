@@ -72,64 +72,66 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
    }
 
    //Allocate a buffer for the relays
-   relay_boards = malloc((relay_board_count) * sizeof(relay_board));
-
-   //Fill the relay structs
-   cur_dev = devs;
-   for (i = 0; i < relay_board_count; i++)
+   if (relay_board_count > 0)
    {
-      //Save the path to this device
-      relay_boards[i].path = malloc(strlen(cur_dev->path));
-      memcpy(relay_boards[i].path, cur_dev->path, strlen(cur_dev->path) + 1);
+      relay_boards = malloc((relay_board_count) * sizeof(relay_board));
 
-      // The product string is USBRelayx where x is number of relays read to the \0 in case there are more than 9
-      relay_boards[i].relay_count = atoi((const char *)&cur_dev->product_string[8]);
-
-      //Open it to get more details
-      hid_device *handle;
-      handle = hid_open_path(cur_dev->path);
-      if (handle)
+      //Fill the relay structs
+      cur_dev = devs;
+      for (i = 0; i < relay_board_count; i++)
       {
-         result = get_board_features(&relay_boards[i], handle);
-         hid_close(handle);
-      }
-      else
-      {
-         perror("unable to open device\n");
-         result = -1;
-      }
+         //Save the path to this device
+         relay_boards[i].path = malloc(strlen(cur_dev->path));
+         memcpy(relay_boards[i].path, cur_dev->path, strlen(cur_dev->path) + 1);
 
-      //Output the device enumeration details if verbose is on
-      if (verbose)
-      {
-         fprintf(stderr, "Device Found\n  type: %04hx %04hx\n  path: %s\n  serial_number: %ls", cur_dev->vendor_id, cur_dev->product_id, cur_dev->path, cur_dev->serial_number);
-         fprintf(stderr, "\n");
-         fprintf(stderr, "  Manufacturer: %ls\n", cur_dev->manufacturer_string);
-         fprintf(stderr, "  Product:      %ls\n", cur_dev->product_string);
-         fprintf(stderr, "  Release:      %hx\n", cur_dev->release_number);
-         fprintf(stderr, "  Interface:    %d\n", cur_dev->interface_number);
+         // The product string is USBRelayx where x is number of relays read to the \0 in case there are more than 9
+         relay_boards[i].relay_count = atoi((const char *)&cur_dev->product_string[8]);
 
-         fprintf(stderr, "  Number of Relays = %d\n", relay_boards[i].relay_count);
-
-         //If verbose and debug are on, output individual relay details
-         if (debug)
+         //Open it to get more details
+         hid_device *handle;
+         handle = hid_open_path(cur_dev->path);
+         if (handle)
          {
-            for (k = 0; k < relay_boards[i].relay_count; k++)
+            result = get_board_features(&relay_boards[i], handle);
+            hid_close(handle);
+         }
+         else
+         {
+            perror("unable to open device\n");
+            result = -1;
+         }
+
+         //Output the device enumeration details if verbose is on
+         if (verbose)
+         {
+            fprintf(stderr, "Device Found\n  type: %04hx %04hx\n  path: %s\n  serial_number: %ls", cur_dev->vendor_id, cur_dev->product_id, cur_dev->path, cur_dev->serial_number);
+            fprintf(stderr, "\n");
+            fprintf(stderr, "  Manufacturer: %ls\n", cur_dev->manufacturer_string);
+            fprintf(stderr, "  Product:      %ls\n", cur_dev->product_string);
+            fprintf(stderr, "  Release:      %hx\n", cur_dev->release_number);
+            fprintf(stderr, "  Interface:    %d\n", cur_dev->interface_number);
+
+            fprintf(stderr, "  Number of Relays = %d\n", relay_boards[i].relay_count);
+
+            //If verbose and debug are on, output individual relay details
+            if (debug)
             {
-               if (relay_boards[i].state & 1 << k)
+               for (k = 0; k < relay_boards[i].relay_count; k++)
                {
-                  printf("%s_%d=1\n", relay_boards[i].serial, k + 1);
-               }
-               else
-               {
-                  printf("%s_%d=0\n", relay_boards[i].serial, k + 1);
+                  if (relay_boards[i].state & 1 << k)
+                  {
+                     printf("%s_%d=1\n", relay_boards[i].serial, k + 1);
+                  }
+                  else
+                  {
+                     printf("%s_%d=0\n", relay_boards[i].serial, k + 1);
+                  }
                }
             }
          }
+         cur_dev = cur_dev->next;
       }
-      cur_dev = cur_dev->next;
    }
-
    hid_free_enumeration(devs);
    return result;
 }

@@ -27,6 +27,7 @@ libusbrelay_py.so: libusbrelay_py.c libusbrelay.so
 clean:
 	rm -f usbrelay
 	rm -f libusbrelay.so
+	rm -f libusbrelay_py.so
 	rm -rf build
 
 
