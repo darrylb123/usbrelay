@@ -2,7 +2,7 @@ from distutils.core import setup, Extension
 
 module1 = Extension('usbrelay_py',
                     libraries= ['usbrelay'],
-                    library_dirs= ['/usr/lib'],
+                    library_dirs= ['./','/usr/lib','/usr/lib64'],
                     sources = ['libusbrelay_py.c'])
 
 setup (name = 'usbrelay_py',
