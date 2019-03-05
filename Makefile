@@ -5,10 +5,18 @@ MACHINE := $(shell uname -m)
 
 #Default 32 bit x86, raspberry pi, etc..
 LIBDIR = /usr/lib
-#Catch x86_64 machines that use /usr/lib64
+
+#Catch x86_64 machines that use /usr/lib64 (RedHat)
 ifeq ($(MACHINE), x86_64)
 LIBDIR = /usr/lib64
 endif
+
+#Catch debian machines with Multiarch
+ifneq ($(wildcard /usr/lib/x86_64-linux-gnu/.),)
+    LIBDIR = /usr/lib/x86_64-linux-gnu
+endif
+
+LDFLAGS += -L $(LIBDIR) -Wl,-rpath $(LIBDIR)
 
 all: usbrelay libusbrelay.so
 python: usbrelay libusbrelay.so libusbrelay_py.so
