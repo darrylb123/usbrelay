@@ -81,7 +81,7 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
       for (i = 0; i < relay_board_count; i++)
       {
          //Save the path to this device
-         relay_boards[i].path = malloc(strlen(cur_dev->path));
+         relay_boards[i].path = malloc(strlen(cur_dev->path)+1);
          memcpy(relay_boards[i].path, cur_dev->path, strlen(cur_dev->path) + 1);
 
          // The product string is USBRelayx where x is number of relays read to the \0 in case there are more than 9

@@ -1,4 +1,4 @@
-CFLAGS += -O2 -Wall
+CFLAGS += -O0 -Wall -g
 HIDAPI = hidraw
 LDFLAGS += -lhidapi-$(HIDAPI)
 MACHINE := $(shell uname -m)
@@ -11,9 +11,19 @@ ifeq ($(MACHINE), x86_64)
 LIBDIR = /usr/lib64
 endif
 
-#Catch debian machines with Multiarch
+#Catch debian machines with Multiarch (x64)
 ifneq ($(wildcard /usr/lib/x86_64-linux-gnu/.),)
     LIBDIR = /usr/lib/x86_64-linux-gnu
+endif
+
+#Catch debian machines with Multiarch (aarch64)
+ifneq ($(wildcard /usr/lib/aarch64-linux-gnu/.),)
+    LIBDIR = /usr/lib/aarch64-linux-gnu
+endif
+
+#Catch debian machines with Multiarch (arm-linux-gnueabihf)
+ifneq ($(wildcard /usr/lib/arm-linux-gnueabihf/.),)
+    LIBDIR = /usr/lib/arm-linux-gnueabihf
 endif
 
 LDFLAGS += -L $(LIBDIR) -Wl,-rpath $(LIBDIR)
