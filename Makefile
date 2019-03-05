@@ -1,4 +1,4 @@
-CFLAGS += -O0 -Wall -g
+CFLAGS += -O2 -Wall
 HIDAPI = hidraw
 LDFLAGS += -lhidapi-$(HIDAPI)
 MACHINE := $(shell uname -m)
