@@ -1,14 +1,13 @@
 CFLAGS += -O2 -Wall
 HIDAPI = hidraw
 LDFLAGS += -lhidapi-$(HIDAPI)
-MACHINE := $(shell uname -m)
 
 #Default 32 bit x86, raspberry pi, etc..
 LIBDIR = /usr/lib
 
 #Catch x86_64 machines that use /usr/lib64 (RedHat)
-ifeq ($(MACHINE), x86_64)
-LIBDIR = /usr/lib64
+ifneq ($(wildcard /usr/lib64/.),)
+    LIBDIR = /usr/lib64
 endif
 
 #Catch debian machines with Multiarch (x64)
