@@ -1,0 +1,4 @@
+*.so
+usbrelay
+._*
+build
