@@ -5,4 +5,6 @@ FROM debian:9
 RUN apt update && apt install -y \
     make \
     gcc \
-    libhidapi-dev
+    libhidapi-dev \
+    libpython3.5-dev \
+    python3
