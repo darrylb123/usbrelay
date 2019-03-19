@@ -1,6 +1,6 @@
-![alt text](usbrelay.jpg "USB Relay")
+# USB Relay Driver For Linux
 
-USB Relay driver for linux
+![alt text](usbrelay.jpg "USB Relay")
 
 A cheap USB relay available from Ebay with 1,2,4 or 8 relay output.
 The double throw relay ratings are 10A 250VAC each.
@@ -75,14 +75,16 @@ Device Descriptor:
 Device Status:     0x0000
   (Bus Powered)
 ```
-HIDAPI
+___
+
+## HIDAPI
 
 http://www.signal11.us/oss/hidapi
 
 HIDAPI is a fairly recent addition to linux and is available as a package for Fedora 20 but not for Pidora (F18). 
 The package was built for Pidora (Fedora 18) using the F20 hidapi source package.
 
-Installing Debian Packages:
+### Installing Debian Packages:
 This code is a maintained package in Debian (and Raspian). Use normal apt-get commands:
 
 ```
@@ -91,11 +93,11 @@ $ sudo apt-get install usbrelay
 
 Other Linux platforms will need to build the source, see below
 
-Protocol:
+### Protocol:
 The relay modules does not set the USB serial number but has a unique serial when the HID device is queried, the current state of the relays is also sent with the serial.
 The HID serial is matched and the ON/OFF command is sent to the chosen relay.
 
-Building the code:
+### Building The Code:
 Assuming the hidapi and hidapi-devel packages have been installed. Note that there are two options for the hidapi library: hidapi-hidraw or hidapi-libusb. Different distributions have better results with one or the other. YMMV.
 
 ```
@@ -105,15 +107,16 @@ Assuming the hidapi and hidapi-devel packages have been installed. Note that the
 # make HIDAPI=libusb
 ```
 
-You can also build using Docker. Assuming you have Docker installed, execute the build script:
+### Docker Build:
+You can also build using Docker. Assuming you have Docker installed (only tested with version 18), execute the build script:
 
 ```
 $ ./build.sh
 ```
 
-The usbrelay binary and libusbrelay.so library will be built in the root directory of the repo.
+The usbrelay binary, libusbrelay.so and libusbrelay_py.so libraries will be built in the root directory of the repo.
 
-Usage:
+### Usage:
 The code needs to access the device. This can be achieved either by running the program with root privileges (so sudo is your friend) or by putting
 ```
 SUBSYSTEM=="usb", ATTR{idVendor}=="16c0",ATTR{idProduct}=="05df", MODE="0666"
@@ -206,11 +209,12 @@ ZAQ12_1=0
 ZAQ12_2=0
 ```
 
-This also optionally includes a python extension. In order to build the python extension, you must have the Python 3 development libraries installed.
+### Python Extension: 
+This also optionally includes a python extension. In order to build the python extension, you must have the Python 3 development libraries installed. The docker build process will produce the python library as well.
 
 Debian:
 ```
-##Install Python3 dev pacakage
+##Install Python3 dev package
 # sudo apt install libpython3.5-dev
 ```
 
