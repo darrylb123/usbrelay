@@ -130,35 +130,35 @@ static PyObject *usbrelay_board_details(PyObject *self, PyObject *args)
         result = Py_BuildValue("(O)", boards[0]);
         break;
     case 2:
-        result = Py_BuildValue("(oo)", boards[0], boards[1]);
+        result = Py_BuildValue("(OO)", boards[0], boards[1]);
         break;
     case 3:
-        result = Py_BuildValue("(ooo)", boards[0], boards[1], boards[2]);
+        result = Py_BuildValue("(OOO)", boards[0], boards[1], boards[2]);
         break;
     case 4:
-        result = Py_BuildValue("(oooo)", boards[0], boards[1], boards[2], boards[3]);
+        result = Py_BuildValue("(OOOO)", boards[0], boards[1], boards[2], boards[3]);
         break;
     case 5:
-        result = Py_BuildValue("(ooooo)", boards[0], boards[1], boards[2], boards[3], boards[4]);
+        result = Py_BuildValue("(OOOOO)", boards[0], boards[1], boards[2], boards[3], boards[4]);
         break;
     case 6:
-        result = Py_BuildValue("(oooooo)", boards[0], boards[1], boards[2], boards[3], boards[4],
+        result = Py_BuildValue("(OOOOOO)", boards[0], boards[1], boards[2], boards[3], boards[4],
                                boards[5]);
         break;
     case 7:
-        result = Py_BuildValue("(ooooooo)", boards[0], boards[1], boards[2], boards[3], boards[4],
+        result = Py_BuildValue("(OOOOOOO)", boards[0], boards[1], boards[2], boards[3], boards[4],
                                boards[5], boards[6]);
         break;
     case 8:
-        result = Py_BuildValue("(oooooooo)", boards[0], boards[1], boards[2], boards[3], boards[4],
+        result = Py_BuildValue("(OOOOOOOO)", boards[0], boards[1], boards[2], boards[3], boards[4],
                                boards[5], boards[6], boards[7]);
         break;
     case 9:
-        result = Py_BuildValue("(ooooooooo)", boards[0], boards[1], boards[2], boards[3], boards[4],
+        result = Py_BuildValue("(OOOOOOOOO)", boards[0], boards[1], boards[2], boards[3], boards[4],
                                boards[5], boards[6], boards[7], boards[8]);
         break;
     case 10:
-        result = Py_BuildValue("(oooooooooo)", boards[0], boards[1], boards[2], boards[3], boards[4],
+        result = Py_BuildValue("(OOOOOOOOOO)", boards[0], boards[1], boards[2], boards[3], boards[4],
                                boards[5], boards[6], boards[7], boards[8], boards[9]);
         break;
     }
