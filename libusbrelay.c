@@ -146,7 +146,7 @@ int operate_relay(const char *serial, unsigned char relay, unsigned char target_
    hid_device *handle;
 
    relay_board *board = find_board(serial);
-   if (board != NULL && relay >0 && relay < board->relay_count)
+   if (board != NULL && relay >0 && relay <= board->relay_count)
    {
       handle = hid_open_path(board->path);
 
