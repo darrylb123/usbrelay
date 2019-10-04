@@ -34,7 +34,7 @@ libusbrelay.so: libusbrelay.c libusbrelay.h
 	$(CC) -shared -fPIC $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $<
 
 usbrelay: usbrelay.c libusbrelay.h libusbrelay.so
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -L./ -lusbrelay -o $@ $<
+	$(CC) $(CPPFLAGS) $(CFLAGS) $< -lusbrelay -L./ $(LDFLAGS) -o $@
 
 #We build this once directly for error checking purposes, then let python do the real build
 libusbrelay_py.so: libusbrelay_py.c libusbrelay.so
