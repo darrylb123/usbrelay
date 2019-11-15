@@ -31,7 +31,7 @@ all: usbrelay libusbrelay.so
 python: usbrelay libusbrelay.so libusbrelay_py.so
 
 libusbrelay.so: libusbrelay.c libusbrelay.h
-	$(CC) -shared -fPIC $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $<
+	$(CC) -shared -fPIC $(CPPFLAGS) $(CFLAGS) $< $(LDFLAGS) -o $@ 
 
 usbrelay: usbrelay.c libusbrelay.h libusbrelay.so
 	$(CC) $(CPPFLAGS) $(CFLAGS) $< -lusbrelay -L./ $(LDFLAGS) -o $@
