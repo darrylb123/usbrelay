@@ -98,19 +98,25 @@ The relay modules does not set the USB serial number but has a unique serial whe
 The HID serial is matched and the ON/OFF command is sent to the chosen relay.
 
 ### Building The Code:
-The usual make, make install dance assuming the hidapi and hidapi-devel packages have been installed. Note that there are two options for the hidapi library: hidapi-hidraw or hidapi-libusb. Different distributions have better results with one or the other. YMMV.
+The usual make, make install dance assuming the hidapi and hidapi-devel packages have been installed. Note that there are two options for the hidapi library: hidapi-hidraw or hidapi-libusb. Different distributions have better results with one or the other. YMMV. 
 
 ```
-# cd usbrelay
-# make
-# sudo make install
+$ sudo apt-get install libhidapi-dev libhidapi-hidraw0 git 
+$ git clone https://git.com/darrylb123/usbrelay
+$ cd usbrelay
+$ make
+$ sudo make install
+### Test with a usbrelay plugged in
+$ sudo usbrelay
 
-To choose the hidapi library, add the option to the make command line
+### Build the python interface using the instructions below
+
+To choose the alternative hidapi libraries, add the option to the make command line
 
 ### hidapi-hidraw - This is the default if no option is given
-# make HIDAPI=hidraw
+$ make HIDAPI=hidraw
 ### hidapi-libusb
-# make HIDAPI=libusb
+$ make HIDAPI=libusb
 ```
 
 ### Docker Build:
