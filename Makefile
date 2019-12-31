@@ -1,6 +1,7 @@
 CFLAGS += -O2 -Wall
 HIDAPI = hidraw
 LDFLAGS += -lhidapi-$(HIDAPI)
+PYTHON_VERSION=$(shell python3 -c "import sys;t='{v[0]}.{v[1]}'.format(v=list(sys.version_info[:2]));sys.stdout.write(t)")
 
 #Default 32 bit x86, raspberry pi, etc..
 LIBDIR = /usr/lib
@@ -37,8 +38,9 @@ usbrelay: usbrelay.c libusbrelay.h libusbrelay.so
 	$(CC) $(CPPFLAGS) $(CFLAGS) $< -lusbrelay -L./ $(LDFLAGS) -o $@
 
 #We build this once directly for error checking purposes, then let python do the real build
+
 libusbrelay_py.so: libusbrelay_py.c libusbrelay.so
-	$(CC) -shared -fPIC -I/usr/include/python3.5m $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -L./ -lusbrelay -o $@ $<
+	$(CC) -shared -fPIC -I/usr/include/python$(PYTHON_VERSION)m $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -L./ -lusbrelay -o $@ $<
 	python3 setup.py build
 
 clean:
