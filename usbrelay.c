@@ -28,22 +28,20 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "libusbrelay.h"
 #include "usbrelay.h"
 
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+
 int main(int argc, char *argv[])
 {
     struct relay *relays = 0;
-    char arg_t[20] = {'\0'};
     int debug = 0;
-    char *token;
-    const char delimiters[] = "_=";
     int i;
-    int size = sizeof(struct relay);
     int exit_code = 0;
 
     /* allocate the memory for all the relays */
     if (argc > 1)
     {
-        relays = malloc(size * (argc + 1)); /* Yeah, I know. Not using the first member */
-        relays[0].this_serial[0] = '\0';
+        relays = calloc(argc + 1, sizeof(struct relay)); /* Yeah, I know. Not using the first member */
+	/* relays is zero-initialized */
     }
     else
         debug = 1;
@@ -51,32 +49,43 @@ int main(int argc, char *argv[])
     /* loop through the command line and grab the relay details */
     for (i = 1; i < argc; i++)
     {
-        /* copy the arg and bounds check */
-        strncpy(arg_t, argv[i], 19);
-        arg_t[19] = '\0';
-        token = strtok(arg_t, delimiters);
-        if (token != NULL)
-        {
-            strcpy(relays[i].this_serial, token);
-        }
-        token = strtok((char *)NULL, delimiters);
-        if (token != NULL)
-        {
-            relays[i].relay_num = atoi(token);
-        }
-        token = strtok(NULL, delimiters);
-        if (relays[i].relay_num == 0)
-        { /* command to change the serial - remaining token is the new serial */
-            if (token != NULL)
-            {
-                strcpy(relays[i].new_serial, token);
-            }
-        }
-        else
-        {
-            if (token != NULL)
-            {
-                if (atoi(token))
+	char *arg = argv[i];
+	struct relay *relay = &relays[i];
+
+	char *underscore = strchr(arg, '_');
+	char *equal_sign = strchr(arg, '=');
+
+	if (underscore && equal_sign && underscore > equal_sign) /* e.g. ASDFG=QWERT_1 */
+	{
+	    fprintf(stderr, "Invalid relay specification: %s\n", argv[i]);
+	    exit(1);
+	}
+
+
+	size_t size;
+
+	/* Parse serial number */
+	if (underscore)
+	    size = underscore - arg;
+	else if (equal_sign)
+	    size = equal_sign - arg;
+	else
+	    size = strlen(arg);
+	strncpy(relay->this_serial, arg, MIN(size, sizeof(relay->this_serial) - 1));
+
+	/* Parse relay number */
+	if (underscore)
+	    relay->relay_num = atoi(underscore + 1);
+
+	if (equal_sign)
+	{
+	    if (relay->relay_num == 0)
+	    { /* command to change the serial - remaining token is the new serial */
+		strncpy(relay->new_serial, equal_sign + 1, sizeof(relay->new_serial) - 1);
+	    }
+	    else
+	    {
+                if (atoi(equal_sign + 1))
                 {
                     relays[i].state = CMD_ON;
                 }
@@ -86,8 +95,8 @@ int main(int argc, char *argv[])
                 }
             }
         }
-        fprintf(stderr, "Orig: %s, Serial: %s, Relay: %d State: %x\n", arg_t, relays[i].this_serial, relays[i].relay_num, relays[i].state);
-        relays[i].found = 0;
+        fprintf(stderr, "Orig: %s, Serial: %s, Relay: %d State: %x\n", arg, relay->this_serial, relay->relay_num, relay->state);
+        relay->found = 0;
     }
 
     //Locate and identify attached relay boards
@@ -110,6 +119,7 @@ int main(int argc, char *argv[])
                 }
                 else
                 {
+		    fprintf(stderr, "Setting new serial\n");
                     set_serial(board->serial, relays[i].new_serial);
                 }
             }
