@@ -97,12 +97,12 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
          }
          else
          {
-            perror("unable to open device\n");
+            perror("unable to open device - Use root, sudo or set the device permissions via udev\n");
             result = -1;
          }
 
          //Output the device enumeration details if verbose is on
-         if (verbose)
+         if (result != -1 && verbose)
          {
             fprintf(stderr, "Device Found\n  type: %04hx %04hx\n  path: %s\n  serial_number: %ls", cur_dev->vendor_id, cur_dev->product_id, cur_dev->path, cur_dev->serial_number);
             fprintf(stderr, "\n");
@@ -114,7 +114,7 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
             fprintf(stderr, "  Number of Relays = %d\n", relay_boards[i].relay_count);
 
             //If verbose and debug are on, output individual relay details
-            if (debug)
+            if (result != -1 && debug)
             {
                for (k = 0; k < relay_boards[i].relay_count; k++)
                {
