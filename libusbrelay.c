@@ -45,6 +45,7 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
    char *vendor;
    int result = 0;
    struct hid_device_info *devs, *cur_dev;
+   int num_opened = 0, num_error = 0;
 
    //If we were given a product code, use it
    if (product != NULL)
@@ -92,12 +93,14 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
          handle = hid_open_path(cur_dev->path);
          if (handle)
          {
+	    num_opened++;
             result = get_board_features(&relay_boards[i], handle);
             hid_close(handle);
          }
          else
          {
-            perror("unable to open device - Use root, sudo or set the device permissions via udev\n");
+	    num_error++;
+            perror(cur_dev->path);
             result = -1;
          }
 
@@ -133,6 +136,8 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
       }
    }
    hid_free_enumeration(devs);
+   if (num_opened == 0 && num_error > 0)
+      fprintf(stderr, "Unable to open any device - Use root, sudo or set the device permissions via udev\n");
    return result;
 }
 
