@@ -74,7 +74,7 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
    //Allocate a buffer for the relays
    if (relay_board_count > 0)
    {
-      relay_boards = malloc((relay_board_count) * sizeof(relay_board));
+      relay_boards = calloc(relay_board_count, sizeof(relay_board));
 
       //Fill the relay structs
       cur_dev = devs;
@@ -289,7 +289,7 @@ void shutdown()
  */
 static int get_board_features(relay_board *board, hid_device *handle)
 {
-   unsigned char buf[9];
+   unsigned char buf[9] = { 0 };
    //Get the features of the device
    buf[0] = 0x01;
    int ret = hid_get_feature_report(handle, buf, sizeof(buf));
