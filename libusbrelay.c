@@ -107,7 +107,7 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
          //Output the device enumeration details if verbose is on
          if (result != -1 && verbose)
          {
-            fprintf(stderr, "Device Found\n  type: %04hx %04hx\n  path: %s\n  serial_number: %ls", cur_dev->vendor_id, cur_dev->product_id, cur_dev->path, cur_dev->serial_number);
+            fprintf(stderr, "Device Found\n  type: %04hx %04hx\n  path: %s\n  serial_number: %s", cur_dev->vendor_id, cur_dev->product_id, cur_dev->path, relay_boards[i].serial);
             fprintf(stderr, "\n");
             fprintf(stderr, "  Manufacturer: %ls\n", cur_dev->manufacturer_string);
             fprintf(stderr, "  Product:      %ls\n", cur_dev->product_string);

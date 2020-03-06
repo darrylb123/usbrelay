@@ -142,7 +142,7 @@ $ sudo ./usbrelay
 Device Found
   type: 16c0 05df
   path: /dev/hidraw1
-  serial_number: 
+  serial_number: PSUIS
   Manufacturer: www.dcttech.com
   Product:      USBRelay2
   Release:      100
@@ -183,7 +183,7 @@ $ sudo ./usbrelay
 Device Found
   type: 16c0 05df
   path: /dev/hidraw4
-  serial_number: 
+  serial_number: ZXCV
   Manufacturer: www.dcttech.com
   Product:      USBRelay2
   Release:      100
@@ -197,7 +197,7 @@ Orig: ZXCV, Serial: ZXCV, Relay: 0 State: 0
 Device Found
   type: 16c0 05df
   path: /dev/hidraw4
-  serial_number: 
+  serial_number: ZXCV
   Manufacturer: www.dcttech.com
   Product:      USBRelay2
   Release:      100
@@ -211,7 +211,7 @@ $ sudo ./usbrelay
 Device Found
   type: 16c0 05df
   path: /dev/hidraw4
-  serial_number: 
+  serial_number: ZAQ12
   Manufacturer: www.dcttech.com
   Product:      USBRelay2
   Release:      100
