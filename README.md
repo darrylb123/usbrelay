@@ -270,11 +270,14 @@ for board in boards:
 
 Once the library is installed, you can run the test script in python as follows:
 ```
-$ python3 test.py
+[[$ python3 test.py
 ```
 It will turn on and then off every relay attached to every board on your system.
 
-# Support for Ucreatefun USB relays
+## Support for Ucreatefun USB Modules
+![alt text](ucreatefun.jpg "USB Relay")
+
+
 A USB relay became available that is supported by the software but with severe limitations
 - Status of the relays is not available
 - There is no serial so there can only be one of these modules attached to a system. The module has a USB serial number of A0001 on every module.
