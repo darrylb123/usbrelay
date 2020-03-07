@@ -168,10 +168,6 @@ $ sudo ./usbrelay PSUIS_2=0
 $ sudo ./usbrelay PSUIS_2=1 PSUIS_1=0
 $ sudo ./usbrelay PSUIS_2=0 PSUIS_1=1 0U70M_1=0 0U70M_2=1
 ```
-If for some reason the USB id changes, (ie other than 16c0:05df) set the USBID environment variable to the correct ID
-```
-$sudo USBID=16c0:05df ./usbrelay
-```
 
 Change the serial permanently
 
@@ -277,5 +273,21 @@ Once the library is installed, you can run the test script in python as follows:
 $ python3 test.py
 ```
 It will turn on and then off every relay attached to every board on your system.
+
+# Support for Ucreatefun USB relays
+A USB relay became available that is supported by the software but with severe limitations
+- Status of the relays is not available
+- There is no serial so there can only be one of these modules attached to a system. The module has a USB serial number of A0001 on every module.
+- The number of relays is not available
+
+The module has a USB device ID of 0519:2018.
+There are modules with 1,2,4,and 8 relays. The module accepts a request for relay 9 which turns on/off all relays.
+Operating the module works the same as for the DccTech modules except the serial used is A0001
+Running usbrelay without arguments prints nothing to stdout
+```
+$ sudo ./usbrelay A0001_2=1 # Turns on relay 2
+$ sudo ./usbrelay A0001_9=1 # turns on all relays
+```
+
 
 Enjoy
