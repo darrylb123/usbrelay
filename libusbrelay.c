@@ -28,49 +28,42 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "libusbrelay.h"
 
 //Global variables
-unsigned short vendor_id = 0x16c0;
-unsigned short product_id = 0x05df;
+
 relay_board *relay_boards = 0;
 int relay_board_count = 0;
 int i, k;
 
 //Private function prototypes
 static int get_board_features(relay_board *board, hid_device *handle);
+int known_relay(struct hid_device_info *thisdev);
 
 /**
  * Enumerate all possible relay devices in the system
  */
-int enumerate_relay_boards(const char *product, int verbose, int debug)
+int enumerate_relay_boards(const char *product,int verbose, int debug)
 {
-   char *vendor;
-   int result = 0;
+
+   int result = 0,relay = 0;
    struct hid_device_info *devs, *cur_dev;
    int num_opened = 0, num_error = 0;
 
-   //If we were given a product code, use it
-   if (product != NULL)
-   {
-      vendor = strsep((char **)&product, ":");
-      if (vendor && *vendor)
-      {
-         vendor_id = strtol(vendor, NULL, 16);
-      }
-      if (product && *product)
-      {
-         product_id = strtol(product, NULL, 16);
-      }
-   }
-
-   //Enumerate USB devices with the given IDs
-   devs = hid_enumerate(vendor_id, product_id);
+ 
+   //Enumerate all HID USB devices 
+   devs = hid_enumerate(0, 0);
 
    //Count the number of returned devices
    cur_dev = devs;
 
-   for (relay_board_count = 0; cur_dev != NULL; relay_board_count++)
+   while(cur_dev != NULL)
    {
+      // Check if the HID device is a known relay else jump over it
+      if ( ! known_relay(cur_dev) && cur_dev != NULL ) 
+         cur_dev = cur_dev->next;
+      else
+         relay_board_count++;
       cur_dev = cur_dev->next;
    }
+   fprintf(stderr,"Found %d devices\n", relay_board_count);
 
    //Allocate a buffer for the relays
    if (relay_board_count > 0)
@@ -79,58 +72,70 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
 
       //Fill the relay structs
       cur_dev = devs;
-      for (i = 0; i < relay_board_count; i++)
-      {
-         //Save the path to this device
-         relay_boards[i].path = malloc(strlen(cur_dev->path)+1);
-         memcpy(relay_boards[i].path, cur_dev->path, strlen(cur_dev->path) + 1);
-
-         // The product string is USBRelayx where x is number of relays read to the \0 in case there are more than 9
-         relay_boards[i].relay_count = atoi((const char *)&cur_dev->product_string[8]);
-
-         //Open it to get more details
-         hid_device *handle;
-         handle = hid_open_path(cur_dev->path);
-         if (handle)
+      while (cur_dev != NULL) {
+         // skip unknown HID devices
+         relay_boards[relay].module_type = known_relay(cur_dev);
+         if( relay_boards[relay].module_type ) 
          {
-	    num_opened++;
-            result = get_board_features(&relay_boards[i], handle);
-            hid_close(handle);
-         }
-         else
-         {
-	    num_error++;
-            perror(cur_dev->path);
-            result = -1;
-         }
+            
+            //Save the path to this device
+            relay_boards[relay].path = malloc(strlen(cur_dev->path)+1);
+            memcpy(relay_boards[relay].path, cur_dev->path, strlen(cur_dev->path) + 1);
 
-         //Output the device enumeration details if verbose is on
-         if (result != -1 && verbose)
-         {
-            fprintf(stderr, "Device Found\n  type: %04hx %04hx\n  path: %s\n  serial_number: %ls", cur_dev->vendor_id, cur_dev->product_id, cur_dev->path, cur_dev->serial_number);
-            fprintf(stderr, "\n");
-            fprintf(stderr, "  Manufacturer: %ls\n", cur_dev->manufacturer_string);
-            fprintf(stderr, "  Product:      %ls\n", cur_dev->product_string);
-            fprintf(stderr, "  Release:      %hx\n", cur_dev->release_number);
-            fprintf(stderr, "  Interface:    %d\n", cur_dev->interface_number);
-
-            fprintf(stderr, "  Number of Relays = %d\n", relay_boards[i].relay_count);
-
-            //If verbose and debug are on, output individual relay details
-            if (result != -1 && debug)
+            // The product string is USBRelayx where x is number of relays read to the \0 in case there are more than 9
+            relay_boards[relay].relay_count = atoi((const char *)&cur_dev->product_string[8]);
+            // Ucreatefun relays do not have any information returned from the HID report
+            // The USB serial is also fixed so this is copied to the module serial so that something can make the module unique
+            if (relay_boards[relay].module_type == UCREATE)
             {
-               for (k = 0; k < relay_boards[i].relay_count; k++)
+            relay_boards[relay].relay_count = 9; //No way of finding number of relays for these boards
+            memset(relay_boards[relay].serial, 0x0, sizeof(relay_boards[relay].serial));
+            wcstombs(relay_boards[relay].serial, cur_dev->serial_number , Serial_Length);
+            // memcpy(relay_boards[relay].serial, cur_dev->serial_number, Serial_Length);
+            }
+
+            //Open it to get more details
+            hid_device *handle;
+            handle = hid_open_path(cur_dev->path);
+            if (handle)
+            {
+	            num_opened++;
+               result = get_board_features(&relay_boards[relay], handle);
+               hid_close(handle);
+            }
+            else
+            {
+	            num_error++;
+               perror(cur_dev->path);
+               result = -1;
+            }
+
+            //Output the device enumeration details if verbose is on
+            if (result != -1 && verbose) 
+            {
+               fprintf(stderr, "Device Found\n  type: %04hx %04hx\n  path: %s\n  serial_number: %s\n", cur_dev->vendor_id, cur_dev->product_id, cur_dev->path, relay_boards[relay].serial);
+               fprintf(stderr, "  Manufacturer: %ls\n  Product:      %ls\n  Release:      %hx\n  Interface:    %d\n  Number of Relays = %d\n  Module_type = %d\n", 
+                  cur_dev->manufacturer_string,cur_dev->product_string,cur_dev->release_number,cur_dev->interface_number,relay_boards[relay].relay_count,relay_boards[relay].module_type);
+
+
+               //If verbose and debug are on, output individual relay details
+               if (result != -1 && debug) 
                {
-                  if (relay_boards[i].state & 1 << k)
-                  {
-                     printf("%s_%d=1\n", relay_boards[i].serial, k + 1);
-                  }
-                  else
-                  {
-                     printf("%s_%d=0\n", relay_boards[i].serial, k + 1);
+                  
+                  for (k = 0; k < relay_boards[relay].relay_count; k++){
+                     if ( relay_boards[relay].module_type == DCTTECH ) // No point printing state of Ucreatefun relays, not available
+                     {
+                        if (relay_boards[relay].state & 1 << k)
+                        {
+                           printf("%s_%d=1\n", relay_boards[relay].serial, k + 1);
+                        }else{
+                           printf("%s_%d=0\n", relay_boards[relay].serial, k + 1);
+                        }
+                     }
                   }
                }
             }
+            relay++;
          }
          cur_dev = cur_dev->next;
       }
@@ -149,6 +154,7 @@ int operate_relay(const char *serial, unsigned char relay, unsigned char target_
    unsigned char buf[9]; // 1 extra byte for the report ID
    int res = -1;
    hid_device *handle;
+   
 
    relay_board *board = find_board(serial);
    if (board != NULL && relay >0 && relay <= board->relay_count)
@@ -157,15 +163,36 @@ int operate_relay(const char *serial, unsigned char relay, unsigned char target_
 
       if (handle)
       {
-         buf[0] = 0x0; //report number
-         buf[1] = target_state;
-         buf[2] = relay;
-         buf[3] = 0x00;
-         buf[4] = 0x00;
-         buf[5] = 0x00;
-         buf[6] = 0x00;
-         buf[7] = 0x00;
-         buf[8] = 0x00;
+         if ( board->module_type == DCTTECH ){
+            buf[0] = 0x0; //report number
+            buf[1] = target_state;
+            buf[2] = relay;
+            buf[3] = 0x00;
+            buf[4] = 0x00;
+            buf[5] = 0x00;
+            buf[6] = 0x00;
+            buf[7] = 0x00;
+            buf[8] = 0x00;
+         } 
+         if (board->module_type == UCREATE ) 
+         {
+            
+            unsigned char ucreate;
+            if (target_state == 0xff ) ucreate = 0xF0;
+            else ucreate = 0x00;
+            ucreate += relay;
+            
+            printf("target %x ucreate %x f0 %x\n\n",target_state,ucreate,0xF0);
+            buf[0] = 0; //report number
+            buf[1] = ucreate;
+            buf[2] = 0x00;
+            buf[3] = 0x00;
+            buf[4] = 0x00;
+            buf[5] = 0x00;
+            buf[6] = 0x00;
+            buf[7] = 0x00;
+            buf[8] = 0x00;
+         }
          res = hid_write(handle, buf, sizeof(buf));
       }
       else
@@ -173,10 +200,11 @@ int operate_relay(const char *serial, unsigned char relay, unsigned char target_
          res = -1;
       }
 
-      if (res > 0)
+      if (res > 0  )
       {
+         if (board->module_type == DCTTECH)
          //Update our relay status
-         res = get_board_features(board, handle);
+            res = get_board_features(board, handle);
       }
       else
       {
@@ -242,7 +270,7 @@ relay_board *find_board(const char *serial)
 {
    for (i = 0; i < relay_board_count; i++)
    {
-      if (strcmp(relay_boards[i].serial, serial) == 0)
+      if ((strcmp(relay_boards[i].serial, serial) == 0)||(strcmp(relay_boards[i].path, serial) == 0))
       {
          return &relay_boards[i];
       }
@@ -302,13 +330,28 @@ static int get_board_features(relay_board *board, hid_device *handle)
    {
       perror("hid_get_feature_report\n");
    }
+   if ( board->module_type == DCTTECH ) {
+      //Set the serial number (0x0 for termination)
+      memset(board->serial, 0x0, sizeof(board->serial));
+      memcpy(board->serial, buf, Serial_Length);
 
-   //Set the serial number (0x0 for termination)
-   memset(board->serial, 0x0, sizeof(board->serial));
-   memcpy(board->serial, buf, Serial_Length);
-
-   //Byte 7 in the response contains the target_state of the relays
-   board->state = buf[7];
+      //Byte 7 in the response contains the target_state of the relays
+      board->state = buf[7];
+      } else if(board->module_type == UCREATE ){
+         return ret;
+      }
 
    return ret;
+}
+
+// Function to check if the product is known and return the type
+int known_relay(struct hid_device_info *thisdev) 
+{
+   char product[20];
+   if ( thisdev == NULL ) return 0;
+   sprintf(product,"%ls",thisdev->product_string);
+   //       fprintf(stderr,"%s\n",product );
+	if ( !strncmp( product,"USBRelay",8) ) return DCTTECH ;
+	if ( !strncmp( product,"HIDRelay",8) ) return UCREATE;
+	return 0;
 }

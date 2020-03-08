@@ -168,11 +168,16 @@ $ sudo ./usbrelay PSUIS_2=0
 $ sudo ./usbrelay PSUIS_2=1 PSUIS_1=0
 $ sudo ./usbrelay PSUIS_2=0 PSUIS_1=1 0U70M_1=0 0U70M_2=1
 ```
+The path to a device can be used in lieu of the serial, this can be useful for devices with corrupted serials
 
+```
+$ sudo ./usbrelay /dev/hidraw1=0
+```
 Change the serial permanently
 
 Use the fictitious relay 0 to set the serial permanently. If you have duplicate serials, make sure only one is plugged in when you change it.
 Maximum of 5 character serial. It is probably sensible to change one module at a time to avoid serial collisions.
+You may also use the device path to set the serial as above
 
 ```
 $ sudo ./usbrelay
@@ -188,7 +193,7 @@ Device Found
 ZXCV_1=0
 ZXCV_2=0
 
-$ sudo ./usbrelay ZXCV_0=ZAQ12
+$ sudo ./usbrelay ZXCV_0=ZAQ12 # or /dev/hidraw_0=ZAQ12
 Orig: ZXCV, Serial: ZXCV, Relay: 0 State: 0
 Device Found
   type: 16c0 05df
@@ -280,7 +285,7 @@ It will turn on and then off every relay attached to every board on your system.
 
 A USB relay became available that is supported by the software but with severe limitations
 - Status of the relays is not available
-- There is no serial so there can only be one of these modules attached to a system. The module has a USB serial number of A0001 on every module.
+- There is no serial so there can only be one of these modules attached to a system, unless referred to be device path. The module has a USB serial number of A0001 on every module.
 - The number of relays is not available
 
 The module has a USB device ID of 0519:2018.
@@ -288,8 +293,9 @@ There are modules with 1,2,4,and 8 relays. The module accepts a request for rela
 Operating the module works the same as for the DccTech modules except the serial used is A0001
 Running usbrelay without arguments prints nothing to stdout
 ```
-$ sudo ./usbrelay A0001_2=1 # Turns on relay 2
-$ sudo ./usbrelay A0001_9=1 # turns on all relays
+$ sudo usbrelay A0001_2=1 # Turns on relay 2
+$ sudo usbrelay /dev/hidraw4_1=1
+$ sudo usbrelay A0001_9=1 # turns on all relays
 ```
 
 

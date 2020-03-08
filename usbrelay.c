@@ -71,7 +71,9 @@ int main(int argc, char *argv[])
 	    size = equal_sign - arg;
 	else
 	    size = strlen(arg);
-	strncpy(relay->this_serial, arg, MIN(size, sizeof(relay->this_serial) - 1));
+	
+	relay->this_serial = malloc(size+1); 
+	strncpy(relay->this_serial, arg, size);
 
 	/* Parse relay number */
 	if (underscore)
@@ -149,6 +151,13 @@ int main(int argc, char *argv[])
     }
 
     if (relays)
-        free(relays);
+    {
+      for (i = 1; i < argc; i++)
+      {
+         free(relays[i].this_serial);
+      }
+      free(relays);
+    }
+       
     exit(exit_code);
 }
