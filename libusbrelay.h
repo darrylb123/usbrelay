@@ -27,6 +27,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #define CMD_ON 0xff
 #define CMD_OFF 0xfd
 #define CMD_SET_SERIAL 0xfa
+#define DCTTECH 1
+#define UCREATE 2
 
 #define Serial_Length 5
 
@@ -37,10 +39,11 @@ typedef struct relay_board {
 	unsigned char relay_count;
 	unsigned char state;
 	char *path;
+	int module_type;
 } relay_board;
 
 //Public methods
-int enumerate_relay_boards(const char *product, int verbose, int debug);
+int enumerate_relay_boards(const char *product,int verbose, int debug);
 int operate_relay(const char *path,unsigned char relay, unsigned char state);
 int set_serial(const char *path,char *newserial);
 relay_board *find_board(const char *serial);
