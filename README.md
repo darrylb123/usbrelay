@@ -142,7 +142,7 @@ $ sudo ./usbrelay
 Device Found
   type: 16c0 05df
   path: /dev/hidraw1
-  serial_number: 
+  serial_number: PSUIS
   Manufacturer: www.dcttech.com
   Product:      USBRelay2
   Release:      100
@@ -184,7 +184,7 @@ $ sudo ./usbrelay
 Device Found
   type: 16c0 05df
   path: /dev/hidraw4
-  serial_number: 
+  serial_number: ZXCV
   Manufacturer: www.dcttech.com
   Product:      USBRelay2
   Release:      100
@@ -193,12 +193,12 @@ Device Found
 ZXCV_1=0
 ZXCV_2=0
 
-$ sudo ./usbrelay ZXCV_0=ZAQ12 # or /dev/hidraw_0=ZAQ12
+$ sudo ./usbrelay ZXCV_0=ZAQ12 # or /dev/hidraw4_0=ZAQ12
 Orig: ZXCV, Serial: ZXCV, Relay: 0 State: 0
 Device Found
   type: 16c0 05df
   path: /dev/hidraw4
-  serial_number: 
+  serial_number: ZXCV
   Manufacturer: www.dcttech.com
   Product:      USBRelay2
   Release:      100
@@ -212,7 +212,7 @@ $ sudo ./usbrelay
 Device Found
   type: 16c0 05df
   path: /dev/hidraw4
-  serial_number: 
+  serial_number: ZAQ12
   Manufacturer: www.dcttech.com
   Product:      USBRelay2
   Release:      100
@@ -285,7 +285,7 @@ It will turn on and then off every relay attached to every board on your system.
 
 A USB relay became available that is supported by the software but with severe limitations
 - Status of the relays is not available
-- There is no serial so there can only be one of these modules attached to a system, unless referred to be device path. The module has a USB serial number of A0001 on every module.
+- There is no serial so there can only be one of these modules attached to a system, unless referred to by device path. The module has a USB serial number of A0001 on every module.
 - The number of relays is not available
 
 The module has a USB device ID of 0519:2018.
@@ -297,6 +297,119 @@ $ sudo usbrelay A0001_2=1 # Turns on relay 2
 $ sudo usbrelay /dev/hidraw4_1=1
 $ sudo usbrelay A0001_9=1 # turns on all relays
 ```
+## Referencing devices by physical USB port
+Symbolic links can be used to devices to allow physical USB ports to be referenced. The following line in a /etc/udev/rules.d file will create a symbolic link with the name of the USB port:
+```
+KERNEL=="hidraw*",KERNELS=="*-*", SYMLINK+="hidrawport%b"
+```
+The following example has a ucreatefun usb relay plugged into a USB port and 2 dcttech relays plugged into a USB hub attached to another port:
+```
+$ ls -l /dev/hidr*
+crw-------. 1 root root 243, 0 Mar  9 15:23 /dev/hidraw0
+crw-------. 1 root root 243, 1 Mar  9 15:23 /dev/hidraw1
+crw-------. 1 root root 243, 2 Mar  9 15:23 /dev/hidraw2
+crw-------. 1 root root 243, 3 Mar  9 15:23 /dev/hidraw3
+crw-------. 1 root root 243, 4 Mar  9 17:47 /dev/hidraw4
+crw-------. 1 root root 243, 5 Mar  9 17:36 /dev/hidraw5
+crw-------. 1 root root 243, 6 Mar  9 17:47 /dev/hidraw6
+lrwxrwxrwx. 1 root root      7 Mar  9 17:47 /dev/hidrawport3-10.1:1.0 -> hidraw4 
+lrwxrwxrwx. 1 root root      7 Mar  9 17:47 /dev/hidrawport3-10.3:1.0 -> hidraw6
+lrwxrwxrwx. 1 root root      7 Mar  9 15:23 /dev/hidrawport3-5:1.0 -> hidraw0
+lrwxrwxrwx. 1 root root      7 Mar  9 15:23 /dev/hidrawport3-5:1.1 -> hidraw1
+lrwxrwxrwx. 1 root root      7 Mar  9 15:23 /dev/hidrawport3-5:1.2 -> hidraw2
+lrwxrwxrwx. 1 root root      7 Mar  9 15:23 /dev/hidrawport3-6:1.0 -> hidraw3
+lrwxrwxrwx. 1 root root      7 Mar  9 17:36 /dev/hidrawport3-9:1.0 -> hidraw5
 
+$ sudo usbrelay
+Found 3 devices
+Device Found
+  type: 16c0 05df
+  path: /dev/hidraw4
+  serial_number: ASDFG
+  Manufacturer: www.dcttech.com
+  Product:      USBRelay2
+  Release:      100
+  Interface:    0
+  Number of Relays = 2
+  Module_type = 1
+ASDFG_1=1
+ASDFG_2=0
+Device Found
+  type: 16c0 05df
+  path: /dev/hidraw6
+  serial_number: 48VZ7
+  Manufacturer: www.dcttech.com
+  Product:      USBRelay2
+  Release:      100
+  Interface:    0
+  Number of Relays = 2
+  Module_type = 1
+48VZ7_1=0
+48VZ7_2=0
+Device Found
+  type: 0519 2018
+  path: /dev/hidraw5
+  serial_number: A0001
+  Manufacturer: Ucreatefun.com
+  Product:      HIDRelay
+  Release:      1
+  Interface:    0
+  Number of Relays = 9
+  Module_type = 2
+  
+  
+  $ sudo usbrelay /dev/hidrawport3-10.1:1.0_1=1 /dev/hidrawport3-10.3:1.0_2=0 /dev/hidrawport3-9:1.0_2=0
+Orig: /dev/hidrawport3-10.1:1.0_1=1, Serial: /dev/hidrawport3-10.1:1.0, Relay: 1 State: ff
+Orig: /dev/hidrawport3-10.3:1.0_2=0, Serial: /dev/hidrawport3-10.3:1.0, Relay: 2 State: fd
+Orig: /dev/hidrawport3-9:1.0_2=0, Serial: /dev/hidrawport3-9:1.0, Relay: 2 State: fd
+Found 3 devices
+Device Found
+  type: 16c0 05df
+  path: /dev/hidraw4
+  serial_number: ASDFG
+  Manufacturer: www.dcttech.com
+  Product:      USBRelay2
+  Release:      100
+  Interface:    0
+  Number of Relays = 2
+  Module_type = 1
+Device Found
+  type: 16c0 05df
+  path: /dev/hidraw6
+  serial_number: 48VZ7
+  Manufacturer: www.dcttech.com
+  Product:      USBRelay2
+  Release:      100
+  Interface:    0
+  Number of Relays = 2
+  Module_type = 1
+Device Found
+  type: 0519 2018
+  path: /dev/hidraw5
+  serial_number: A0001
+  Manufacturer: Ucreatefun.com
+  Product:      HIDRelay
+  Release:      1
+  Interface:    0
+  Number of Relays = 9
+  Module_type = 2
+Serial: /dev/hidrawport3-10.1:1.0, Relay: 1 State: ff 
+1 HID Serial: ASDFG Serial: /dev/hidrawport3-10.1:1.0, Relay: 1 State: ff
+
+Serial: /dev/hidrawport3-10.3:1.0, Relay: 2 State: fd 
+2 HID Serial: 48VZ7 Serial: /dev/hidrawport3-10.3:1.0, Relay: 2 State: fd
+
+Serial: /dev/hidrawport3-9:1.0, Relay: 2 State: fd 
+3 HID Serial: A0001 Serial: /dev/hidrawport3-9:1.0, Relay: 2 State: fd
+target fd ucreate 2 f0 f0
+
+
+Serial: /dev/hidrawport3-10.1:1.0, Relay: 1 State: ff --- Found
+Serial: /dev/hidrawport3-10.3:1.0, Relay: 2 State: fd --- Found
+Serial: /dev/hidrawport3-9:1.0, Relay: 2 State: fd --- Found
+
+
+```
+Any
 
 Enjoy

@@ -268,13 +268,28 @@ int set_serial(const char *serial, char *newserial)
  */
 relay_board *find_board(const char *serial)
 {
+   char *respath = NULL;
+   int isdevice = 0;
+   if(strncmp(serial,"/dev/",5)== 0 )
+   {
+       respath = realpath(serial,NULL);
+       
+   }
+   
    for (i = 0; i < relay_board_count; i++)
    {
-      if ((strcmp(relay_boards[i].serial, serial) == 0)||(strcmp(relay_boards[i].path, serial) == 0))
+      if (respath != NULL)
       {
+         if (strcmp(relay_boards[i].path, respath)  == 0) isdevice = 1;
+      }
+      
+      if ((strcmp(relay_boards[i].serial, serial) == 0)|| isdevice )
+      {
+         if (respath) free(respath);
          return &relay_boards[i];
       }
    }
+   if (respath) free(respath);
    return NULL;
 }
 
