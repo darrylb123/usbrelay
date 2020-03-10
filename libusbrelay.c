@@ -105,7 +105,7 @@ int enumerate_relay_boards(const char *product,int verbose, int debug)
             }
             else
             {
-	            num_error++;
+               num_error++;
                perror(cur_dev->path);
                result = -1;
             }
@@ -366,7 +366,7 @@ int known_relay(struct hid_device_info *thisdev)
    if ( thisdev == NULL ) return 0;
    sprintf(product,"%ls",thisdev->product_string);
    //       fprintf(stderr,"%s\n",product );
-	if ( !strncmp( product,"USBRelay",8) ) return DCTTECH ;
-	if ( !strncmp( product,"HIDRelay",8) ) return UCREATE;
-	return 0;
+   if ( !strncmp( product,"USBRelay",8) ) return DCTTECH ;
+   if ( !strncmp( product,"HIDRelay",8) ) return UCREATE;
+   return 0;
 }

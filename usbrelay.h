@@ -16,9 +16,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 /* usbrelay.h */
 
 struct  relay {
-	char *this_serial;
-	unsigned char relay_num;
-	unsigned char state;
-	int found;
-	char new_serial[10];
+    char *this_serial;
+    unsigned char relay_num;
+    unsigned char state;
+    int found;
+    char new_serial[10];
 };
