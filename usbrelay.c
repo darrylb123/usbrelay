@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
     if (argc > 1)
     {
         relays = calloc(argc + 1, sizeof(struct relay)); /* Yeah, I know. Not using the first member */
-    /* relays is zero-initialized */
+        /* relays is zero-initialized */
     }
     else
         debug = 1;
@@ -49,44 +49,43 @@ int main(int argc, char *argv[])
     /* loop through the command line and grab the relay details */
     for (i = 1; i < argc; i++)
     {
-    char *arg = argv[i];
-    struct relay *relay = &relays[i];
+        char *arg = argv[i];
+        struct relay *relay = &relays[i];
 
-    char *underscore = strchr(arg, '_');
-    char *equal_sign = strchr(arg, '=');
+        char *underscore = strchr(arg, '_');
+        char *equal_sign = strchr(arg, '=');
 
-    if (underscore && equal_sign && underscore > equal_sign) /* e.g. ASDFG=QWERT_1 */
-    {
-        fprintf(stderr, "Invalid relay specification: %s\n", argv[i]);
-        exit(1);
-    }
-
-
-    size_t size;
-
-    /* Parse serial number */
-    if (underscore)
-        size = underscore - arg;
-    else if (equal_sign)
-        size = equal_sign - arg;
-    else
-        size = strlen(arg);
-    
-    relay->this_serial = malloc(size+1); 
-    strncpy(relay->this_serial, arg, size);
-
-    /* Parse relay number */
-    if (underscore)
-        relay->relay_num = atoi(underscore + 1);
-
-    if (equal_sign)
-    {
-        if (relay->relay_num == 0)
-        { /* command to change the serial - remaining token is the new serial */
-        strncpy(relay->new_serial, equal_sign + 1, sizeof(relay->new_serial) - 1);
-        }
-        else
+        if (underscore && equal_sign && underscore > equal_sign) /* e.g. ASDFG=QWERT_1 */
         {
+            fprintf(stderr, "Invalid relay specification: %s\n", argv[i]);
+            exit(1);
+        }
+
+        size_t size;
+
+        /* Parse serial number */
+        if (underscore)
+            size = underscore - arg;
+        else if (equal_sign)
+            size = equal_sign - arg;
+        else
+            size = strlen(arg);
+        
+        relay->this_serial = malloc(size+1); 
+        strncpy(relay->this_serial, arg, size);
+
+        /* Parse relay number */
+        if (underscore)
+            relay->relay_num = atoi(underscore + 1);
+
+        if (equal_sign)
+        {
+            if (relay->relay_num == 0)
+            { /* command to change the serial - remaining token is the new serial */
+                strncpy(relay->new_serial, equal_sign + 1, sizeof(relay->new_serial) - 1);
+            }
+            else
+            {
                 if (atoi(equal_sign + 1))
                 {
                     relays[i].state = CMD_ON;
@@ -121,7 +120,7 @@ int main(int argc, char *argv[])
                 }
                 else
                 {
-            fprintf(stderr, "Setting new serial\n");
+                    fprintf(stderr, "Setting new serial\n");
                     set_serial(board->serial, relays[i].new_serial);
                 }
             }
@@ -152,11 +151,11 @@ int main(int argc, char *argv[])
 
     if (relays)
     {
-      for (i = 1; i < argc; i++)
-      {
-         free(relays[i].this_serial);
-      }
-      free(relays);
+        for (i = 1; i < argc; i++)
+        {
+            free(relays[i].this_serial);
+        }
+        free(relays);
     }
        
     exit(exit_code);

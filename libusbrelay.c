@@ -47,7 +47,6 @@ int enumerate_relay_boards(const char *product,int verbose, int debug)
    struct hid_device_info *devs, *cur_dev;
    int num_opened = 0, num_error = 0;
 
- 
    //Enumerate all HID USB devices 
    devs = hid_enumerate(0, 0);
 
@@ -88,10 +87,10 @@ int enumerate_relay_boards(const char *product,int verbose, int debug)
             // The USB serial is also fixed so this is copied to the module serial so that something can make the module unique
             if (relay_boards[relay].module_type == UCREATE)
             {
-            relay_boards[relay].relay_count = 9; //No way of finding number of relays for these boards
-            memset(relay_boards[relay].serial, 0x0, sizeof(relay_boards[relay].serial));
-            wcstombs(relay_boards[relay].serial, cur_dev->serial_number , Serial_Length);
-            // memcpy(relay_boards[relay].serial, cur_dev->serial_number, Serial_Length);
+               relay_boards[relay].relay_count = 9; //No way of finding number of relays for these boards
+               memset(relay_boards[relay].serial, 0x0, sizeof(relay_boards[relay].serial));
+               wcstombs(relay_boards[relay].serial, cur_dev->serial_number , Serial_Length);
+               // memcpy(relay_boards[relay].serial, cur_dev->serial_number, Serial_Length);
             }
 
             //Open it to get more details
