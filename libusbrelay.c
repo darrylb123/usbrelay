@@ -362,7 +362,7 @@ static int get_board_features(relay_board *board, hid_device *handle)
 // Function to check if the product is known and return the type
 int known_relay(struct hid_device_info *thisdev) 
 {
-   char product[20];
+   char product[255];
    if ( thisdev == NULL ) return 0;
    sprintf(product,"%ls",thisdev->product_string);
    //       fprintf(stderr,"%s\n",product );
