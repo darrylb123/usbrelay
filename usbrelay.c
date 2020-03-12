@@ -88,7 +88,8 @@ int main(int argc, char *argv[])
 			}
 		}
 		fprintf(stderr, "Orig: %s, Serial: %s, Relay: %d State: %x\n",
-			arg, relay->this_serial, relay->relay_num,
+			arg, relay->this_serial, 
+			relay->relay_num,
 			relay->state);
 		relay->found = 0;
 	}
@@ -99,7 +100,8 @@ int main(int argc, char *argv[])
 	/* loop through the supplied command line and try to match the serial */
 	for (i = 1; i < argc; i++) {
 		fprintf(stderr, "Serial: %s, Relay: %d State: %x \n",
-			relays[i].this_serial, relays[i].relay_num,
+			relays[i].this_serial, 
+			relays[i].relay_num,
 			relays[i].state);
 		relay_board *board = find_board(relays[i].this_serial);
 
@@ -107,8 +109,7 @@ int main(int argc, char *argv[])
 			fprintf(stderr, "%d HID Serial: %s ", i, board->serial);
 			if (relays[i].relay_num == 0) {
 				if (!relays[i].new_serial[0]) {
-					fprintf(stderr,
-						"\n \n New serial can't be empty!\n");
+					fprintf(stderr, "\n \n New serial can't be empty!\n");
 				} else {
 					fprintf(stderr, "Setting new serial\n");
 					set_serial(board->serial,
@@ -118,10 +119,9 @@ int main(int argc, char *argv[])
 				fprintf(stderr,
 					"Serial: %s, Relay: %d State: %x\n",
 					relays[i].this_serial,
-					relays[i].relay_num, relays[i].state);
-				if (operate_relay
-				    (board->serial, relays[i].relay_num,
-				     relays[i].state) < 0)
+					relays[i].relay_num,
+					relays[i].state);
+				if (operate_relay(board->serial, relays[i].relay_num,relays[i].state) < 0)
 					exit_code++;
 				relays[i].found = 1;
 			}
