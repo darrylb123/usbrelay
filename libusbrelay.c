@@ -55,10 +55,11 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
 
 	while (cur_dev != NULL) {
 		// Check if the HID device is a known relay else jump over it
-		if (!known_relay(cur_dev) && cur_dev != NULL)
+		if (!known_relay(cur_dev) && cur_dev != NULL) {
 			cur_dev = cur_dev->next;
-		else
+		} else {
 			relay_board_count++;
+		}
 		cur_dev = cur_dev->next;
 	}
 	fprintf(stderr, "Found %d devices\n", relay_board_count);
@@ -73,7 +74,6 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
 			// skip unknown HID devices
 			relay_boards[relay].module_type = known_relay(cur_dev);
 			if (relay_boards[relay].module_type) {
-
 				//Save the path to this device
 				relay_boards[relay].path =
 				    malloc(strlen(cur_dev->path) + 1);
@@ -81,16 +81,14 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
 				       strlen(cur_dev->path) + 1);
 
 				// The product string is USBRelayx where x is number of relays read to the \0 in case there are more than 9
-				relay_boards[relay].relay_count =
-				    atoi((const char *)&cur_dev->
-					 product_string[8]);
+				relay_boards[relay].relay_count = atoi((const char *)&cur_dev->product_string[8]);
+				
 				// Ucreatefun relays do not have any information returned from the HID report
 				// The USB serial is also fixed so this is copied to the module serial so that something can make the module unique
 				if (relay_boards[relay].module_type == UCREATE) {
 					relay_boards[relay].relay_count = 9;	//No way of finding number of relays for these boards
 					memset(relay_boards[relay].serial, 0x0,
-					       sizeof(relay_boards[relay].
-						      serial));
+					       sizeof(relay_boards[relay].serial));
 					wcstombs(relay_boards[relay].serial,
 						 cur_dev->serial_number,
 						 Serial_Length);
@@ -101,9 +99,7 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
 				handle = hid_open_path(cur_dev->path);
 				if (handle) {
 					num_opened++;
-					result =
-					    get_board_features(&relay_boards
-							       [relay], handle);
+					result = get_board_features(&relay_boards[relay], handle);
 					hid_close(handle);
 				} else {
 					num_error++;
@@ -126,37 +122,23 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
 						cur_dev->release_number,
 						cur_dev->interface_number,
 						relay_boards[relay].relay_count,
-						relay_boards[relay].
-						module_type);
+						relay_boards[relay].module_type);
 
 					//If verbose and debug are on, output individual relay details
 					if (result != -1 && debug) {
 
-						for (k = 0;
-						     k <
-						     relay_boards[relay].
-						     relay_count; k++) {
+						for (k = 0;k < relay_boards[relay].relay_count; k++) {
 							if (relay_boards[relay].module_type == DCTTECH)	// No point printing state of Ucreatefun relays, not available
 							{
-								if (relay_boards
-								    [relay].
-								    state & 1 <<
-								    k) {
+								if (relay_boards[relay].state & 1 << k) {
 									printf
 									    ("%s_%d=1\n",
-									     relay_boards
-									     [relay].
-									     serial,
-									     k +
-									     1);
+									     relay_boards[relay].serial,
+									     k + 1);
 								} else {
 									printf
 									    ("%s_%d=0\n",
-									     relay_boards
-									     [relay].
-									     serial,
-									     k +
-									     1);
+									     relay_boards[relay].serial,k +1);
 								}
 							}
 						}
@@ -169,8 +151,7 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
 	}
 	hid_free_enumeration(devs);
 	if (num_opened == 0 && num_error > 0)
-		fprintf(stderr,
-			"Unable to open any device - Use root, sudo or set the device permissions via udev\n");
+		fprintf(stderr, "Unable to open any device - Use root, sudo or set the device permissions via udev\n");
 	return result;
 }
 
@@ -208,9 +189,6 @@ int operate_relay(const char *serial, unsigned char relay,
 				else
 					ucreate = 0x00;
 				ucreate += relay;
-
-				printf("target %x ucreate %x f0 %x\n\n",
-				       target_state, ucreate, 0xF0);
 				buf[0] = 0;	//report number
 				buf[1] = ucreate;
 				buf[2] = 0x00;
