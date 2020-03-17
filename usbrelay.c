@@ -49,13 +49,14 @@ int main(int argc, char *argv[])
       }
 	}
 	/* allocate the memory for all the relays */
-	if (argc > 1) {
-		relays = calloc(argc + 1, sizeof(struct relay));	/* Yeah, I know. Not using the first member */
+	if ((argc - optind) > 1) {
+		relays = calloc(argc - optind + 1, sizeof(struct relay));	/* Yeah, I know. Not using the first member */
 		/* relays is zero-initialized */
 	} 
 	/* loop through the command line and grab the relay details */
-	for (i = 1; i < argc; i++) {
-		char *arg = argv[i];
+	for (i = 0 ; i < (argc - optind); i++) {
+	   printf("argv %s\n",argv[i + optind]);
+		char *arg = argv[i + optind];
 		struct relay *relay = &relays[i];
 
 		char *underscore = strchr(arg, '_');
@@ -63,7 +64,7 @@ int main(int argc, char *argv[])
 
 		if (underscore && equal_sign && underscore > equal_sign) {	/* e.g. ASDFG=QWERT_1 */
 			fprintf(stderr, "Invalid relay specification: %s\n",
-				argv[i]);
+				argv[i + optind]);
 			exit(1);
 		}
 
@@ -107,7 +108,7 @@ int main(int argc, char *argv[])
 	enumerate_relay_boards(getenv("USBID"), verbose, debug);
 
 	/* loop through the supplied command line and try to match the serial */
-	for (i = 1; i < argc; i++) {
+	for (i = 0; i < (argc - optind); i++) {
 		if (debug ) {
 			fprintf(stderr, "Serial: %s, Relay: %d State: %x \n",
 				relays[i].this_serial, 
@@ -143,7 +144,7 @@ int main(int argc, char *argv[])
 
 	shutdown();
 
-	for (i = 1; i < argc; i++) {
+	for (i = 1; i < (argc - optind); i++) {
 		if (debug)
 			fprintf(stderr,"Serial: %s, Relay: %d State: %x ",
 				relays[i].this_serial, relays[i].relay_num,
@@ -157,9 +158,8 @@ int main(int argc, char *argv[])
 			exit_code++;
 		}
 	}
-
 	if (relays) {
-		for (i = 1; i < argc; i++) {
+		for (i = 1; i < (argc - optind) ; i++) {
 			free(relays[i].this_serial);
 		}
 		free(relays);
