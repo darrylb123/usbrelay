@@ -136,9 +136,12 @@ KERNEL=="hidraw*", ATTRS{busnum}=="1", ATTRS{idVendor}=="16c0", ATTRS{idProduct}
 ```
 to `/etc/udev/rules.d/50-dct-tech-usb-relay-2.rules`.
 
-Running the program will display each module that matches device 16c0:05df the debug information is sent to stderr while the state is sent to stdout for use in scripts. The only limit to the number of these relays that can be plugged in and operated at once is the number of USB ports.
+Running the program will display each module that matches device 16c0:05df or 0519:2018. The program can be invoked with the debug (-d) or quiet (-q) flags. The debug information is sent to stderr while the state is sent to stdout for use in scripts. The only limit to the number of these relays that can be plugged in and operated at once is the number of USB ports. Using neither the -d or -q flags just prints the state of the relays to stdout.
 ```
 $ sudo ./usbrelay
+PSUIS_1=1
+PSUIS_2=0
+$ sudo ./usbrelay -d
 Device Found
   type: 16c0 05df
   path: /dev/hidraw1
@@ -149,16 +152,18 @@ Device Found
   Interface:    0
 PSUIS_1=1
 PSUIS_2=0
+$ sudo ./usbrelay -q
+$
 ```
 To get the relay state
 ```
-$ sudo ./usbrelay 2>/dev/null
+$ sudo ./usbrelay
 PSUIS_1=1
 PSUIS_2=0
 ```
 To use the state in a script:
 ```
-$ eval $(sudo ./usbrelay 2>/dev/null)
+$ eval $(sudo ./usbrelay)
 $ echo $PSUIS_2
 0
 ```
@@ -181,43 +186,15 @@ You may also use the device path to set the serial as above
 
 ```
 $ sudo ./usbrelay
-Device Found
-  type: 16c0 05df
-  path: /dev/hidraw4
-  serial_number: ZXCV
-  Manufacturer: www.dcttech.com
-  Product:      USBRelay2
-  Release:      100
-  Interface:    0
-  Number of Relays = 2
 ZXCV_1=0
 ZXCV_2=0
 
 $ sudo ./usbrelay ZXCV_0=ZAQ12 # or /dev/hidraw4_0=ZAQ12
-Orig: ZXCV, Serial: ZXCV, Relay: 0 State: 0
-Device Found
-  type: 16c0 05df
-  path: /dev/hidraw4
-  serial_number: ZXCV
-  Manufacturer: www.dcttech.com
-  Product:      USBRelay2
-  Release:      100
-  Interface:    0
-  Number of Relays = 2
-Serial: ZXCV, Relay: 0 State: 0 
-1 HID Serial: ZXCV 
-Serial: ZXCV, Relay: 0 State: 0 --- Not Found
+ZXCV_1=0
+ZXCV_2=0
+Setting new serial
 
 $ sudo ./usbrelay
-Device Found
-  type: 16c0 05df
-  path: /dev/hidraw4
-  serial_number: ZAQ12
-  Manufacturer: www.dcttech.com
-  Product:      USBRelay2
-  Release:      100
-  Interface:    0
-  Number of Relays = 2
 ZAQ12_1=0
 ZAQ12_2=0
 ```
@@ -291,7 +268,7 @@ A USB relay became available that is supported by the software but with severe l
 The module has a USB device ID of 0519:2018.
 There are modules with 1,2,4,and 8 relays. The module accepts a request for relay 9 which turns on/off all relays.
 Operating the module works the same as for the DccTech modules except the serial used is A0001
-Running usbrelay without arguments prints nothing to stdout
+Running usbrelay without arguments prints all posible relays (8) to stdout.
 ```
 $ sudo usbrelay A0001_2=1 # Turns on relay 2
 $ sudo usbrelay /dev/hidraw4_1=1
@@ -321,44 +298,23 @@ lrwxrwxrwx. 1 root root      7 Mar  9 15:23 /dev/hidrawport3-6:1.0 -> hidraw3
 lrwxrwxrwx. 1 root root      7 Mar  9 17:36 /dev/hidrawport3-9:1.0 -> hidraw5
 
 $ sudo usbrelay
-Found 3 devices
-Device Found
-  type: 16c0 05df
-  path: /dev/hidraw4
-  serial_number: ASDFG
-  Manufacturer: www.dcttech.com
-  Product:      USBRelay2
-  Release:      100
-  Interface:    0
-  Number of Relays = 2
-  Module_type = 1
-ASDFG_1=1
-ASDFG_2=0
-Device Found
-  type: 16c0 05df
-  path: /dev/hidraw6
-  serial_number: 48VZ7
-  Manufacturer: www.dcttech.com
-  Product:      USBRelay2
-  Release:      100
-  Interface:    0
-  Number of Relays = 2
-  Module_type = 1
-48VZ7_1=0
-48VZ7_2=0
-Device Found
-  type: 0519 2018
-  path: /dev/hidraw5
-  serial_number: A0001
-  Manufacturer: Ucreatefun.com
-  Product:      HIDRelay
-  Release:      1
-  Interface:    0
-  Number of Relays = 9
-  Module_type = 2
+OMG12_1=0
+OMG12_2=0
+QWERT_1=0
+QWERT_2=0
+A0001_1=-1
+A0001_2=-1
+A0001_3=-1
+A0001_4=-1
+A0001_5=-1
+A0001_6=-1
+A0001_7=-1
+A0001_8=-1
+A0001_9=-1
+
   
   
-  $ sudo usbrelay /dev/hidrawport3-10.1:1.0_1=1 /dev/hidrawport3-10.3:1.0_2=0 /dev/hidrawport3-9:1.0_2=0
+  $ sudo usbrelay -d /dev/hidrawport3-10.1:1.0_1=1 /dev/hidrawport3-10.3:1.0_2=0 /dev/hidrawport3-9:1.0_2=0
 Orig: /dev/hidrawport3-10.1:1.0_1=1, Serial: /dev/hidrawport3-10.1:1.0, Relay: 1 State: ff
 Orig: /dev/hidrawport3-10.3:1.0_2=0, Serial: /dev/hidrawport3-10.3:1.0, Relay: 2 State: fd
 Orig: /dev/hidrawport3-9:1.0_2=0, Serial: /dev/hidrawport3-9:1.0, Relay: 2 State: fd
