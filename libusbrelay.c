@@ -46,7 +46,6 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
 	int result = 0, relay = 0;
 	struct hid_device_info *devs, *cur_dev;
 	int num_opened = 0, num_error = 0;
-
 	//Enumerate all HID USB devices 
 	devs = hid_enumerate(0, 0);
 
@@ -62,7 +61,8 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
 		}
 		cur_dev = cur_dev->next;
 	}
-	fprintf(stderr, "Found %d devices\n", relay_board_count);
+	if (debug)
+		printf("Found %d devices\n", relay_board_count);
 
 	//Allocate a buffer for the relays
 	if (relay_board_count > 0) {
@@ -107,39 +107,36 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
 					result = -1;
 				}
 
-				//Output the device enumeration details if verbose is on
-				if (result != -1 && verbose) {
-					fprintf(stderr,
-						"Device Found\n  type: %04hx %04hx\n  path: %s\n  serial_number: %s\n",
+				//Output the device enumeration details if debug is on
+				if (result != -1 && debug) {
+					printf("Device Found\n  type: %04hx %04hx\n  path: %s\n  serial_number: %s\n",
 						cur_dev->vendor_id,
 						cur_dev->product_id,
 						cur_dev->path,
 						relay_boards[relay].serial);
-					fprintf(stderr,
-						"  Manufacturer: %ls\n  Product:      %ls\n  Release:      %hx\n  Interface:    %d\n  Number of Relays = %d\n  Module_type = %d\n",
+					printf("Manufacturer: %ls\n  Product:      %ls\n  Release:      %hx\n  Interface:    %d\n  Number of Relays = %d\n  Module_type = %d\n",
 						cur_dev->manufacturer_string,
 						cur_dev->product_string,
 						cur_dev->release_number,
 						cur_dev->interface_number,
 						relay_boards[relay].relay_count,
 						relay_boards[relay].module_type);
+				}
 
-					//If verbose and debug are on, output individual relay details
-					if (result != -1 && debug) {
+				
+				if (result != -1 && (verbose||debug)) {
 
-						for (k = 0;k < relay_boards[relay].relay_count; k++) {
-							if (relay_boards[relay].module_type == DCTTECH)	// No point printing state of Ucreatefun relays, not available
-							{
-								if (relay_boards[relay].state & 1 << k) {
-									printf
-									    ("%s_%d=1\n",
-									     relay_boards[relay].serial,
-									     k + 1);
-								} else {
-									printf
-									    ("%s_%d=0\n",
-									     relay_boards[relay].serial,k +1);
-								}
+					for (k = 0;k < relay_boards[relay].relay_count; k++) {
+						if (relay_boards[relay].module_type == UCREATE)	{ // State cannot be determined print -1
+							printf("%s_%d=-1\n",
+									relay_boards[relay].serial,k + 1);
+						} else {		 	
+							if (relay_boards[relay].state & 1 << k) {
+								printf("%s_%d=1\n",
+									relay_boards[relay].serial,k + 1);
+							} else {
+								printf("%s_%d=0\n",
+									relay_boards[relay].serial,k +1);
 							}
 						}
 					}
@@ -356,7 +353,6 @@ int known_relay(struct hid_device_info *thisdev)
 	if (thisdev == NULL)
 		return 0;
 	sprintf(product, "%ls", thisdev->product_string);
-	//       fprintf(stderr,"%s\n",product );
 	if (!strncmp(product, "USBRelay", 8))
 		return DCTTECH;
 	if (!strncmp(product, "HIDRelay", 8))
