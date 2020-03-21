@@ -49,13 +49,12 @@ int main(int argc, char *argv[])
       }
 	}
 	/* allocate the memory for all the relays */
-	if ((argc - optind) > 1) {
+	if ((argc - optind) >= 1) {
 		relays = calloc(argc - optind + 1, sizeof(struct relay));	/* Yeah, I know. Not using the first member */
 		/* relays is zero-initialized */
 	} 
 	/* loop through the command line and grab the relay details */
 	for (i = 0 ; i < (argc - optind); i++) {
-	   printf("argv %s\n",argv[i + optind]);
 		char *arg = argv[i + optind];
 		struct relay *relay = &relays[i];
 

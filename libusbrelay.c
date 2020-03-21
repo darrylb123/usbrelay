@@ -92,7 +92,6 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
 					wcstombs(relay_boards[relay].serial,
 						 cur_dev->serial_number,
 						 Serial_Length);
-					// memcpy(relay_boards[relay].serial, cur_dev->serial_number, Serial_Length);
 				}
 				//Open it to get more details
 				hid_device *handle;
