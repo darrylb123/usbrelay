@@ -102,7 +102,7 @@ The usual make, make install dance assuming the hidapi and hidapi-devel packages
 
 ```
 $ sudo apt-get install libhidapi-dev libhidapi-hidraw0 git 
-$ git clone https://git.com/darrylb123/usbrelay
+$ git clone https://github.com/darrylb123/usbrelay
 $ cd usbrelay
 $ make
 $ sudo make install
