@@ -271,7 +271,7 @@ relay_board *find_board(const char *serial)
 				isdevice = 1;
 		}
 
-		if ((strcmp(relay_boards[i].serial, serial) == 0) || isdevice) {
+		if ((strcmp(relay_boards[i].serial, serial) == 0) || (strcmp(relay_boards[i].path, serial) == 0)  || isdevice) {
 			if (respath)
 				free(respath);
 			return &relay_boards[i];

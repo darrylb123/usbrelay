@@ -176,7 +176,22 @@ $ sudo ./usbrelay PSUIS_2=0 PSUIS_1=1 0U70M_1=0 0U70M_2=1
 The path to a device can be used in lieu of the serial, this can be useful for devices with corrupted serials
 
 ```
-$ sudo ./usbrelay /dev/hidraw1=0
+$ sudo ./usbrelay /dev/hidraw1_1=0
+```
+Alternatively if using libusb instead of hidraw you may use the usb device path 
+```
+Device Found
+  type: 0519 2018
+  path: 0001:0015:00
+  serial_number: A0001
+Manufacturer: Ucreatefun.com
+  Product:      HIDRelay
+  Release:      1
+  Interface:    0
+  Number of Relays = 9
+  Module_type = 2
+
+$ sudo ./usbrelay 0001:0015:00_1=0
 ```
 Change the serial permanently
 
