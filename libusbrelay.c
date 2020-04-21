@@ -163,6 +163,7 @@ int operate_relay(const char *serial, unsigned char relay,
 
 	relay_board *board = find_board(serial);
 	if (board != NULL && relay > 0 && relay <= board->relay_count) {
+		printf("Operate %s path\n", board->path );
 		handle = hid_open_path(board->path);
 
 		if (handle) {
