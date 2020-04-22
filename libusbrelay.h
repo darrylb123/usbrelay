@@ -44,9 +44,9 @@ typedef struct relay_board {
 
 //Public methods
 int enumerate_relay_boards(const char *product,int verbose, int debug);
-int operate_relay(const char *path,unsigned char relay, unsigned char state);
-int set_serial(const char *path,char *newserial);
-relay_board *find_board(const char *serial);
+int operate_relay(const char *path,unsigned char relay, unsigned char state,int debug);
+int set_serial(const char *path,char *newserial,int debug);
+relay_board *find_board(const char *serial,int debug);
 int get_relay_board_count(void);
 relay_board* get_relay_boards(void);
 void shutdown(void);

@@ -62,7 +62,7 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
 		cur_dev = cur_dev->next;
 	}
 	if (debug)
-		printf("Found %d devices\n", relay_board_count);
+		fprintf(stderr,"enumerate_relay_boards()Found %d devices\n", relay_board_count);
 
 	//Allocate a buffer for the relays
 	if (relay_board_count > 0) {
@@ -108,12 +108,12 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
 
 				//Output the device enumeration details if debug is on
 				if (result != -1 && debug) {
-					printf("Device Found\n  type: %04hx %04hx\n  path: %s\n  serial_number: %s\n",
+					fprintf(stderr,"Device Found\n  type: %04hx %04hx\n  path: %s\n  serial_number: %s\n",
 						cur_dev->vendor_id,
 						cur_dev->product_id,
 						relay_boards[relay].path,
 						relay_boards[relay].serial);
-					printf("Manufacturer: %ls\n  Product:      %ls\n  Release:      %hx\n  Interface:    %d\n  Number of Relays = %d\n  Module_type = %d\n",
+					fprintf(stderr,"Manufacturer: %ls\n  Product:      %ls\n  Release:      %hx\n  Interface:    %d\n  Number of Relays = %d\n  Module_type = %d\n",
 						cur_dev->manufacturer_string,
 						cur_dev->product_string,
 						cur_dev->release_number,
@@ -155,15 +155,15 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
  * Command a relay at a particular /dev path to switch to a given state
  */
 int operate_relay(const char *serial, unsigned char relay,
-		  unsigned char target_state)
+		  unsigned char target_state,int debug)
 {
 	unsigned char buf[9];	// 1 extra byte for the report ID
 	int res = -1;
 	hid_device *handle;
 
-	relay_board *board = find_board(serial);
+	relay_board *board = find_board(serial,debug);
 	if (board != NULL && relay > 0 && relay <= board->relay_count) {
-		printf("Operate %s path\n", board->path );
+		if(debug) fprintf(stderr,"operate_relay(%s,%c) %s path\n",serial,relay, board->path );
 		handle = hid_open_path(board->path);
 
 		if (handle) {
@@ -206,7 +206,7 @@ int operate_relay(const char *serial, unsigned char relay,
 				//Update our relay status
 				res = get_board_features(board, handle);
 		} else {
-			fprintf(stderr, "Unable to write()\n");
+			fprintf(stderr, "operate_relay() Unable to write\n");
 			fprintf(stderr, "Error: %ls\n", hid_error(handle));
 		}
 
@@ -216,13 +216,13 @@ int operate_relay(const char *serial, unsigned char relay,
 	return (res);
 }
 
-int set_serial(const char *serial, char *newserial)
+int set_serial(const char *serial, char *newserial,int debug)
 {
 	unsigned char buf[9];	// 1 extra byte for the report ID
 	int res = -1;
 	hid_device *handle;
 
-	relay_board *board = find_board(serial);
+	relay_board *board = find_board(serial,debug);
 	if (board != NULL) {
 		handle = hid_open_path(board->path);
 
@@ -245,7 +245,7 @@ int set_serial(const char *serial, char *newserial)
 			//Update our copy of the serial number
 			res = get_board_features(board, handle);
 		} else {
-			fprintf(stderr, "Unable to write()\n");
+			fprintf(stderr, "set_serial() Unable to write()\n");
 			fprintf(stderr, "Error: %ls\n", hid_error(handle));
 		}
 		hid_close(handle);
@@ -257,7 +257,7 @@ int set_serial(const char *serial, char *newserial)
 /**
  * Find a board path given a relay board serial
  */
-relay_board *find_board(const char *serial)
+relay_board *find_board(const char *serial,int debug )
 {
 	char *respath = NULL;
 	int isdevice = 0;
@@ -273,6 +273,7 @@ relay_board *find_board(const char *serial)
 		}
 
 		if ((strcmp(relay_boards[i].serial, serial) == 0) || (strcmp(relay_boards[i].path, serial) == 0)  || isdevice) {
+			if(debug) fprintf(stderr,"find_board(%s) path %s\n",serial,relay_boards[i].path);
 			if (respath)
 				free(respath);
 			return &relay_boards[i];

@@ -109,12 +109,12 @@ int main(int argc, char *argv[])
 	/* loop through the supplied command line and try to match the serial */
 	for (i = 0; i < (argc - optind); i++) {
 		if (debug ) {
-			fprintf(stderr, "Serial: %s, Relay: %d State: %x \n",
-				relays[i].this_serial, 
+			fprintf(stderr, "main() arg %d Serial: %s, Relay: %d State: %x \n",
+				i,relays[i].this_serial, 
 				relays[i].relay_num,
 				relays[i].state);
 		}
-		relay_board *board = find_board(relays[i].this_serial);
+		relay_board *board = find_board(relays[i].this_serial, debug );
 
 		if (board) {
 			if (debug == 2)
@@ -125,16 +125,16 @@ int main(int argc, char *argv[])
 				} else {
 					fprintf(stderr, "Setting new serial\n");
 					set_serial(board->serial,
-						   relays[i].new_serial);
+						   relays[i].new_serial,debug);
 				}
 			} else {
 				if (debug)
 					fprintf(stderr,
-						"Serial: %s, Relay: %d State: %x\n",
+						"main() operate: %s, Relay: %d State: %x\n",
 						relays[i].this_serial,
 						relays[i].relay_num,
 						relays[i].state);
-				if (operate_relay(board->serial, relays[i].relay_num,relays[i].state) < 0)
+				if (operate_relay(relays[i].this_serial, relays[i].relay_num,relays[i].state,debug) < 0)
 					exit_code++;
 				relays[i].found = 1;
 			}

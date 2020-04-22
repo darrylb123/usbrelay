@@ -186,7 +186,7 @@ static PyObject *usbrelay_board_control(PyObject *self, PyObject *args)
             target_state = CMD_ON;
         }
 
-        result = operate_relay(serial, relay, target_state);
+        result = operate_relay(serial, relay, target_state,0);
     }
 
     return Py_BuildValue("i", result);
