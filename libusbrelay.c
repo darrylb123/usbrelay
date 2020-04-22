@@ -54,9 +54,7 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
 
 	while (cur_dev != NULL) {
 		// Check if the HID device is a known relay else jump over it
-		if (!known_relay(cur_dev) && cur_dev != NULL) {
-			cur_dev = cur_dev->next;
-		} else {
+		if (known_relay(cur_dev)) {
 			relay_board_count++;
 		}
 		cur_dev = cur_dev->next;
