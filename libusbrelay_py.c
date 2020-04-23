@@ -61,7 +61,8 @@ static struct PyModuleDef usb_relaymodule = {
 PyMODINIT_FUNC PyInit_usbrelay_py(void)
 {
     //Attempt to enumerate the relays while we're here
-    enumerate_relay_boards(NULL,0,0);
+    // int result = -1;
+    // result = enumerate_relay_boards(NULL,0,0);
 
     //Give Python our API
     return PyModule_Create(&usb_relaymodule);
