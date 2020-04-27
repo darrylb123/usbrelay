@@ -3,6 +3,7 @@ HIDAPI = hidraw
 LDFLAGS += -lhidapi-$(HIDAPI)
 PYTHON_VERSION=$(shell python3 -c "import sys;t='{v[0]}.{v[1]}'.format(v=list(sys.version_info[:2]));sys.stdout.write(t)")
 
+
 #Default 32 bit x86, raspberry pi, etc..
 LIBDIR = /usr/lib
 
@@ -28,18 +29,21 @@ endif
 
 LDFLAGS += -L $(LIBDIR) -Wl,-rpath $(LIBDIR)
 
-all: usbrelay libusbrelay.so
+all: usbrelay libusbrelay.so 
 python: usbrelay libusbrelay.so libusbrelay_py.so
 
-libusbrelay.so: libusbrelay.c libusbrelay.h
-	$(CC) -shared -fPIC $(CPPFLAGS) $(CFLAGS) $< $(LDFLAGS) -o $@ 
+libusbrelay.so: libusbrelay.c libusbrelay.h gitversion.c
+	$(CC) -shared -fPIC $(CPPFLAGS) $(CFLAGS) gitversion.c $< $(LDFLAGS) -o $@ 
 
-usbrelay: usbrelay.c libusbrelay.h libusbrelay.so
-	$(CC) $(CPPFLAGS) $(CFLAGS) $< -lusbrelay -L./ $(LDFLAGS) -o $@
+usbrelay: usbrelay.c libusbrelay.h libusbrelay.so gitversion.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) gitversion.c $< -lusbrelay -L./ $(LDFLAGS) -o $@
+
+gitversion.c: .git/HEAD .git/index
+	echo "const char *gitversion = \"$(shell git rev-parse HEAD)\";" > $@
 
 #We build this once directly for error checking purposes, then let python do the real build
 
-libusbrelay_py.so: libusbrelay_py.c libusbrelay.so
+libusbrelay_py.so: libusbrelay_py.c libusbrelay.so gitversion.c
 	$(CC) -shared -fPIC -I/usr/include/python$(PYTHON_VERSION)m $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -L./ -lusbrelay -o $@ $<
 	python3 setup.py build
 
@@ -48,6 +52,7 @@ clean:
 	rm -f libusbrelay.so
 	rm -f libusbrelay_py.so
 	rm -rf build
+	rm -f gitversion.c
 
 
 install: usbrelay libusbrelay.so

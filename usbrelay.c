@@ -104,6 +104,7 @@ int main(int argc, char *argv[])
 	}
 
 	//Locate and identify attached relay boards
+	if(debug) fprintf(stderr,"Version: %s\n",gitversion);
 	enumerate_relay_boards(getenv("USBID"), verbose, debug);
 
 	/* loop through the supplied command line and try to match the serial */

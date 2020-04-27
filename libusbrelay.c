@@ -51,6 +51,7 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
 
 	//Count the number of returned devices
 	cur_dev = devs;
+	if (debug) fprintf(stderr,"Library Version: %s\n",gitversion);
 
 	while (cur_dev != NULL) {
 		// Check if the HID device is a known relay else jump over it

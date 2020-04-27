@@ -32,6 +32,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #define Serial_Length 5
 
+extern const char *gitversion;
+
 //Struct for relay boards
 typedef struct relay_board {
 	//+1 for the \0 string terminator
