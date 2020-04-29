@@ -25,29 +25,94 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <ctype.h>
 #include <unistd.h>
 #include <hidapi/hidapi.h>
+#include <argp.h>
 #include "libusbrelay.h"
 #include "usbrelay.h"
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
+static void argp_print_version(FILE *stream, struct argp_state *state)
+{
+	fprintf(stream, "usbrelay %s\n", gitversion);
+}
+
+void (*argp_program_version_hook)(FILE *stream, struct argp_state *state) = argp_print_version;
+
+const char *argp_program_bug_address =
+	"https://github.com/darrylb123/usbrelay/issues";
+
+/* Program documentation. */
+static char doc[] =
+	"Control or query USB HID relays."
+
+	/* This part of the documentation comes after the options */
+	"\vWithout ACTION, the actual state of all relays is printed to stdout.\n"
+	"ACTION can be one of:\n"
+	"RELID_N=[0|1] to switch the N-th relay off or on\n"
+	"RELID=NEWID to change relay ID\n"
+	;
+
+/* A description of the arguments we accept. */
+static char args_doc[] = "[ACTION...]";
+
+/* The options we understand. */
+static struct argp_option options[] = {
+	{"debug",    'd', 0,       0, "Produce debugging output" },
+	{"quiet",    'q', 0,       0, "Be quiet" },
+	{ 0 }
+};
+
+/* Used by ‘main’ to communicate with ‘parse_opt’. */
+struct arguments
+{
+	int debug;
+	int verbose;
+};
+
+/* Parse a single option. */
+static error_t
+parse_opt (int key, char *arg, struct argp_state *state)
+{
+	/* Get the ‘input’ argument from ‘argp_parse’, which we
+	   know is a pointer to our arguments structure. */
+	struct arguments *args = state->input;
+
+	switch (key) {
+	case 'd':
+		args->debug = 1;
+		break;
+	case 'q': case 's':
+		args->verbose = 0;
+		break;
+
+	case ARGP_KEY_NO_ARGS:
+		break;
+
+	default:
+		return ARGP_ERR_UNKNOWN;
+	}
+	return 0;
+}
+
+/* Our argp parser. */
+static struct argp argp = { options, parse_opt, args_doc, doc };
+
+
+
 int main(int argc, char *argv[])
 {
 	struct relay *relays = 0;
-	int debug = 0;
-	int verbose = 1;
-	int i,c;
+	int i;
 	int exit_code = 0;
+	struct arguments args = {
+		.debug = 0,
+		.verbose = 1,
+	};
 
-	while ((c = getopt (argc, argv, "qd")) != -1) {
-    switch (c) {
-      case 'q':
-        verbose = 0;
-        break;
-      case 'd':
-        debug = 1;
-        break;
-      }
-	}
+       /* Parse our arguments; every option seen by ‘parse_opt’ will
+          be reflected in ‘args’. */
+       argp_parse (&argp, argc, argv, 0, &optind, &args);
+
 	/* allocate the memory for all the relays */
 	if ((argc - optind) >= 1) {
 		relays = calloc(argc - optind + 1, sizeof(struct relay));	/* Yeah, I know. Not using the first member */
@@ -94,7 +159,7 @@ int main(int argc, char *argv[])
 				}
 			}
 		}
-		if (debug) {
+		if (args.debug) {
 			fprintf(stderr, "Orig: %s, Serial: %s, Relay: %d State: %x\n",
 				arg, relay->this_serial, 
 				relay->relay_num,
@@ -104,21 +169,21 @@ int main(int argc, char *argv[])
 	}
 
 	//Locate and identify attached relay boards
-	if(debug) fprintf(stderr,"Version: %s\n",gitversion);
-	enumerate_relay_boards(getenv("USBID"), verbose, debug);
+	if(args.debug) fprintf(stderr,"Version: %s\n",gitversion);
+	enumerate_relay_boards(getenv("USBID"), args.verbose, args.debug);
 
 	/* loop through the supplied command line and try to match the serial */
 	for (i = 0; i < (argc - optind); i++) {
-		if (debug ) {
+		if (args.debug ) {
 			fprintf(stderr, "main() arg %d Serial: %s, Relay: %d State: %x \n",
 				i,relays[i].this_serial, 
 				relays[i].relay_num,
 				relays[i].state);
 		}
-		relay_board *board = find_board(relays[i].this_serial, debug );
+		relay_board *board = find_board(relays[i].this_serial, args.debug );
 
 		if (board) {
-			if (debug == 2)
+			if (args.debug == 2)
 				fprintf(stderr, "%d HID Serial: %s ", i, board->serial);
 			if (relays[i].relay_num == 0) {
 				if (!relays[i].new_serial[0]) {
@@ -126,16 +191,16 @@ int main(int argc, char *argv[])
 				} else {
 					fprintf(stderr, "Setting new serial\n");
 					set_serial(board->serial,
-						   relays[i].new_serial,debug);
+						   relays[i].new_serial,args.debug);
 				}
 			} else {
-				if (debug)
+				if (args.debug)
 					fprintf(stderr,
 						"main() operate: %s, Relay: %d State: %x\n",
 						relays[i].this_serial,
 						relays[i].relay_num,
 						relays[i].state);
-				if (operate_relay(relays[i].this_serial, relays[i].relay_num,relays[i].state,debug) < 0)
+				if (operate_relay(relays[i].this_serial, relays[i].relay_num,relays[i].state,args.debug) < 0)
 					exit_code++;
 				relays[i].found = 1;
 			}
@@ -145,15 +210,15 @@ int main(int argc, char *argv[])
 	shutdown();
 
 	for (i = 1; i < (argc - optind); i++) {
-		if (debug)
+		if (args.debug)
 			fprintf(stderr,"Serial: %s, Relay: %d State: %x ",
 				relays[i].this_serial, relays[i].relay_num,
 				relays[i].state);
 		if (relays[i].found) {
-			if (debug)
+			if (args.debug)
 				fprintf(stderr, "--- Found\n");
 		} else {
-			if (debug)
+			if (args.debug)
 				fprintf(stderr, "--- Not Found\n");
 			exit_code++;
 		}
