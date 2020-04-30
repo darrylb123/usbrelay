@@ -136,12 +136,31 @@ KERNEL=="hidraw*", ATTRS{busnum}=="1", ATTRS{idVendor}=="16c0", ATTRS{idProduct}
 ```
 to `/etc/udev/rules.d/50-dct-tech-usb-relay-2.rules`.
 
-Running the program will display each module that matches device 16c0:05df or 0519:2018. The program can be invoked with the debug (-d) or quiet (-q) flags. The debug information is sent to stderr while the state is sent to stdout for use in scripts. The only limit to the number of these relays that can be plugged in and operated at once is the number of USB ports. Using neither the -d or -q flags just prints the state of the relays to stdout.
+```
+$ sudo usbrelay --help
+Usage: usbrelay [OPTION...] [ACTION...]
+Control or query USB HID relays.
+
+  -d, --debug                Produce debugging output
+  -q, --quiet                Be quiet
+  -?, --help                 Give this help list
+      --usage                Give a short usage message
+  -V, --version              Print program version
+
+Without ACTION, the actual state of all relays is printed to stdout.
+ACTION can be one of:
+RELID_N=[0|1] to switch the N-th relay off or on
+RELID=NEWID to change relay ID
+
+Report bugs to https://github.com/darrylb123/usbrelay/issues.
+```
+
+Running the program without arguments will display each module that matches device 16c0:05df or 0519:2018. The program can be invoked with the debug (-d) or quiet (-q) flags. The debug information is sent to stderr while the state is sent to stdout for use in scripts. The only limit to the number of these relays that can be plugged in and operated at once is the number of USB ports. Using neither the -d or -q flags just prints the state of the relays to stdout.
 ```
 $ sudo ./usbrelay
 PSUIS_1=1
 PSUIS_2=0
-$ sudo ./usbrelay -d
+$ sudo ./usbrelay -d (--debug)
 Device Found
   type: 16c0 05df
   path: /dev/hidraw1
@@ -152,7 +171,7 @@ Device Found
   Interface:    0
 PSUIS_1=1
 PSUIS_2=0
-$ sudo ./usbrelay -q
+$ sudo ./usbrelay -q (--quiet)
 $
 ```
 To get the relay state
