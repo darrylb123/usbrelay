@@ -157,10 +157,10 @@ Report bugs to https://github.com/darrylb123/usbrelay/issues.
 
 Running the program without arguments will display each module that matches device 16c0:05df or 0519:2018. The program can be invoked with the debug (-d) or quiet (-q) flags. The debug information is sent to stderr while the state is sent to stdout for use in scripts. The only limit to the number of these relays that can be plugged in and operated at once is the number of USB ports. Using neither the -d or -q flags just prints the state of the relays to stdout.
 ```
-$ sudo ./usbrelay
+$ sudo usbrelay
 PSUIS_1=1
 PSUIS_2=0
-$ sudo ./usbrelay -d (--debug)
+$ sudo usbrelay -d (--debug)
 Device Found
   type: 16c0 05df
   path: /dev/hidraw1
@@ -171,31 +171,31 @@ Device Found
   Interface:    0
 PSUIS_1=1
 PSUIS_2=0
-$ sudo ./usbrelay -q (--quiet)
+$ sudo usbrelay -q (--quiet)
 $
 ```
 To get the relay state
 ```
-$ sudo ./usbrelay
+$ sudo usbrelay
 PSUIS_1=1
 PSUIS_2=0
 ```
 To use the state in a script:
 ```
-$ eval $(sudo ./usbrelay)
+$ eval $(sudo usbrelay)
 $ echo $PSUIS_2
 0
 ```
 To set the relay state of 1 or more modules at once:
 ```
-$ sudo ./usbrelay PSUIS_2=0
-$ sudo ./usbrelay PSUIS_2=1 PSUIS_1=0
-$ sudo ./usbrelay PSUIS_2=0 PSUIS_1=1 0U70M_1=0 0U70M_2=1
+$ sudo usbrelay PSUIS_2=0
+$ sudo usbrelay PSUIS_2=1 PSUIS_1=0
+$ sudo usbrelay PSUIS_2=0 PSUIS_1=1 0U70M_1=0 0U70M_2=1
 ```
 The path to a device can be used in lieu of the serial, this can be useful for devices with corrupted serials
 
 ```
-$ sudo ./usbrelay /dev/hidraw1_1=0
+$ sudo usbrelay /dev/hidraw1_1=0
 ```
 Alternatively if using libusb instead of hidraw you may use the usb device path 
 ```
@@ -210,7 +210,7 @@ Manufacturer: Ucreatefun.com
   Number of Relays = 9
   Module_type = 2
 
-$ sudo ./usbrelay 0001:0015:00_1=0
+$ sudo usbrelay 0001:0015:00_1=0
 ```
 Change the serial permanently
 
@@ -219,16 +219,16 @@ Maximum of 5 character serial. It is probably sensible to change one module at a
 You may also use the device path to set the serial as above
 
 ```
-$ sudo ./usbrelay
+$ sudo usbrelay
 ZXCV_1=0
 ZXCV_2=0
 
-$ sudo ./usbrelay ZXCV_0=ZAQ12 # or /dev/hidraw4_0=ZAQ12
+$ sudo usbrelay ZXCV_0=ZAQ12 # or /dev/hidraw4_0=ZAQ12
 ZXCV_1=0
 ZXCV_2=0
 Setting new serial
 
-$ sudo ./usbrelay
+$ sudo usbrelay
 ZAQ12_1=0
 ZAQ12_2=0
 ```
@@ -286,7 +286,7 @@ for board in boards:
 
 Once the library is installed, you can run the test script in python as follows:
 ```
-[[$ python3 test.py
+$ python3 test.py
 ```
 It will turn on and then off every relay attached to every board on your system.
 
