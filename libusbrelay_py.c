@@ -116,7 +116,8 @@ static PyObject *usbrelay_board_details(PyObject *self, PyObject *args)
     boards = malloc(sizeof(PyObject *) * board_count);
 
     //Pack up our board information into Python Typles
-    for (int i = 0; i < board_count; i++)
+    int i;
+    for (i = 0; i < board_count; i++)
     {
         boards[i] = Py_BuildValue("(sii)", relay_boards[i].serial, relay_boards[i].relay_count, relay_boards[i].state);
     }
