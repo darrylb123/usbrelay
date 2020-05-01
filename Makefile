@@ -1,7 +1,7 @@
 CFLAGS += -O2 -Wall
 HIDAPI = hidraw
 LDFLAGS += -lhidapi-$(HIDAPI)
-PYTHON_VERSION=$(shell python3 -c "import sys;t='{v[0]}.{v[1]}'.format(v=list(sys.version_info[:2]));sys.stdout.write(t)")
+PYTHON_INCLUDE=$(shell python3-config --includes)
 
 
 #Default 32 bit x86, raspberry pi, etc..
@@ -44,7 +44,7 @@ gitversion.c: .git/HEAD .git/index
 #We build this once directly for error checking purposes, then let python do the real build
 
 libusbrelay_py.so: libusbrelay_py.c libusbrelay.so gitversion.c
-	$(CC) -shared -fPIC -I/usr/include/python$(PYTHON_VERSION)m $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -L./ -lusbrelay -o $@ $<
+	$(CC) -shared -fPIC $(PYTHON_INCLUDE) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -L./ -lusbrelay -o $@ $<
 	python3 setup.py build
 
 clean:
