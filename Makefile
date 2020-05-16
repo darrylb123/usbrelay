@@ -38,8 +38,8 @@ libusbrelay.so: libusbrelay.c libusbrelay.h gitversion.c
 usbrelay: usbrelay.c libusbrelay.h libusbrelay.so gitversion.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) gitversion.c $< -lusbrelay -L./ $(LDFLAGS) -o $@
 
-gitversion.c: .git/HEAD .git/index
-	echo "const char *gitversion = \"$(shell git describe --tags --match '[0-9].[0-9]*' --abbrev=10 --dirty)\";" > $@
+#gitversion.c: .git/HEAD .git/index
+#	echo "const char *gitversion = \"$(shell git describe --tags --match '[0-9].[0-9]*' --abbrev=10 --dirty)\";" > $@
 
 #We build this once directly for error checking purposes, then let python do the real build
 

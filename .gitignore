@@ -1,5 +1,4 @@
 *.so
-gitversion.c
 usbrelay
 ._*
 build
