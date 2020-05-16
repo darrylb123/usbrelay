@@ -106,6 +106,8 @@ $ git clone https://github.com/darrylb123/usbrelay
 $ cd usbrelay
 $ make
 $ sudo make install
+
+
 ### Test with a usbrelay plugged in
 $ sudo usbrelay
 
@@ -118,6 +120,15 @@ $ make HIDAPI=hidraw
 ### hidapi-libusb
 $ make HIDAPI=libusb
 ```
+
+### Pushing the code
+The gitversion.c is created by a git pre-commit hook and adds the version repository.
+The version printed by -V will always be the version before the commit that created the repository
+The hook is part of the repository and needs to be added to the repository git config prior to comitting the code
+```
+git config --local core.hooksPath .githooks/
+```
+
 
 ### Docker Build:
 You can also build using Docker. Assuming you have Docker installed (only tested with version 18), execute the build script:
