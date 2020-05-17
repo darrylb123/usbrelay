@@ -1,4 +1,6 @@
 #!/bin/sh
-echo "const char *gitversion = \"$(git describe --tags --match '[0-9].[0-9]*' --abbrev=10 --dirty)\";" >gitversion.c
+COUNT=$(git rev-list HEAD --count)
+COUNT=$(expr $COUNT + 1)
+echo "const char *gitversion = \"Commit: $COUNT\";" >gitversion.c
 
 git add gitversion.c
