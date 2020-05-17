@@ -1,6 +1,6 @@
 #!/bin/sh
 COUNT=$(git rev-list HEAD --count)
 COUNT=$(expr $COUNT + 1)
-echo "const char *gitversion = \"Commit: $COUNT\";" >gitversion.c
+echo "#define GITVERSION \"Commit: $COUNT\";" >gitversion.h
 
-git add gitversion.c
+git add gitversion.h

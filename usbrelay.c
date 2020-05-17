@@ -28,12 +28,13 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <argp.h>
 #include "libusbrelay.h"
 #include "usbrelay.h"
+#include "gitversion.h"
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
 static void argp_print_version(FILE *stream, struct argp_state *state)
 {
-	fprintf(stream, "usbrelay %s\n", gitversion);
+	fprintf(stream, "usbrelay %s\n", GITVERSION);
 }
 
 void (*argp_program_version_hook)(FILE *stream, struct argp_state *state) = argp_print_version;
@@ -169,7 +170,7 @@ int main(int argc, char *argv[])
 	}
 
 	//Locate and identify attached relay boards
-	if(args.debug) fprintf(stderr,"Version: %s\n",gitversion);
+	if(args.debug) fprintf(stderr,"Version: %s\n",GITVERSION);
 	enumerate_relay_boards(getenv("USBID"), args.verbose, args.debug);
 
 	/* loop through the supplied command line and try to match the serial */

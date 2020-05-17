@@ -32,11 +32,11 @@ LDFLAGS += -L $(LIBDIR) -Wl,-rpath $(LIBDIR)
 all: usbrelay libusbrelay.so 
 python: usbrelay libusbrelay.so libusbrelay_py.so
 
-libusbrelay.so: libusbrelay.c libusbrelay.h gitversion.c
-	$(CC) -shared -fPIC $(CPPFLAGS) $(CFLAGS) gitversion.c $< $(LDFLAGS) -o $@ 
+libusbrelay.so: libusbrelay.c libusbrelay.h 
+	$(CC) -shared -fPIC $(CPPFLAGS) $(CFLAGS)  $< $(LDFLAGS) -o $@ 
 
-usbrelay: usbrelay.c libusbrelay.h libusbrelay.so gitversion.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) gitversion.c $< -lusbrelay -L./ $(LDFLAGS) -o $@
+usbrelay: usbrelay.c libusbrelay.h libusbrelay.so 
+	$(CC) $(CPPFLAGS) $(CFLAGS)  $< -lusbrelay -L./ $(LDFLAGS) -o $@
 
 #We build this once directly for error checking purposes, then let python do the real build
 

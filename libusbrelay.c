@@ -26,6 +26,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <unistd.h>
 #include <hidapi/hidapi.h>
 #include "libusbrelay.h"
+#include "gitversion.h"
 
 //Global variables
 
@@ -51,7 +52,7 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
 
 	//Count the number of returned devices
 	cur_dev = devs;
-	if (debug) fprintf(stderr,"Library Version: %s\n",gitversion);
+	if (debug) fprintf(stderr,"Library Version: %s\n",GITVERSION);
 
 	while (cur_dev != NULL) {
 		// Check if the HID device is a known relay else jump over it
