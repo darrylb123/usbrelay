@@ -82,7 +82,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
 	case 'd':
 		args->debug = 1;
 		break;
-	case 'q': case 's':
+	case 'q':
 		args->verbose = 0;
 		break;
 
