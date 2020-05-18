@@ -1,3 +1,0 @@
-COUNT=$(git rev-list HEAD --count)
-COUNT=$(expr $COUNT + 1)
-sed -i "1s/^/$COUNT: /" $1

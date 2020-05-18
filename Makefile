@@ -60,6 +60,7 @@ clean:
 	rm -f libusbrelay.so
 	rm -f libusbrelay_py.so
 	rm -rf build
+	rm -f gitversion.h
 
 
 install: usbrelay libusbrelay.so

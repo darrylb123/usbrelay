@@ -1,5 +1,0 @@
-*.so
-usbrelay
-._*
-build
-gitversion.h
