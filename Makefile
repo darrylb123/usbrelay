@@ -35,12 +35,23 @@ python: usbrelay libusbrelay.so libusbrelay_py.so
 libusbrelay.so: libusbrelay.c libusbrelay.h 
 	$(CC) -shared -fPIC $(CPPFLAGS) $(CFLAGS)  $< $(LDFLAGS) -o $@ 
 
-usbrelay: usbrelay.c libusbrelay.h libusbrelay.so 
+usbrelay: usbrelay.c libusbrelay.h libusbrelay.so
 	$(CC) $(CPPFLAGS) $(CFLAGS)  $< -lusbrelay -L./ $(LDFLAGS) -o $@
+
+# Command to generate version number if running from git repo
+GIT_VERSION = $(shell git describe --tags --match '[0-9].[0-9]*' --abbrev=10 --dirty)
+
+# If .git/HEAD and/or .git/index exist, we generate git version with
+# the command above and regenerate it whenever any of these files
+# changes. If these files don't exist, we use ??? as the version.
+gitversion.h: $(wildcard .git/HEAD .git/index)
+	echo "#define GITVERSION \"$(if $(word 1,$^),$(GIT_VERSION),???)\"" > $@
+
+usbrelay.c libusbrelay.c: gitversion.h
 
 #We build this once directly for error checking purposes, then let python do the real build
 
-libusbrelay_py.so: libusbrelay_py.c libusbrelay.so gitversion.c
+libusbrelay_py.so: libusbrelay_py.c libusbrelay.so
 	$(CC) -shared -fPIC $(PYTHON_INCLUDE) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -L./ -lusbrelay -o $@ $<
 	python3 setup.py build
 
