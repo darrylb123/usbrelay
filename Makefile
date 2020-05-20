@@ -39,13 +39,14 @@ usbrelay: usbrelay.c libusbrelay.h libusbrelay.so
 	$(CC) $(CPPFLAGS) $(CFLAGS)  $< -lusbrelay -L./ $(LDFLAGS) -o $@
 
 # Command to generate version number if running from git repo
+DIR_VERSION = $(shell basename `pwd`)
 GIT_VERSION = $(shell git describe --tags --match '[0-9].[0-9]*' --abbrev=10 --dirty)
 
 # If .git/HEAD and/or .git/index exist, we generate git version with
 # the command above and regenerate it whenever any of these files
 # changes. If these files don't exist, we use ??? as the version.
 gitversion.h: $(wildcard .git/HEAD .git/index)
-	echo "#define GITVERSION \"$(if $(word 1,$^),$(GIT_VERSION),???)\"" > $@
+	echo "#define GITVERSION \"$(if $(word 1,$^),$(GIT_VERSION),$(DIR_VERSION))\"" > $@
 
 usbrelay.c libusbrelay.c: gitversion.h
 
