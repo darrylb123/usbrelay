@@ -195,6 +195,11 @@ $ sudo usbrelay PSUIS_2=0
 $ sudo usbrelay PSUIS_2=1 PSUIS_1=0
 $ sudo usbrelay PSUIS_2=0 PSUIS_1=1 0U70M_1=0 0U70M_2=1
 ```
+Operate relay 9 to set the state of all relays together
+```
+$ sudo usbrelay PSUIS_9=0
+$ sudo usbrelay PSUIS_9=1 0U70M_9=1
+```
 The path to a device can be used in lieu of the serial, this can be useful for devices with corrupted serials
 
 ```

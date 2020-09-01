@@ -162,7 +162,7 @@ int operate_relay(const char *serial, unsigned char relay,
 	hid_device *handle;
 
 	relay_board *board = find_board(serial,debug);
-	if (board != NULL && relay > 0 && relay <= board->relay_count) {
+	if (board != NULL && relay > 0 ) { 
 		if(debug) fprintf(stderr,"operate_relay(%s,%c) %s path\n",serial,relay, board->path );
 		handle = hid_open_path(board->path);
 
@@ -177,6 +177,15 @@ int operate_relay(const char *serial, unsigned char relay,
 				buf[6] = 0x00;
 				buf[7] = 0x00;
 				buf[8] = 0x00;
+				if ( relay == 9 ) { // operate all relays
+					for (char i = 1; i <= board->relay_count; i++ ) {
+						buf[2] = i;
+						res = hid_write(handle, buf, sizeof(buf));
+					}
+				} else {
+					if ( relay <= board->relay_count)
+						res = hid_write(handle, buf, sizeof(buf));
+				}
 			}
 			if (board->module_type == UCREATE) {
 
@@ -195,8 +204,8 @@ int operate_relay(const char *serial, unsigned char relay,
 				buf[6] = 0x00;
 				buf[7] = 0x00;
 				buf[8] = 0x00;
+				res = hid_write(handle, buf, sizeof(buf));
 			}
-			res = hid_write(handle, buf, sizeof(buf));
 		} else {
 			res = -1;
 		}
@@ -206,7 +215,7 @@ int operate_relay(const char *serial, unsigned char relay,
 				//Update our relay status
 				res = get_board_features(board, handle);
 		} else {
-			fprintf(stderr, "operate_relay() Unable to write\n");
+			fprintf(stderr, "operate_relay() Unable to write or unknown relay\n");
 			fprintf(stderr, "Error: %ls\n", hid_error(handle));
 		}
 
