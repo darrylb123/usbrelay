@@ -27,8 +27,6 @@ ifneq ($(wildcard /usr/lib/arm-linux-gnueabihf/.),)
     LIBDIR = /usr/lib/arm-linux-gnueabihf
 endif
 
-LDFLAGS += -L $(LIBDIR) -Wl,-rpath $(LIBDIR)
-
 all: usbrelay libusbrelay.so 
 python: usbrelay libusbrelay.so libusbrelay_py.so
 
