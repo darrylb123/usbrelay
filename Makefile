@@ -3,31 +3,30 @@ HIDAPI = hidraw
 LDFLAGS += -lhidapi-$(HIDAPI)
 PYTHON_INCLUDE=$(shell python3-config --includes)
 
+PREFIX=/usr
 
 #Default 32 bit x86, raspberry pi, etc..
-LIBDIR = /usr/lib
+LIBDIR = $(PREFIX)/lib
 
 #Catch x86_64 machines that use /usr/lib64 (RedHat)
-ifneq ($(wildcard /usr/lib64/.),)
-    LIBDIR = /usr/lib64
+ifneq ($(wildcard $(PREFIX)/lib64/.),)
+    LIBDIR = $(PREFIX)/lib64
 endif
 
 #Catch debian machines with Multiarch (x64)
-ifneq ($(wildcard /usr/lib/x86_64-linux-gnu/.),)
-    LIBDIR = /usr/lib/x86_64-linux-gnu
+ifneq ($(wildcard $(PREFIX)/lib/x86_64-linux-gnu/.),)
+    LIBDIR = $(PREFIX)/lib/x86_64-linux-gnu
 endif
 
 #Catch debian machines with Multiarch (aarch64)
-ifneq ($(wildcard /usr/lib/aarch64-linux-gnu/.),)
-    LIBDIR = /usr/lib/aarch64-linux-gnu
+ifneq ($(wildcard $(PREFIX)/lib/aarch64-linux-gnu/.),)
+    LIBDIR = $(PREFIX)/lib/aarch64-linux-gnu
 endif
 
 #Catch debian machines with Multiarch (arm-linux-gnueabihf)
-ifneq ($(wildcard /usr/lib/arm-linux-gnueabihf/.),)
-    LIBDIR = /usr/lib/arm-linux-gnueabihf
+ifneq ($(wildcard $(PREFIX)/lib/arm-linux-gnueabihf/.),)
+    LIBDIR = $(PREFIX)/lib/arm-linux-gnueabihf
 endif
-
-LDFLAGS += -L $(LIBDIR) -Wl,-rpath $(LIBDIR)
 
 all: usbrelay libusbrelay.so 
 python: usbrelay libusbrelay.so libusbrelay_py.so
@@ -67,8 +66,8 @@ clean:
 install: usbrelay libusbrelay.so
 	install -d $(DESTDIR)$(LIBDIR)
 	install -m 0755 libusbrelay.so $(DESTDIR)$(LIBDIR)
-	install -d $(DESTDIR)/usr/bin
-	install -m 0755 usbrelay $(DESTDIR)/usr/bin
+	install -d $(DESTDIR)$(PREFIX)/bin
+	install -m 0755 usbrelay $(DESTDIR)$(PREFIX)/bin
 
 install_py: install libusbrelay.so libusbrelay_py.so
 	python3 setup.py install
