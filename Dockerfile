@@ -1,10 +1,11 @@
 # Base image.
-FROM debian:9
+FROM debian:10
 
 # Install dependencies.
 RUN apt update && apt install -y \
     make \
     gcc \
+    git-core \
     libhidapi-dev \
-    libpython3.5-dev \
+    python3-dev \
     python3
