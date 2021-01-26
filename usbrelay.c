@@ -126,8 +126,9 @@ int main(int argc, char *argv[])
 
 		char *underscore = strchr(arg, '_');
 		char *equal_sign = strchr(arg, '=');
+		char *another_equal = strchr(equal_sign+1, '=');
 
-		if (underscore && equal_sign && underscore > equal_sign) {	/* e.g. ASDFG=QWERT_1 */
+		if ((underscore && equal_sign && underscore > equal_sign) || another_equal) {	/* e.g. ASDFG=QWERT_1 */
 			fprintf(stderr, "Invalid relay specification: %s\n",
 				argv[i + optind]);
 			exit(1);
