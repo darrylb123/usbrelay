@@ -125,9 +125,10 @@ int main(int argc, char *argv[])
 		struct relay *relay = &relays[i];
 
 		char *underscore = strchr(arg, '_');
+		char *second_underscore = strrchr(arg, '_'); /* Search from end of string too. Should be only one _ or = */
 		char *equal_sign = strchr(arg, '=');
-
-		if (underscore && equal_sign && underscore > equal_sign) {	/* e.g. ASDFG=QWERT_1 */
+		char *second_equals = strrchr(arg, '=');
+		if (!underscore || !equal_sign || (underscore > equal_sign) || (equal_sign != second_equals) || (underscore != second_underscore)){	/* e.g. ASDFG=QWERT_1 */
 			fprintf(stderr, "Invalid relay specification: %s\n",
 				argv[i + optind]);
 			exit(1);
