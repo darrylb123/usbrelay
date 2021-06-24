@@ -253,7 +253,7 @@ Debian:
 Fedora:
 ```
 ##Install Python3 dev pacakage
-# yum install python3-devel
+# dnf install python3-devel
 ```
 
 With the dependency installed, the library can be built and installed with:
@@ -426,6 +426,8 @@ A python daemon using libusbrelay to connect to an MQTT server. When the daemon 
 To install:
 ```
 sudo useradd usbrelay
+sudo apt-get install python-paho-mqtt (Debian)
+dnf install python3-paho-mqtt (Fedora)
 cp usbrelayd.py /usr/local/sbin
 ```
 #### usbrelay.service usbrelay.conf
