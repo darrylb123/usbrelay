@@ -11,9 +11,9 @@ import sys
 
 def publish_states(client):
     boards = usbrelay_py.board_details()
-    print("Boards: ",boards)
+#    print("Boards: ",boards)
     for board in boards:
-        print("Board: ",board)
+#        print("Board: ",board)
         relay = 1
         # determine the state of each relay and publish to the MQTT broker
         while(relay < board[1]+1):
@@ -25,17 +25,17 @@ def publish_states(client):
             
             topic = "{0}/{1}/{2}"
             topic_str = topic.format("stat",board[0],relay)
-            print("State: ", topic_str, relay_state)
+            print("State: ", topic_str, relay_state,flush=True)
             client.publish(topic_str, relay_state)
             topic_str = topic.format("cmnd",board[0],relay)
-            print("Subscribed: ", topic_str)
+            print("Subscribed: ", topic_str,flush=True)
             client.subscribe(topic_str)
             relay += 1
         client.on_message=on_message 
 
 def on_message(client, userdata, message):
     msg_state = str(message.payload.decode("utf-8"))
-    print("received message: " ,message.topic, msg_state)
+    print("received message: " ,message.topic, msg_state,flush=True)
     # any message other than ON is OFF
     if( msg_state == "ON" ):
         relay_cmd = 1
@@ -44,7 +44,7 @@ def on_message(client, userdata, message):
     
     content = re.split("/",message.topic)
     result = usbrelay_py.board_control(content[1],int(content[2]),relay_cmd)
-    print("COntent: ", content , result)
+#    print("COntent: ", content , result)
     pub_str = "stat/{0}/{1}"
     client.publish(pub_str.format(content[1],content[2]), msg_state)
 
@@ -52,7 +52,7 @@ def on_message(client, userdata, message):
 
 
 if ( len(sys.argv) < 2 ):
-    print("No mqtt broker name")
+    print("No mqtt broker name",flush=True)
     exit()
 mqttBroker = sys.argv[1]
 #
@@ -60,10 +60,10 @@ mqttBroker = sys.argv[1]
 count = usbrelay_py.board_count()
 
 if(count < 1):
-    print("No usbrelay modules connected")
+    print("No usbrelay modules connected",flush=True)
     exit()
 else:
-    print("Modules Connected: ",count)
+    print("Modules Connected: ",count,flush=True)
 
 # connect to the mqtt broker
 
