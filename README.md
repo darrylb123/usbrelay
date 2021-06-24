@@ -479,7 +479,7 @@ MQTT Topics for controlling usbrelays
 Using mosquitto client tools
 ```
 mosquitto_sub -h your_mqtt_broker -t stat/OMG12/1
-mosquitto_pub -h your_mqtt_broker -t stat/OMG12/1 -m ON
+mosquitto_pub -h your_mqtt_broker -t cmnd/OMG12/1 -m ON
  
 ```
 Enjoy
