@@ -2,6 +2,7 @@
 Description=USB Relay MQTT service
 After=network.target
 StartLimitIntervalSec=10
+StopWhenUnneeded=true
 
 [Service]
 Type=simple
