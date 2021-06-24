@@ -410,4 +410,74 @@ Serial: /dev/hidrawport3-9:1.0, Relay: 2 State: fd --- Found
 ```
 Any
 
+### MQTT support
+MQTT support requires the successful installation of the python library described above. Check this first (with a module plugged in) by running:
+```
+sudo python3 test.py
+```
+MQTT support provides capability of using Home Assistant or nodered with usbrelay. The capability is made up of:
+
+- usbrelayd.py 
+- usbrelay.service
+- usbrelay.conf 
+- 50-usbrelay.rules 
+#### usbrelayd.py
+A python daemon using libusbrelay to connect to an MQTT server. When the daemon starts, it publishes the state of all usbrelay devices found and subscribes to command topics for each relay.
+To install:
+```
+sudo useradd usbrelay
+cp usbrelayd.py /usr/local/sbin
+```
+#### usbrelay.service usbrelay.conf
+A systemd unit and environment file for controlling and monitoring the usbrelayd.py daemon
+To install:
+```
+sudo cp usbrelayd.service /etc/systemd/system
+sudo cp usbrelayd.conf /usr/local/etc/usbrelayd.conf
+sudo systemctl daemon-reload
+```
+Edit usbrelay.conf to set the address of your mqtt broker
+
+#### 50-usbrelay.rules
+A udev rule file that reacts and starts/stops the usbrelayd.service when a module is pluggedin or removed
+
+To install:
+```
+sudo cp 50-usbrelay.rules /etc/udev/rules.d
+sudo udevadm control -R
+```
+#### Operation
+
+After installation and configuration confirm the correct operation.
+```
+systemctl status usbrelayd
+usbrelayd.service - USB Relay MQTT service
+     Loaded: loaded (/etc/systemd/system/usbrelayd.service; disabled; vendor preset: disabled)
+     Active: active (running) since Thu 2021-06-24 15:23:01 AEST; 2s ago
+   Main PID: 1151364 (python3)
+      Tasks: 1 (limit: 14159)
+     Memory: 14.4M
+        CPU: 117ms
+     CGroup: /system.slice/usbrelayd.service
+             └─1151364 /usr/bin/python3 /usr/local/sbin/usbrelayd.py nodered
+
+Jun 24 15:23:01 xxx.local systemd[1]: Started USB Relay MQTT service.
+Jun 24 15:23:02 xxx.local python3[1151364]: Modules Connected:  1
+Jun 24 15:23:02 xxx.local python3[1151364]: State:  stat/OMG12/1 OFF
+Jun 24 15:23:02 xxx.local python3[1151364]: Subscribed:  cmnd/OMG12/1
+Jun 24 15:23:02 xxx.local python3[1151364]: State:  stat/OMG12/2 OFF
+Jun 24 15:23:02 xxx.local python3[1151364]: Subscribed:  cmnd/OMG12/2
+
+```
+MQTT Topics for controlling usbrelays
+
+- Current state: stat/SERIAL/Relay (eg stat/OMG12/1 )
+- Command: cmnd/SERIAL/Relay ON/OFF (eg cmnd/OMG12/2 )
+ 
+Using mosquitto client tools
+```
+mosquitto_sub -h your_mqtt_broker -t stat/OMG12/1
+mosquitto_pub -h your_mqtt_broker -t stat/OMG12/1 -m ON
+ 
+```
 Enjoy
