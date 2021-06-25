@@ -31,7 +31,7 @@ def publish_states(client):
             print("Subscribed: ", topic_str,flush=True)
             client.subscribe(topic_str)
             relay += 1
-        client.on_message=on_message 
+        
 
 def on_message(client, userdata, message):
     msg_state = str(message.payload.decode("utf-8"))
@@ -71,8 +71,9 @@ else:
 client = mqtt.Client("Switch")
 client.connect(mqttBroker) 
 publish_states(client)
-
-client.loop_forever()
-
+client.on_message=on_message 
+while(True):
+    client.loop_start()
+    time.sleep(60)
 
 

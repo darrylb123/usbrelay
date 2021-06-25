@@ -10,7 +10,7 @@ Restart=always
 RestartSec=1
 User=usbrelay
 EnvironmentFile=/usr/local/etc/usbrelayd.conf
-ExecStart=/usr/bin/python3 /usr/local/sbin/usbrelayd.py ${BROKER}
+ExecStart=/usr/bin/python3 /usr/local/sbin/usbrelayd ${BROKER}
 StandardOutput=journal+console
 StandardError=journal+console
 

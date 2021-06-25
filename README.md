@@ -417,21 +417,21 @@ sudo python3 test.py
 ```
 MQTT support provides capability of using Home Assistant or nodered with usbrelay. The capability is made up of:
 
-- usbrelayd.py 
+- usbrelayd 
 - usbrelay.service
 - usbrelay.conf 
 - 50-usbrelay.rules 
-#### usbrelayd.py
+#### usbrelayd
 A python daemon using libusbrelay to connect to an MQTT server. When the daemon starts, it publishes the state of all usbrelay devices found and subscribes to command topics for each relay.
 To install:
 ```
 sudo useradd usbrelay
 sudo apt-get install python-paho-mqtt (Debian)
 dnf install python3-paho-mqtt (Fedora)
-cp usbrelayd.py /usr/local/sbin
+cp usbrelayd /usr/local/sbin
 ```
 #### usbrelay.service usbrelay.conf
-A systemd unit and environment file for controlling and monitoring the usbrelayd.py daemon
+A systemd unit and environment file for controlling and monitoring the usbrelayd daemon
 To install:
 ```
 sudo cp usbrelayd.service /etc/systemd/system
@@ -461,7 +461,7 @@ usbrelayd.service - USB Relay MQTT service
      Memory: 14.4M
         CPU: 117ms
      CGroup: /system.slice/usbrelayd.service
-             └─1151364 /usr/bin/python3 /usr/local/sbin/usbrelayd.py nodered
+             └─1151364 /usr/bin/python3 /usr/local/sbin/usbrelayd nodered
 
 Jun 24 15:23:01 xxx.local systemd[1]: Started USB Relay MQTT service.
 Jun 24 15:23:02 xxx.local python3[1151364]: Modules Connected:  1
