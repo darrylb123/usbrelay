@@ -61,7 +61,8 @@ clean:
 	rm -f libusbrelay_py.so
 	rm -rf build
 	rm -f gitversion.h
-
+	rm -rf usbrelay_py.egg-info/ dist/ deb/ *.deb *.whl
+	rm -f records.txt
 
 install: usbrelay libusbrelay.so
 	install -d $(DESTDIR)$(LIBDIR)
@@ -70,6 +71,10 @@ install: usbrelay libusbrelay.so
 	install -m 0755 usbrelay $(DESTDIR)$(PREFIX)/bin
 
 install_py: install libusbrelay.so libusbrelay_py.so
-	python3 setup.py install
+	python3 setup.py install --record records.txt
+
+package: usbrelay libusbrelay.so
+	./create_deb.sh
+	./create_whl.sh
 
 .PHONY: all clean install
