@@ -13,19 +13,12 @@ ifneq ($(wildcard $(PREFIX)/lib64/.),)
     LIBDIR = $(PREFIX)/lib64
 endif
 
-#Catch debian machines with Multiarch (x64)
-ifneq ($(wildcard $(PREFIX)/lib/x86_64-linux-gnu/.),)
-    LIBDIR = $(PREFIX)/lib/x86_64-linux-gnu
-endif
-
-#Catch debian machines with Multiarch (aarch64)
-ifneq ($(wildcard $(PREFIX)/lib/aarch64-linux-gnu/.),)
-    LIBDIR = $(PREFIX)/lib/aarch64-linux-gnu
-endif
-
-#Catch debian machines with Multiarch (arm-linux-gnueabihf)
-ifneq ($(wildcard $(PREFIX)/lib/arm-linux-gnueabihf/.),)
-    LIBDIR = $(PREFIX)/lib/arm-linux-gnueabihf
+#Catch debian machines
+DEB_HOST_MULTIARCH=$(shell dpkg-architecture -qDEB_HOST_MULTIARCH 2>/dev/null)
+ifneq ($(DEB_HOST_MULTIARCH),)
+  ifneq ($(wildcard $(PREFIX)/lib/$(DEB_HOST_MULTIARCH)/.),)
+    LIBDIR = $(PREFIX)/lib/$(DEB_HOST_MULTIARCH)
+  endif
 endif
 
 all: usbrelay libusbrelay.so 
