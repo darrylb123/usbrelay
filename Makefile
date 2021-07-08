@@ -72,4 +72,26 @@ install: usbrelay libusbrelay.so
 install_py: install libusbrelay.so libusbrelay_py.so
 	python3 setup.py install
 
-.PHONY: all clean install
+release: usbrelay-$(GIT_VERSION).tar.gz usbrelay-$(GIT_VERSION).zip
+
+# Create release tarball. Make sure that the same commit produces the
+# same binary (hence --mtime and -n).
+usbrelay-$(GIT_VERSION).tar.gz: gitversion.h
+	git archive --format=tar --prefix=usbrelay-$(GIT_VERSION)/ HEAD > usbrelay.tar.tmp
+	tar --append --file usbrelay.tar.tmp --transform="s|^|usbrelay-$(GIT_VERSION)/|" --mtime="$(shell git log -1 --format=%aI)" gitversion.h
+	gzip --to-stdout -n usbrelay.tar.tmp > $@
+	rm -f usbrelay.tar.tmp
+
+# Create release zip. Attempt to make sure that the same commit
+# produces the same binary (hence touch --date).
+usbrelay-$(GIT_VERSION).zip: gitversion.h
+	git archive --format=zip --prefix=usbrelay-$(GIT_VERSION)/ HEAD > usbrelay.zip.tmp
+	mkdir -p usbrelay-$(GIT_VERSION)/
+	cp gitversion.h usbrelay-$(GIT_VERSION)/
+	-touch --date="$(shell git log -1 --format=%aI)" usbrelay-$(GIT_VERSION)/gitversion.h
+	zip --grow usbrelay.zip.tmp usbrelay-$(GIT_VERSION)/gitversion.h
+	rm usbrelay-$(GIT_VERSION)/gitversion.h
+	-rmdir usbrelay-$(GIT_VERSION)
+	mv usbrelay.zip.tmp $@
+
+.PHONY: all clean install release
