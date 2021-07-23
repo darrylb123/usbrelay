@@ -75,5 +75,5 @@ client.on_message=on_message
 while(True):
     client.loop_start()
     time.sleep(60)
-
+    publish_states(client)
 
