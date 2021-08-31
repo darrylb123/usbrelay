@@ -80,8 +80,6 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
 				memcpy(relay_boards[relay].path, cur_dev->path,
 				       strlen(cur_dev->path) + 1);
 
-				// The product string is USBRelayx where x is number of relays read to the \0 in case there are more than 9
-				relay_boards[relay].relay_count = atoi((const char *)&cur_dev->product_string[8]);
 				
 				// Ucreatefun relays do not have any information returned from the HID report
 				// The USB serial is also fixed so this is copied to the module serial so that something can make the module unique
@@ -92,6 +90,9 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
 					wcstombs(relay_boards[relay].serial,
 						 cur_dev->serial_number,
 						 Serial_Length);
+				} else {
+					// The product string is USBRelayx where x is number of relays read to the \0 in case there are more than 9
+					relay_boards[relay].relay_count = atoi((const char *)&cur_dev->product_string[8]);
 				}
 				//Open it to get more details
 				hid_device *handle;
