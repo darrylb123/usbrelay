@@ -142,7 +142,9 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
 				}
 				relay++;
 			}
-			cur_dev = cur_dev->next;
+			do {
+				cur_dev = cur_dev->next;
+			} while (cur_dev != NULL && !known_relay(cur_dev));
 		}
 	}
 	hid_free_enumeration(devs);
