@@ -172,8 +172,8 @@ int main(int argc, char *argv[])
 		}
 	}
 	// Warn if library is different version
-	if( !strcmp(libusbrelay_version(),GITVERSION)) {
-		fprintf(stderr, "Warning: Version difference\n libusbrelay: %s\nusbrelay: %s\n", libusbrelay_version(), GITVERSION);
+	if( strcmp(libusbrelay_version(),GITVERSION)) {
+		fprintf(stderr, "Warning: Version difference\nlibusbrelay: %s\nusbrelay: %s\n", libusbrelay_version(), GITVERSION);
 	}
 	
 	//Locate and identify attached relay boards
