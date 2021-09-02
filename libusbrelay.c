@@ -33,6 +33,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 relay_board *relay_boards = 0;
 int relay_board_count = 0;
 int i, k;
+const char *libversion = GITVERSION;
 
 //Private function prototypes
 static int get_board_features(relay_board * board, hid_device * handle);
@@ -41,6 +42,9 @@ int known_relay(struct hid_device_info *thisdev);
 /**
  * Enumerate all possible relay devices in the system
  */
+const char * libusbrelay_version(void){
+	return libversion;
+}
 int enumerate_relay_boards(const char *product, int verbose, int debug)
 {
 
@@ -52,7 +56,7 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
 
 	//Count the number of returned devices
 	cur_dev = devs;
-	if (debug) fprintf(stderr,"Library Version: %s\n",GITVERSION);
+	// if (debug) fprintf(stderr,"Library Version: %s\n",libversion);
 
 	while (cur_dev != NULL) {
 		// Check if the HID device is a known relay else jump over it

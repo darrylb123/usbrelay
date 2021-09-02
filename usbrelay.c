@@ -34,7 +34,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 static void argp_print_version(FILE *stream, struct argp_state *state)
 {
-	fprintf(stream, "usbrelay %s\n", GITVERSION);
+	fprintf(stream, "libusbrelay: %s\nusbrelay: %s\n", libusbrelay_version(), GITVERSION);
 }
 
 void (*argp_program_version_hook)(FILE *stream, struct argp_state *state) = argp_print_version;
@@ -154,6 +154,7 @@ int main(int argc, char *argv[])
 			if (relay->relay_num == 0) {	/* command to change the serial - remaining token is the new serial */
 				strncpy(relay->new_serial, equal_sign + 1,
 					sizeof(relay->new_serial) - 1);
+				relay->new_serial[sizeof(relay->new_serial) -1] = 0;
 			} else {
 				if (atoi(equal_sign + 1)) {
 					relays[i].state = CMD_ON;
@@ -170,9 +171,14 @@ int main(int argc, char *argv[])
 			relay->found = 0;
 		}
 	}
-
+	// Warn if library is different version
+	if( !strcmp(libusbrelay_version(),GITVERSION)) {
+		fprintf(stderr, "Warning: Version difference\n libusbrelay: %s\nusbrelay: %s\n", libusbrelay_version(), GITVERSION);
+	}
+	
 	//Locate and identify attached relay boards
-	if(args.debug) fprintf(stderr,"Version: %s\n",GITVERSION);
+	if(args.debug) 
+		fprintf(stderr, "libusbrelay: %s\nusbrelay: %s\n", libusbrelay_version(), GITVERSION);
 	enumerate_relay_boards(getenv("USBID"), args.verbose, args.debug);
 
 	/* loop through the supplied command line and try to match the serial */
