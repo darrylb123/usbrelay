@@ -310,7 +310,7 @@ A USB relay became available that is supported by the software but with severe l
 The module has a USB device ID of 0519:2018.
 There are modules with 1,2,4,and 8 relays. The module accepts a request for relay 9 which turns on/off all relays.
 Operating the module works the same as for the DccTech modules except the serial used is A0001
-Running usbrelay without arguments prints all posible relays (8) to stdout.
+Running usbrelay without arguments prints all possible relays (8) to stdout.
 ```
 $ sudo usbrelay A0001_2=1 # Turns on relay 2
 $ sudo usbrelay /dev/hidraw4_1=1
