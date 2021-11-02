@@ -298,6 +298,24 @@ $ python3 test.py
 ```
 It will turn on and then off every relay attached to every board on your system.
 
+### Fine-grained UDEV permissions
+
+When using many relays on a system, which is shared by several users
+and it is not desired to give all users access to all relays, one can
+add the following line to udev rules, e.g.
+`/etc/udev/rules.d/50-dct-tech-usb-relay-2.rules`.
+
+    SUBSYSTEMS=="usb", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="05df", IMPORT{program}="/usr/bin/usbrelay --quiet --export-id $devnode"
+
+This ensures that subsequent rules can use relay ID stored in the
+ID_SERIAL environment variable to match different relays. For example
+giving permissions for different relays to different users can be
+achieved by the following rules:
+
+    SUBSYSTEMS=="usb", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="05df", ENV{ID_SERIAL}=="PSUIS", MODE="0600", OWNER="user1"
+    SUBSYSTEMS=="usb", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="05df", ENV{ID_SERIAL}=="0U70M", MODE="0600", OWNER="user2"
+
+
 ## Support for Ucreatefun USB Modules
 ![alt text](ucreatefun.jpg "USB Relay")
 

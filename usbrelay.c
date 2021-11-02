@@ -60,6 +60,7 @@ static char args_doc[] = "[ACTION...]";
 static struct argp_option options[] = {
 	{"debug",    'd', 0,       0, "Produce debugging output" },
 	{"quiet",    'q', 0,       0, "Be quiet" },
+	{"export-id",'e', "DEV",   0, "Print relay ID of the given DEV (/dev/hidrawXX) in udev-compatible format" },
 	{ 0 }
 };
 
@@ -68,6 +69,7 @@ struct arguments
 {
 	int debug;
 	int verbose;
+	char *export_id;	/* "/dev/hidrawXX" or NULL */
 };
 
 /* Parse a single option. */
@@ -81,6 +83,9 @@ parse_opt (int key, char *arg, struct argp_state *state)
 	switch (key) {
 	case 'd':
 		args->debug = 1;
+		break;
+	case 'e':
+		args->export_id = arg;
 		break;
 	case 'q':
 		args->verbose = 0;
@@ -107,6 +112,7 @@ int main(int argc, char *argv[])
 	int exit_code = 0;
 	struct arguments args = {
 		.debug = 0,
+		.export_id = NULL,
 		.verbose = 1,
 	};
 
@@ -180,6 +186,16 @@ int main(int argc, char *argv[])
 	if(args.debug) 
 		fprintf(stderr, "libusbrelay: %s\nusbrelay: %s\n", libusbrelay_version(), GITVERSION);
 	enumerate_relay_boards(getenv("USBID"), args.verbose, args.debug);
+
+	if (args.export_id) {
+		relay_board *relay = find_board(args.export_id, args.debug);
+		if (!relay) {
+			fprintf(stderr, "relay '%s' not found\n", args.export_id);
+			exit(1);
+		}
+		printf("ID_SERIAL=%s\n", relay->serial);
+		return 0;
+	}
 
 	/* loop through the supplied command line and try to match the serial */
 	for (i = 0; i < (argc - optind); i++) {
