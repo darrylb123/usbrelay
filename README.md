@@ -298,6 +298,24 @@ $ python3 test.py
 ```
 It will turn on and then off every relay attached to every board on your system.
 
+### Fine-grained UDEV permissions
+
+When using many relays on a system, which is shared by several users
+and it is not desired to give all users access to all relays, one can
+add the following line to udev rules, e.g.
+`/etc/udev/rules.d/50-dct-tech-usb-relay-2.rules`.
+
+    SUBSYSTEMS=="usb", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="05df", IMPORT{program}="/usr/bin/usbrelay --quiet --export-id $devnode"
+
+This ensures that subsequent rules can use relay ID stored in the
+ID_SERIAL environment variable to match different relays. For example
+giving permissions for different relays to different users can be
+achieved by the following rules:
+
+    SUBSYSTEMS=="usb", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="05df", ENV{ID_SERIAL}=="PSUIS", MODE="0600", OWNER="user1"
+    SUBSYSTEMS=="usb", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="05df", ENV{ID_SERIAL}=="0U70M", MODE="0600", OWNER="user2"
+
+
 ## Support for Ucreatefun USB Modules
 ![alt text](ucreatefun.jpg "USB Relay")
 
@@ -310,7 +328,7 @@ A USB relay became available that is supported by the software but with severe l
 The module has a USB device ID of 0519:2018.
 There are modules with 1,2,4,and 8 relays. The module accepts a request for relay 9 which turns on/off all relays.
 Operating the module works the same as for the DccTech modules except the serial used is A0001
-Running usbrelay without arguments prints all posible relays (8) to stdout.
+Running usbrelay without arguments prints all possible relays (8) to stdout.
 ```
 $ sudo usbrelay A0001_2=1 # Turns on relay 2
 $ sudo usbrelay /dev/hidraw4_1=1
