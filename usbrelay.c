@@ -50,7 +50,7 @@ static char doc[] =
 	"\vWithout ACTION, the actual state of all relays is printed to stdout.\n"
 	"ACTION can be one of:\n"
 	"RELID_N=[0|1] to switch the N-th relay off or on\n"
-	"RELID=NEWID to change relay ID\n"
+	"RELID_0=NEWID to change relay ID\n"
 	;
 
 /* A description of the arguments we accept. */
