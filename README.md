@@ -437,7 +437,6 @@ MQTT support provides capability of using Home Assistant or nodered with usbrela
 
 - usbrelayd 
 - usbrelay.service
-- usbrelay.conf 
 - 50-usbrelay.rules 
 #### usbrelayd
 A python daemon using libusbrelay to connect to an MQTT server. When the daemon starts, it publishes the state of all usbrelay devices found and subscribes to command topics for each relay.
@@ -448,15 +447,14 @@ sudo apt-get install python-paho-mqtt (Debian)
 dnf install python3-paho-mqtt (Fedora)
 cp usbrelayd /usr/local/sbin
 ```
-#### usbrelay.service usbrelay.conf
-A systemd unit and environment file for controlling and monitoring the usbrelayd daemon
+#### usbrelay.service 
+A systemd unit for controlling and monitoring the usbrelayd daemon
+The systemd service file references your MQTT broker hostname as mymqttbroker. Either create that hostname in DNS or /etc/hosts. Alternatively, If you are using an external MQTT broker, modify the service file accordingly.
 To install:
 ```
 sudo cp usbrelayd.service /etc/systemd/system
-sudo cp usbrelayd.conf /usr/local/etc/usbrelayd.conf
 sudo systemctl daemon-reload
 ```
-Edit usbrelay.conf to set the address of your mqtt broker
 
 #### 50-usbrelay.rules
 A udev rule file that reacts and starts/stops the usbrelayd.service when a module is pluggedin or removed
@@ -479,7 +477,7 @@ usbrelayd.service - USB Relay MQTT service
      Memory: 14.4M
         CPU: 117ms
      CGroup: /system.slice/usbrelayd.service
-             └─1151364 /usr/bin/python3 /usr/local/sbin/usbrelayd nodered
+             └─1151364 /usr/bin/python3 /usr/local/sbin/usbrelayd mymqttbroker
 
 Jun 24 15:23:01 xxx.local systemd[1]: Started USB Relay MQTT service.
 Jun 24 15:23:02 xxx.local python3[1151364]: Modules Connected:  1
