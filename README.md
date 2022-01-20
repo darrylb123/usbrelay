@@ -264,7 +264,7 @@ Debian:
 
 Fedora:
 ```
-##Install Python3 dev pacakage
+##Install Python3 dev package
 # dnf install python3-devel
 ```
 
