@@ -445,7 +445,10 @@ To install:
 sudo useradd usbrelay
 sudo apt-get install python-paho-mqtt (Debian)
 dnf install python3-paho-mqtt (Fedora)
-cp usbrelayd /usr/local/sbin
+sudo cp usbrelayd /usr/sbin
+sudo cp usbrelayd.ini /etc/usbrelayd.ini
+
+
 ```
 #### usbrelay.service 
 A systemd unit for controlling and monitoring the usbrelayd daemon

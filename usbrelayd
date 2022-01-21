@@ -8,6 +8,7 @@ import usbrelay_py
 import time
 import re
 import sys
+import configparser
 
 def publish_states(client):
     boards = usbrelay_py.board_details()
@@ -51,10 +52,15 @@ def on_message(client, userdata, message):
 # read the server name or IP address from the command lin
 
 
-if ( len(sys.argv) < 2 ):
-    print("No mqtt broker name",flush=True)
-    exit()
-mqttBroker = sys.argv[1]
+config = configparser.ConfigParser()
+config.read('/etc/usbrelayd.ini')
+mqttBroker = config['MQTT']['BROKER']
+clientName = config['MQTT']['CLIENTNAME']
+
+print("MQTT Broker: ", mqttBroker)
+print("MQTT Client: ", clientName)
+
+
 #
 # Count connected usbrelay modules, exit if none 
 count = usbrelay_py.board_count()
@@ -68,7 +74,7 @@ else:
 # connect to the mqtt broker
 
 
-client = mqtt.Client("Switch")
+client = mqtt.Client(clientName)
 client.connect(mqttBroker) 
 publish_states(client)
 client.on_message=on_message 

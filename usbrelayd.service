@@ -9,7 +9,7 @@ Type=simple
 Restart=always
 RestartSec=1
 User=usbrelay
-ExecStart=/usr/bin/python3 /usr/local/sbin/usbrelayd mymqttbroker
+ExecStart=/usr/bin/python3 /usr/sbin/usbrelayd
 StandardOutput=journal+console
 StandardError=journal+console
 
