@@ -44,6 +44,17 @@ Summary: Python 3 user interface for usbrelay
  This package includes the usbrelay Python 3 module.
 
 
+%package mqtt
+Requires: %{name}-common%{_isa} = %{version}-%{release}
+Requires: %{name}-python3%{_isa} = %{version}-%{release}
+Summary: Support for Home Assistant or nodered with usbrelay
+%description mqtt
+%{common_description}
+ .
+ This package provides the MQTT support for using usbrelay with Home Assistant
+ or nodered.
+
+
 %prep
 %autosetup -n %{name}-%{branch}
 
@@ -56,7 +67,12 @@ make python HIDAPI=libusb
 %install
 make install DESTDIR=%{buildroot}
 python3 setup.py install --prefix=%{_prefix} --install-lib=%{buildroot}%{python3_sitearch}
-
+mkdir -p %{buildroot}%_udevrulesdir
+cp 50-usbrelay.rules %{buildroot}%_udevrulesdir
+mkdir %{buildroot}%{_sbindir}
+cp usbrelayd %{buildroot}%{_sbindir}
+mkdir -p %{buildroot}/etc/systemd/system
+cp usbrelayd.service %{buildroot}/etc/systemd/system/
 
 %files common
 %license LICENSE.md
@@ -67,6 +83,12 @@ python3 setup.py install --prefix=%{_prefix} --install-lib=%{buildroot}%{python3
 
 %files python3
 %{python3_sitearch}/%{name}_*.egg/
+
+
+%files mqtt
+%_udevrulesdir/50-usbrelay.rules
+%{_sbindir}/usbrelayd
+/etc/systemd/system/usbrelayd.service
 
 
 %changelog
