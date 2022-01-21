@@ -1,4 +1,4 @@
 SUBSYSTEM=="usb", ATTR{idVendor}=="16c0",ATTR{idProduct}=="05df", MODE="0666"
 KERNEL=="hidraw*",  ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="05df", MODE="0660", GROUP="usbrelay", TAG+="systemd" ENV{SYSTEMD_WANTS}="usbrelayd.service"
-KERNEL=="hidraw*",  ATTRS{idVendor}=="0519", ATTRS{idProduct}=="2018", MODE="0660", GROUP="usbrelay"
+KERNEL=="hidraw*",  ATTRS{idVendor}=="0519", ATTRS{idProduct}=="2018", MODE="0660", GROUP="usbrelay", SYMLINK+="usbrelay%b"
 
