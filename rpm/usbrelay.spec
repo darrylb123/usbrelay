@@ -62,17 +62,21 @@ Summary: Support for Home Assistant or nodered with usbrelay
 %build
 %set_build_flags
 make python HIDAPI=libusb
+%py3_build
 
 
 %install
 make install DESTDIR=%{buildroot}
-python3 setup.py install --prefix=%{_prefix} --install-lib=%{buildroot}%{python3_sitearch}
+
+%py3_install
+
 mkdir -p %{buildroot}%_udevrulesdir
 cp 50-usbrelay.rules %{buildroot}%_udevrulesdir
 mkdir %{buildroot}%{_sbindir}
 cp usbrelayd %{buildroot}%{_sbindir}
 mkdir -p %{buildroot}/etc/systemd/system
 cp usbrelayd.service %{buildroot}/etc/systemd/system/
+
 
 %files common
 %license LICENSE.md
@@ -82,11 +86,12 @@ cp usbrelayd.service %{buildroot}/etc/systemd/system/
 
 
 %files python3
-%{python3_sitearch}/%{name}_*.egg/
+%{python3_sitearch}/%{name}_*.egg-info
+%{python3_sitearch}/%{name}_py*.so
 
 
 %files mqtt
-%_udevrulesdir/50-usbrelay.rules
+/%_udevrulesdir/50-usbrelay.rules
 %{_sbindir}/usbrelayd
 /etc/systemd/system/usbrelayd.service
 
