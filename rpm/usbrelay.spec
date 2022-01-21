@@ -70,11 +70,11 @@ make install DESTDIR=%{buildroot}
 
 %py3_install
 
-mkdir -p %{buildroot}%_udevrulesdir
-cp 50-usbrelay.rules %{buildroot}%_udevrulesdir
+mkdir -p %{buildroot}%{_prefix}/lib/udev/rules.d/
+cp 50-usbrelay.rules %{buildroot}%{_prefix}/lib/udev/rules.d/
 mkdir %{buildroot}%{_sbindir}
 cp usbrelayd %{buildroot}%{_sbindir}
-mkdir -p %{buildroot}/etc/systemd/system
+mkdir -p %{buildroot}%{_sysconfdir}/systemd/system
 cp usbrelayd.service %{buildroot}/etc/systemd/system/
 
 
@@ -91,9 +91,9 @@ cp usbrelayd.service %{buildroot}/etc/systemd/system/
 
 
 %files mqtt
-/%_udevrulesdir/50-usbrelay.rules
+%{_prefix}/lib/udev/rules.d/50-usbrelay.rules
 %{_sbindir}/usbrelayd
-/etc/systemd/system/usbrelayd.service
+%{_sysconfdir}/systemd/system/usbrelayd.service
 
 
 %changelog
