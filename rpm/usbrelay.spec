@@ -16,10 +16,14 @@ BuildRequires:  hidapi-devel
 BuildRequires:  make
 BuildRequires:  python3
 BuildRequires:  python3-devel
+BuildRequires:  python3-setuptools
 
 
 %global common_description %{expand: \
- usbrelay...}
+ This package includes programs to operate some USB connected electrical relays.
+ Supported relays USB ID:
+ - 16c0:05df
+ - 0519:2018}
 
 %description
 %{common_description}
@@ -29,9 +33,15 @@ BuildRequires:  python3-devel
 Summary: Common files needed for all usbrelay interfaces
 %description common
 %{common_description}
+
+
+%package python3
+Requires: %{name}-common%{_isa} = %{version}-%{release}
+Summary: Python 3 user interface for usbrelay
+%description python3
+%{common_description}
  .
- This package includes programs for parsing and converting chemical
- mechanisms, a set of common mechanism files, and several sample problems.
+ This package includes the usbrelay Python 3 module.
 
 
 %prep
@@ -45,6 +55,7 @@ make python HIDAPI=libusb
 
 %install
 make install DESTDIR=%{buildroot}
+python3 setup.py install --prefix=%{_prefix} --install-lib=%{buildroot}%{python3_sitearch}
 
 
 %files common
@@ -52,6 +63,10 @@ make install DESTDIR=%{buildroot}
 %doc README.md
 %{_bindir}/usbrelay
 %{_libdir}/libusbrelay.so
+
+
+%files python3
+%{python3_sitearch}/%{name}_*.egg/
 
 
 %changelog
