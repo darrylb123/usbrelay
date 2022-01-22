@@ -2,7 +2,7 @@
 %global branch rpm
 
 Name:          usbrelay
-Version:       0.8.0
+Version:       0.9.0
 Release:       1%{?dist}
 Summary:       USB-connected electrical relay control, based on hidapi
 License:       GPLv2
@@ -12,7 +12,6 @@ Source0:       %{url}archive/%{branch}.tar.gz
 BuildRequires:  gcc
 BuildRequires:  git
 BuildRequires:  hidapi-devel
-#BuildRequires:  libusb
 BuildRequires:  make
 BuildRequires:  python3
 BuildRequires:  python3-devel
@@ -97,5 +96,8 @@ cp usbrelayd.service %{buildroot}/etc/systemd/system/
 
 
 %changelog
+* Sat Jan 22 2022 Mark E. Fuller <mark.e.fuller@gmx.de> - 0.9.0-1
+- bump version 
+
 * Thu Jan 20 2022 Mark E. Fuller <mark.e.fuller@gmx.de> - 0.8.0-1
 - first attempt versions of spec file and packaging
