@@ -53,7 +53,7 @@ def on_message(client, userdata, message):
 
 
 config = configparser.ConfigParser()
-config.read('/etc/usbrelayd.ini')
+config.read('/etc/usbrelayd.conf')
 mqttBroker = config['MQTT']['BROKER']
 clientName = config['MQTT']['CLIENTNAME']
 
