@@ -1,13 +1,10 @@
-%global fork mefuller
-%global branch rpm
-
 Name:          usbrelay
-Version:       0.9.0
+Version:       0.9
 Release:       1%{?dist}
 Summary:       USB-connected electrical relay control, based on hidapi
 License:       GPLv2
-URL:           https://github.com/%{fork}/%{name}/
-Source0:       %{url}archive/%{branch}.tar.gz
+URL:           https://github.com/darrylb123/%{name}/
+Source0:       %{url}archive/refs/tags/%{version}.tar.gz
 Source1:       ./%{name}.sysusers
 
 BuildRequires:  gcc
@@ -36,10 +33,10 @@ Summary: Common files needed for all usbrelay interfaces
 %{common_description}
 
 
-%package python3
+%package -n python3-%{name}
 Requires: %{name}-common%{_isa} = %{version}-%{release}
 Summary: Python 3 user interface for usbrelay
-%description python3
+%description -n python3-%{name}
 %{common_description}
  .
  This package includes the usbrelay Python 3 module.
@@ -47,7 +44,7 @@ Summary: Python 3 user interface for usbrelay
 
 %package mqtt
 Requires: %{name}-common%{_isa} = %{version}-%{release}
-Requires: %{name}-python3%{_isa} = %{version}-%{release}
+Requires: python3-%{name}%{_isa} = %{version}-%{release}
 Summary: Support for Home Assistant or nodered with usbrelay
 %description mqtt
 %{common_description}
@@ -57,7 +54,7 @@ Summary: Support for Home Assistant or nodered with usbrelay
 
 
 %prep
-%autosetup -n %{name}-%{branch}
+%autosetup -n %{name}-%{version}
 
 
 %build
@@ -88,15 +85,15 @@ cp usbrelayd.service %{buildroot}/etc/systemd/system/
 %doc README.md
 %{_bindir}/usbrelay
 %{_libdir}/libusbrelay.so
+%{_prefix}/lib/udev/rules.d/50-usbrelay.rules
 
 
-%files python3
+%files -n python3-%{name}
 %{python3_sitearch}/%{name}_*.egg-info
 %{python3_sitearch}/%{name}_py*.so
 
 
 %files mqtt
-%{_prefix}/lib/udev/rules.d/50-usbrelay.rules
 %{_sbindir}/usbrelayd
 %{_sysconfdir}/systemd/system/usbrelayd.service
 
