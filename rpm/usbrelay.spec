@@ -8,6 +8,7 @@ Summary:       USB-connected electrical relay control, based on hidapi
 License:       GPLv2
 URL:           https://github.com/%{fork}/%{name}/
 Source0:       %{url}archive/%{branch}.tar.gz
+Source1:       ./%{name}.sysusers
 
 BuildRequires:  gcc
 BuildRequires:  git
@@ -16,6 +17,7 @@ BuildRequires:  make
 BuildRequires:  python3
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
+BuildRequires:  systemd-rpm-macros
 
 
 %global common_description %{expand: \
@@ -75,6 +77,10 @@ mkdir %{buildroot}%{_sbindir}
 cp usbrelayd %{buildroot}%{_sbindir}
 mkdir -p %{buildroot}%{_sysconfdir}/systemd/system
 cp usbrelayd.service %{buildroot}/etc/systemd/system/
+
+
+%pre
+%sysusers_create_compat %{SOURCE1}
 
 
 %files common
