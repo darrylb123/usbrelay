@@ -27,7 +27,7 @@ def publish_states(client):
             topic = "{0}/{1}/{2}"
             topic_str = topic.format("stat",board[0],relay)
             print("State: ", topic_str, relay_state,flush=True)
-            client.publish(topic_str, relay_state)
+            client.publish(topic_str, relay_state, qos=0, retain=True)
             topic_str = topic.format("cmnd",board[0],relay)
             print("Subscribed: ", topic_str,flush=True)
             client.subscribe(topic_str)
