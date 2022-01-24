@@ -451,7 +451,7 @@ MQTT support provides capability of using Home Assistant or nodered with usbrela
 
 - usbrelayd 
 - usbrelay.service
-- usbrelayd.ini
+- usbrelayd.conf
 #### usbrelayd
 A python daemon using libusbrelay to connect to an MQTT server. When the daemon starts, it publishes the state of all usbrelay devices found and subscribes to command topics for each relay.
 To install:
@@ -460,10 +460,10 @@ sudo useradd usbrelay
 sudo apt-get install python-paho-mqtt (Debian)
 dnf install python3-paho-mqtt (Fedora)
 sudo cp usbrelayd /usr/sbin
-sudo cp usbrelayd.ini /etc/usbrelayd.ini
+sudo cp usbrelayd.conf /etc/usbrelayd.conf
 
 ```
-Modify /etc/usbrelayd.ini to suit your circumstances.
+Modify /etc/usbrelayd.conf to suit your circumstances.
 #### usbrelay.service 
 A systemd unit for controlling and monitoring the usbrelayd daemon
 The systemd service file references your MQTT broker hostname as mymqttbroker. Either create that hostname in DNS or /etc/hosts. Alternatively, If you are using an external MQTT broker, modify the service file accordingly.
