@@ -1,0 +1,32 @@
+.TH "usbrelay" 1 "24 Jan 2022" "usbrelay"
+.SH NAME
+usbrelay \- control or query USB HID relays
+
+.SH SYNOPSIS
+.B usbrelay
+[OPTION...]
+[ACTION...]
+
+.SH DESCRIPTION
+.B usbrelay
+allows for querying and setting the state of USB HID electrical relays.
+If no ACTION is passed, the state of all relays is printed to stdout.
+RELID_N=[0|1] sets the N-th relay to off or on.
+RELID=NEWID sets the relay ID.
+
+.SH OPTIONS
+.TP
+.BR \-d ", " \-\-debug
+Produce debugging output
+.TP
+.BR \-q ", " \-\-quiet
+Suppress output
+.TP
+.BR \-? ", " \-\-help
+Print the help menu
+.TP
+.BR \-\-usage
+Print a usage description
+.TP
+.BR \-V ", " \-\-version
+Print the program version
