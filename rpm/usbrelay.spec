@@ -3,8 +3,8 @@ Version:       0.9
 Release:       2%{?dist}
 Summary:       USB-connected electrical relay control, based on hidapi
 License:       GPLv2
-URL:           https://github.com/darrylb123/%{name}/
-Source0:       %{url}archive/master.tar.gz
+URL:           https://github.com/mefuller/%{name}/
+Source0:       %{url}archive/rpm.tar.gz
 Source1:       ./%{name}.sysusers
 
 BuildRequires:  gcc
