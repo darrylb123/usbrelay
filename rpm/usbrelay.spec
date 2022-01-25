@@ -89,7 +89,6 @@ install usbrelay.1 %{_buildroot}/share/man/man1/
 %files common
 %license LICENSE.md
 %doc README.md
-%doc %{_prefix}/share/man/man1/usbrelay.1
 %{_bindir}/usbrelay
 %{_libdir}/libusbrelay.so
 %{_prefix}/lib/udev/rules.d/50-usbrelay.rules
