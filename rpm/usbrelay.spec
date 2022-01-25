@@ -71,15 +71,15 @@ make install DESTDIR=%{buildroot}
 %py3_install
 
 
-install -d %{buildroot}%{_prefix}/lib/udev/rules.d/
-install 50-usbrelay.rules %{buildroot}%{_prefix}/lib/udev/rules.d/
+install -d %{buildroot}%{_udevrulesdir}/
+install 50-usbrelay.rules %{buildroot}%{_udevrulesdir}/
 install -d %{buildroot}%{_sbindir}
 install usbrelayd %{buildroot}%{_sbindir}
 install -d %{buildroot}%{_sysconfdir}/systemd/system
 install usbrelayd.service %{buildroot}%{_sysconfdir}/systemd/system/
 install usbrelayd.conf %{buildroot}%{_sysconfdir}/
-install -d %{_buildroot}/share/man/man1/
-install usbrelay.1 %{_buildroot}/share/man/man1/
+install -d %{_buildroot}{_mandir}/man1/
+install usbrelay.1 %{_buildroot}{_mandir}/man1/
 
 
 %pre
@@ -91,7 +91,7 @@ install usbrelay.1 %{_buildroot}/share/man/man1/
 %doc README.md
 %{_bindir}/usbrelay
 %{_libdir}/libusbrelay.so
-%{_prefix}/lib/udev/rules.d/50-usbrelay.rules
+%{_udevrulesdir}/50-usbrelay.rules
 
 
 %files -n python3-%{name}
