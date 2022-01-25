@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+
 # MQTT daemon for usbrelay
 # Publishes a state topic for each connected usbrelay and subscribes to command topics  for each relay
 # Topics are stat/SERIAL/RELAY or cmnd/SERIAL/RELAY
