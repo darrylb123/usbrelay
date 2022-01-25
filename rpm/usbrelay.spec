@@ -1,10 +1,13 @@
+%global fork mefuller
+%global branch rpm
+
 Name:          usbrelay
 Version:       0.9
 Release:       2%{?dist}
 Summary:       USB-connected electrical relay control, based on hidapi
 License:       GPLv2
-URL:           https://github.com/mefuller/%{name}/
-Source0:       %{url}archive/rpm.tar.gz
+URL:           https://github.com/%{fork}/%{name}/
+Source0:       %{url}archive/%{branch}.tar.gz
 Source1:       ./%{name}.sysusers
 
 BuildRequires:  gcc
@@ -54,7 +57,7 @@ Summary: Support for Home Assistant or nodered with usbrelay
 
 
 %prep
-%autosetup -n %{name}-master
+%autosetup -n %{name}-%{branch}
 
 
 %build
@@ -74,9 +77,9 @@ install -d %{buildroot}%{_sbindir}
 install usbrelayd %{buildroot}%{_sbindir}
 install -d %{buildroot}%{_sysconfdir}/systemd/system
 install usbrelayd.service %{buildroot}%{_sysconfdir}/systemd/system/
-install usbrelayd.conf %{_sysconfdir}/
-install -d %{_mandir}/man1/
-install usbrelay.1 %{_mandir}/man1/
+install usbrelayd.conf %{buildroot}%{_sysconfdir}/
+install -d %{_buildroot}/share/man/man1/
+install usbrelay.1 %{_buildroot}/share/man/man1/
 
 
 %pre
@@ -86,7 +89,7 @@ install usbrelay.1 %{_mandir}/man1/
 %files common
 %license LICENSE.md
 %doc README.md
-%doc %{_mandir}/man1/usbrelay.1
+%doc %{_prefix}/share/man/man1/usbrelay.1
 %{_bindir}/usbrelay
 %{_libdir}/libusbrelay.so
 %{_prefix}/lib/udev/rules.d/50-usbrelay.rules
