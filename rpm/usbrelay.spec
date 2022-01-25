@@ -68,6 +68,7 @@ make python HIDAPI=libusb
 
 %install
 make install DESTDIR=%{buildroot}
+%py3_install
 
 
 install -d %{buildroot}%{_prefix}/lib/udev/rules.d/
@@ -96,7 +97,7 @@ install usbrelay.1 %{_buildroot}/share/man/man1/
 %files -n python3-%{name}
 %{python3_sitearch}/%{name}_*.egg-info
 %{python3_sitearch}/%{name}_py*.so
-%{python3_sitearch}/%{name}_test.py
+%{python3_sitearch}/%{name}_py/
 
 
 %files mqtt
