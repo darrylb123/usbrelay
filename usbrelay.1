@@ -11,8 +11,16 @@ usbrelay \- control or query USB HID relays
 .B usbrelay
 allows for querying and setting the state of USB HID electrical relays.
 If no ACTION is passed, the state of all relays is printed to stdout.
-RELID_N=[0|1] sets the N-th relay to off or on.
-RELID=NEWID sets the relay ID.
+RELID_N=[0|1] sets the N-th relay on module RELID to off or on. 
+
+Multiple actions can be performed with one command
+
+eg:
+
+usbrelay REL0A_1=0 REL0A_2=1 REL0B_2=0...
+
+The Relay module ID can be changed on DCTTECH relays:
+RELID_0=NEWID sets the relay RELID to NEWID
 
 .SH OPTIONS
 .TP
