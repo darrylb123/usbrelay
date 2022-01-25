@@ -1,10 +1,10 @@
 Name:          usbrelay
 Version:       0.9
-Release:       1%{?dist}
+Release:       2%{?dist}
 Summary:       USB-connected electrical relay control, based on hidapi
 License:       GPLv2
 URL:           https://github.com/darrylb123/%{name}/
-Source0:       %{url}archive/refs/tags/%{version}.tar.gz
+Source0:       %{url}archive/master.tar.gz
 Source1:       ./%{name}.sysusers
 
 BuildRequires:  gcc
@@ -54,7 +54,7 @@ Summary: Support for Home Assistant or nodered with usbrelay
 
 
 %prep
-%autosetup -n %{name}-%{version}
+%autosetup -n %{name}-master
 
 
 %build
@@ -75,6 +75,9 @@ install usbrelayd %{buildroot}%{_sbindir}
 install -d %{buildroot}%{_sysconfdir}/systemd/system
 install usbrelayd.service %{buildroot}%{_sysconfdir}/systemd/system/
 install usbrelayd.conf %{_sysconfdir}/
+install -d %{_mandir}/man1/
+install usbrelay.1 %{_mandir}/man1/
+
 
 %pre
 %sysusers_create_compat %{SOURCE1}
@@ -83,6 +86,7 @@ install usbrelayd.conf %{_sysconfdir}/
 %files common
 %license LICENSE.md
 %doc README.md
+%doc %{_mandir}/man1/usbrelay.1
 %{_bindir}/usbrelay
 %{_libdir}/libusbrelay.so
 %{_prefix}/lib/udev/rules.d/50-usbrelay.rules
@@ -101,6 +105,9 @@ install usbrelayd.conf %{_sysconfdir}/
 
 
 %changelog
+* Tue Jan 25 2022 Mark E. Fuller <mark.e.fuller@gmx.de> - 0.9.0-2
+- continued spec development and upstream improvements 
+
 * Sat Jan 22 2022 Mark E. Fuller <mark.e.fuller@gmx.de> - 0.9.0-1
 - bump version 
 
