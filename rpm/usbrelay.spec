@@ -69,7 +69,6 @@ make python HIDAPI=libusb
 %install
 make install DESTDIR=%{buildroot}
 
-%py3_install
 
 install -d %{buildroot}%{_prefix}/lib/udev/rules.d/
 install 50-usbrelay.rules %{buildroot}%{_prefix}/lib/udev/rules.d/
