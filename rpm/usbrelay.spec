@@ -3,7 +3,7 @@
 
 Name:          usbrelay
 Version:       0.9
-Release:       2%{?dist}
+Release:       3%{?dist}
 Summary:       USB-connected electrical relay control, based on hidapi
 License:       GPLv2
 URL:           https://github.com/%{fork}/%{name}/
@@ -62,7 +62,7 @@ Summary: Support for Home Assistant or nodered with usbrelay
 
 %build
 %set_build_flags
-make python HIDAPI=libusb
+make HIDAPI=libusb
 %py3_build
 
 
@@ -107,6 +107,10 @@ install usbrelay.1 %{_buildroot}{_mandir}/man1/
 
 
 %changelog
+* Wed Jan 26 2022 Mark E. Fuller <mark.e.fuller@gmx.de> - 0.9.0-3
+- restore minimal Python module
+- try to figure out later what to do with test.py
+
 * Tue Jan 25 2022 Mark E. Fuller <mark.e.fuller@gmx.de> - 0.9.0-2
 - continued spec development and upstream improvements 
 
