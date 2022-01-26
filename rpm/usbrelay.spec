@@ -80,6 +80,9 @@ install usbrelayd.service %{buildroot}%{_sysconfdir}/systemd/system/
 install usbrelayd.conf %{buildroot}%{_sysconfdir}/
 install -d %{_buildroot}{_mandir}/man1/
 install usbrelay.1 %{_buildroot}{_mandir}/man1/
+install -d %{_buildroot}%{_datadir}/%{name}/
+install test.py %{_buildroot}%{_datadir}/%{name}/
+
 
 
 %pre
@@ -98,6 +101,7 @@ install usbrelay.1 %{_buildroot}{_mandir}/man1/
 %{python3_sitearch}/%{name}_*.egg-info
 %{python3_sitearch}/%{name}_py*.so
 %{python3_sitearch}/%{name}_py/
+%{_datadir}/%{name}/test.py
 
 
 %files mqtt

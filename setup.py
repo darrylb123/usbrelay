@@ -16,7 +16,6 @@ setup(
     author_email = "sean@malmoset.com",
     license = 'GPL-2.0',
     ext_modules = [module1],
-    packages = ['usbrelay_pytest'],
 
     classifiers = [
         'Intended Audience :: Science/Research',
