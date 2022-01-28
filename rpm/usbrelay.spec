@@ -62,14 +62,13 @@ Summary: Support for Home Assistant or nodered with usbrelay
 
 %build
 %set_build_flags
-make HIDAPI=libusb
-%py3_build
-
+make python HIDAPI=libusb
 
 %install
 make install DESTDIR=%{buildroot}
 %py3_install
 
+# manual copy/install operations from README
 install -d %{buildroot}%{_udevrulesdir}/
 install 50-usbrelay.rules %{buildroot}%{_udevrulesdir}/
 install -d %{buildroot}%{_sbindir}
@@ -83,15 +82,15 @@ install -d %{_buildroot}%{_datadir}/%{name}/
 install test.py %{_buildroot}%{_datadir}/%{name}/
 
 # usbrelay so is not versioned upstream (has been requested)
-cd %{buildroot}%{_libdir}
-mv libusbrelay.so libusbrelay.so.%{version}
-ln -s libusbrelay.so.%{version} libusbrelay.so.0
-ln -s libusbrelay.so.0 libusbrelay.so
-cd -
+#cd #{buildroot}#{_libdir}
+#mv libusbrelay.so libusbrelay.so.#{version}
+#ln -s libusbrelay.so.#{version} libusbrelay.so.0
+#ln -s libusbrelay.so.0 libusbrelay.so
+#cd -
 
-# check import
-export LD_LIBRARY_PATH=%{buildroot}%{_libdir}
-%py3_check_import usbrelay
+# verify that Python module imports
+export LD_LIBRARY_PATH=%{buildroot}%{_libdir}:%{buildroot}%{python3_sitearch}
+%py3_check_import usbrelay_py
 
 
 %pre
@@ -104,12 +103,14 @@ export LD_LIBRARY_PATH=%{buildroot}%{_libdir}
 #{_mandir}/man1/usbrelay.1
 %{_bindir}/usbrelay
 %{_libdir}/libusbrelay.so
+#{_libdir}/libusbrelay.so.0
+#{_libdir}/libusbrelay.so.%{version}
 %{_udevrulesdir}/50-usbrelay.rules
 
 
 %files -n python3-%{name}
-%{python3_sitearch}/%{name}_*.egg-info
 %{python3_sitearch}/%{name}_py*.so
+%{python3_sitearch}/%{name}_py*.egg-info
 #{_datadir}/{name}/test.py
 
 

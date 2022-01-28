@@ -16,7 +16,6 @@ setup(
     author_email = "sean@malmoset.com",
     license = 'GPL-2.0',
     ext_modules = [module1],
-
     classifiers = [
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: GNU General Public License v2 (GPLv2)',
