@@ -3,7 +3,7 @@
 
 Name:          usbrelay
 Version:       0.9
-Release:       3%{?dist}
+Release:       %autorelease
 Summary:       USB-connected electrical relay control, based on hidapi
 License:       GPLv2
 URL:           https://github.com/%{fork}/%{name}/
@@ -70,7 +70,6 @@ make HIDAPI=libusb
 make install DESTDIR=%{buildroot}
 %py3_install
 
-
 install -d %{buildroot}%{_udevrulesdir}/
 install 50-usbrelay.rules %{buildroot}%{_udevrulesdir}/
 install -d %{buildroot}%{_sbindir}
@@ -83,6 +82,16 @@ install usbrelay.1 %{_buildroot}%{_mandir}/man1/
 install -d %{_buildroot}%{_datadir}/%{name}/
 install test.py %{_buildroot}%{_datadir}/%{name}/
 
+# usbrelay so is not versioned upstream (has been requested)
+cd %{buildroot}%{_libdir}
+mv libusbrelay.so libusbrelay.so.%{version}
+ln -s libusbrelay.so.%{version} libusbrelay.so.0
+ln -s libusbrelay.so.0 libusbrelay.so
+cd -
+
+# check import
+export LD_LIBRARY_PATH=%{buildroot}%{_libdir}
+%py3_check_import usbrelay
 
 
 %pre
@@ -111,15 +120,4 @@ install test.py %{_buildroot}%{_datadir}/%{name}/
 
 
 %changelog
-* Wed Jan 26 2022 Mark E. Fuller <mark.e.fuller@gmx.de> - 0.9.0-3
-- restore minimal Python module
-- why are man and test.py not installing?
-
-* Tue Jan 25 2022 Mark E. Fuller <mark.e.fuller@gmx.de> - 0.9.0-2
-- continued spec development and upstream improvements 
-
-* Sat Jan 22 2022 Mark E. Fuller <mark.e.fuller@gmx.de> - 0.9.0-1
-- bump version 
-
-* Thu Jan 20 2022 Mark E. Fuller <mark.e.fuller@gmx.de> - 0.8.0-1
-- first attempt versions of spec file and packaging
+%autochangelog
