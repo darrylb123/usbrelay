@@ -44,15 +44,16 @@ usbrelay.c libusbrelay.c: gitversion.h
 
 #We build this once directly for error checking purposes, then let python do the real build
 
-libusbrelay_py.so: libusbrelay_py.c libusbrelay.so
-	$(CC) -shared -fPIC $(PYTHON_INCLUDE) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -L./ -lusbrelay -o $@ $<
-	python3 setup.py build
+libusbrelay_py.so: usbrelay_py/src/libusbrelay_py.c libusbrelay.so
+	$(CC) -shared -fPIC $(PYTHON_INCLUDE) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -I./ -L./ -lusbrelay -o $@ $<
+	cd usbrelay_py
+	python3 -m build
 
 clean:
 	rm -f usbrelay
 	rm -f libusbrelay.so
 	rm -f libusbrelay_py.so
-	rm -rf build
+	rm -rf build usbrelay_py/dist 
 	rm -f gitversion.h
 
 

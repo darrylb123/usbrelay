@@ -22,15 +22,14 @@ ifneq ($(DEB_HOST_MULTIARCH),)
 endif
 
 
-python:  ../libusbrelay.so src/libusbrelay_py.so
+all:  ../libusbrelay.so src/libusbrelay_py.so dist/
 
 
 
 #We build this once directly for error checking purposes, then let python do the real build
 
 src/libusbrelay_py.so: src/libusbrelay_py.c ../libusbrelay.so
-	$(CC) -shared -fPIC $(PYTHON_INCLUDE) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -I./.. -L./.. -lusbrelay -o $@ $<
-	python3 -m build
+	python3 -m build --wheel
 
 clean:
 	
@@ -39,9 +38,7 @@ clean:
 	
 
 
-install: 
-
-install_py: install libusbrelay.so libusbrelay_py.so
+install: install src/libusbrelay_py.so
 	python3 -m install
 
 .PHONY: all clean install
