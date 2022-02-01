@@ -3,7 +3,7 @@
 
 Name:          usbrelay
 Version:       0.9
-Release:       %autorelease
+Release:       1%{?dist}
 Summary:       USB-connected electrical relay control, based on hidapi
 License:       GPLv2
 URL:           https://github.com/%{fork}/%{name}/
@@ -122,4 +122,5 @@ install test.py %{_buildroot}%{_datadir}/%{name}/
 
 
 %changelog
-%autochangelog
+* Thu Oct 14 2021 Mark E. Fuller <fuller@fedoraproject.org> - 2.6.0-0.1.a3
+- placeholder entry before autochangelog
