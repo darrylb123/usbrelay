@@ -88,9 +88,10 @@ install test.py %{_buildroot}%{_datadir}/%{name}/
 #ln -s libusbrelay.so.0 libusbrelay.so
 #cd -
 
+%check
 # verify that Python module imports
-export LD_LIBRARY_PATH=%{buildroot}%{_libdir}:%{buildroot}%{python3_sitearch}
-%py3_check_import usbrelay_py
+#export LD_LIBRARY_PATH=
+#py3_check_import -f {buildroot}{python3_sitearch}/{name}_py*.so
 
 
 %pre
@@ -104,7 +105,7 @@ export LD_LIBRARY_PATH=%{buildroot}%{_libdir}:%{buildroot}%{python3_sitearch}
 %{_bindir}/usbrelay
 %{_libdir}/libusbrelay.so
 #{_libdir}/libusbrelay.so.0
-#{_libdir}/libusbrelay.so.%{version}
+#{_libdir}/libusbrelay.so.{version}
 %{_udevrulesdir}/50-usbrelay.rules
 
 
