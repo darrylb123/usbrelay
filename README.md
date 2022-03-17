@@ -259,7 +259,8 @@ This also optionally includes a python extension. In order to build the python e
 Debian:
 ```
 ##Install Python3 dev package
-# sudo apt install libpython3.5-dev
+# sudo apt install libpython3-dev python3-venv pip
+# sudo pip install build
 ```
 
 Fedora:
