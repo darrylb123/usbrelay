@@ -38,7 +38,7 @@ clean:
 	
 
 
-install: install src/libusbrelay_py.so
-	python3 -m pip install
+install: install 
+	python3 -m pip install .
 
 .PHONY: all clean install
