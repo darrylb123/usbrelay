@@ -1,9 +1,9 @@
-%global fork mefuller
+%global fork fuller
 %global branch rpm
 
 Name:          usbrelay
 Version:       0.9
-Release:       1%{?dist}
+Release:       %autorelease
 Summary:       USB-connected electrical relay control, based on hidapi
 License:       GPLv2
 URL:           https://github.com/%{fork}/%{name}/
@@ -76,22 +76,16 @@ install usbrelayd %{buildroot}%{_sbindir}
 install -d %{buildroot}%{_sysconfdir}/systemd/system
 install usbrelayd.service %{buildroot}%{_sysconfdir}/systemd/system/
 install usbrelayd.conf %{buildroot}%{_sysconfdir}/
-install -d %{_buildroot}%{_mandir}/man1/
-install usbrelay.1 %{_buildroot}%{_mandir}/man1/
-install -d %{_buildroot}%{_datadir}/%{name}/
-install test.py %{_buildroot}%{_datadir}/%{name}/
 
-# usbrelay so is not versioned upstream (has been requested)
-#cd #{buildroot}#{_libdir}
-#mv libusbrelay.so libusbrelay.so.#{version}
-#ln -s libusbrelay.so.#{version} libusbrelay.so.0
-#ln -s libusbrelay.so.0 libusbrelay.so
-#cd -
+# install test function (since users need to test relay boards)
+install -d %{buildroot}%{python3_sitearch}/%{name}
+install test.py %{buildroot}%{python3_sitearch}/%{name}/
+
 
 %check
 # verify that Python module imports
-#export LD_LIBRARY_PATH=
-#py3_check_import -f {buildroot}{python3_sitearch}/{name}_py*.so
+# can't test here as this required hardware(?)
+
 
 
 %pre
@@ -101,18 +95,15 @@ install test.py %{_buildroot}%{_datadir}/%{name}/
 %files common
 %license LICENSE.md
 %doc README.md
-#{_mandir}/man1/usbrelay.1
 %{_bindir}/usbrelay
 %{_libdir}/libusbrelay.so
-#{_libdir}/libusbrelay.so.0
-#{_libdir}/libusbrelay.so.{version}
 %{_udevrulesdir}/50-usbrelay.rules
 
 
 %files -n python3-%{name}
 %{python3_sitearch}/%{name}_py*.so
 %{python3_sitearch}/%{name}_py*.egg-info
-#{_datadir}/{name}/test.py
+%{python3_sitearch}/%{name}/*
 
 
 %files mqtt
@@ -122,5 +113,4 @@ install test.py %{_buildroot}%{_datadir}/%{name}/
 
 
 %changelog
-* Thu Oct 14 2021 Mark E. Fuller <fuller@fedoraproject.org> - 2.6.0-0.1.a3
-- placeholder entry before autochangelog
+%autochangelog
