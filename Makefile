@@ -63,6 +63,6 @@ install: usbrelay libusbrelay.so
 	install -m 0755 usbrelay $(DESTDIR)$(PREFIX)/bin
 
 install_py: install libusbrelay.so libusbrelay_py.so
-	python3 setup.py install
+	python3 setup.py install --prefix=$(DESTDIR)
 
 .PHONY: all clean install

@@ -1,9 +1,9 @@
-%global fork mefuller
+%global fork fuller
 %global branch rpm
 
 Name:          usbrelay
 Version:       0.9
-Release:       2%{?dist}
+Release:       %autorelease
 Summary:       USB-connected electrical relay control, based on hidapi
 License:       GPLv2
 URL:           https://github.com/%{fork}/%{name}/
@@ -63,23 +63,29 @@ Summary: Support for Home Assistant or nodered with usbrelay
 %build
 %set_build_flags
 make python HIDAPI=libusb
-%py3_build
-
 
 %install
 make install DESTDIR=%{buildroot}
 %py3_install
 
-
-install -d %{buildroot}%{_prefix}/lib/udev/rules.d/
-install 50-usbrelay.rules %{buildroot}%{_prefix}/lib/udev/rules.d/
+# manual copy/install operations from README
+install -d %{buildroot}%{_udevrulesdir}/
+install 50-usbrelay.rules %{buildroot}%{_udevrulesdir}/
 install -d %{buildroot}%{_sbindir}
 install usbrelayd %{buildroot}%{_sbindir}
 install -d %{buildroot}%{_sysconfdir}/systemd/system
 install usbrelayd.service %{buildroot}%{_sysconfdir}/systemd/system/
 install usbrelayd.conf %{buildroot}%{_sysconfdir}/
-install -d %{_buildroot}/share/man/man1/
-install usbrelay.1 %{_buildroot}/share/man/man1/
+
+# install test function (since users need to test relay boards)
+install -d %{buildroot}%{python3_sitearch}/%{name}
+install test.py %{buildroot}%{python3_sitearch}/%{name}/
+
+
+%check
+# verify that Python module imports
+# can't test here as this required hardware(?)
+
 
 
 %pre
@@ -91,13 +97,13 @@ install usbrelay.1 %{_buildroot}/share/man/man1/
 %doc README.md
 %{_bindir}/usbrelay
 %{_libdir}/libusbrelay.so
-%{_prefix}/lib/udev/rules.d/50-usbrelay.rules
+%{_udevrulesdir}/50-usbrelay.rules
 
 
 %files -n python3-%{name}
-%{python3_sitearch}/%{name}_*.egg-info
 %{python3_sitearch}/%{name}_py*.so
-%{python3_sitearch}/%{name}_py/
+%{python3_sitearch}/%{name}_py*.egg-info
+%{python3_sitearch}/%{name}/*
 
 
 %files mqtt
@@ -107,11 +113,4 @@ install usbrelay.1 %{_buildroot}/share/man/man1/
 
 
 %changelog
-* Tue Jan 25 2022 Mark E. Fuller <mark.e.fuller@gmx.de> - 0.9.0-2
-- continued spec development and upstream improvements 
-
-* Sat Jan 22 2022 Mark E. Fuller <mark.e.fuller@gmx.de> - 0.9.0-1
-- bump version 
-
-* Thu Jan 20 2022 Mark E. Fuller <mark.e.fuller@gmx.de> - 0.8.0-1
-- first attempt versions of spec file and packaging
+%autochangelog

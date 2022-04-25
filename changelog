@@ -1,0 +1,13 @@
+
+* Wed Jan 26 2022 Mark E. Fuller <mark.e.fuller@gmx.de> - 0.9.0-3
+- restore minimal Python module
+- why are man and test.py not installing?
+
+* Tue Jan 25 2022 Mark E. Fuller <mark.e.fuller@gmx.de> - 0.9.0-2
+- continued spec development and upstream improvements 
+
+* Sat Jan 22 2022 Mark E. Fuller <mark.e.fuller@gmx.de> - 0.9.0-1
+- bump version 
+
+* Thu Jan 20 2022 Mark E. Fuller <mark.e.fuller@gmx.de> - 0.8.0-1
+- first attempt versions of spec file and packaging

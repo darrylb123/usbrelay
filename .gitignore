@@ -1,0 +1,7 @@
+build/
+dist/
+gitversion.h
+usbrelay
+*.so
+*.egg
+*.egg-info
