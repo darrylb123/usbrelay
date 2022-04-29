@@ -2,7 +2,7 @@
 %global branch rpm
 
 Name:          usbrelay
-Version:       0.9
+Version:       1.0
 Release:       %autorelease
 Summary:       USB-connected electrical relay control, based on hidapi
 License:       GPLv2
@@ -98,6 +98,7 @@ install test.py %{buildroot}%{python3_sitearch}/%{name}/
 %{_bindir}/usbrelay
 %{_libdir}/libusbrelay.so
 %{_udevrulesdir}/50-usbrelay.rules
+%{_sysusersdir}/%{name}.conf 
 
 
 %files -n python3-%{name}
