@@ -92,6 +92,7 @@ install usbrelay.1 %{_buildroot}/share/man/man1/
 %{_bindir}/usbrelay
 %{_libdir}/libusbrelay.so
 %{_prefix}/lib/udev/rules.d/50-usbrelay.rules
+%{_sysusersdir}/%{name}.conf 
 
 
 %files -n python3-%{name}
