@@ -1,7 +1,6 @@
 CFLAGS += -O2 -Wall
 HIDAPI = hidraw
 LDFLAGS += -lhidapi-$(HIDAPI)
-PYTHON_INCLUDE=$(shell python3-config --includes)
 
 PREFIX=/usr
 
@@ -22,7 +21,6 @@ ifneq ($(DEB_HOST_MULTIARCH),)
 endif
 
 all: usbrelay libusbrelay.so 
-python: usbrelay libusbrelay.so libusbrelay_py.so
 
 libusbrelay.so: libusbrelay.c libusbrelay.h 
 	$(CC) -shared -fPIC $(CPPFLAGS) $(CFLAGS)  $< $(LDFLAGS) -o $@ 
@@ -42,17 +40,10 @@ gitversion.h: $(wildcard .git/HEAD .git/index)
 
 usbrelay.c libusbrelay.c: gitversion.h
 
-#We build this once directly for error checking purposes, then let python do the real build
-
-libusbrelay_py.so: libusbrelay_py.c libusbrelay.so
-	$(CC) -shared -fPIC $(PYTHON_INCLUDE) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -L./ -lusbrelay -o $@ $<
-	python3 setup.py build
 
 clean:
 	rm -f usbrelay
 	rm -f libusbrelay.so
-	rm -f libusbrelay_py.so
-	rm -rf build
 	rm -f gitversion.h
 
 
@@ -62,7 +53,6 @@ install: usbrelay libusbrelay.so
 	install -d $(DESTDIR)$(PREFIX)/bin
 	install -m 0755 usbrelay $(DESTDIR)$(PREFIX)/bin
 
-install_py: install libusbrelay.so libusbrelay_py.so
-	python3 setup.py install --prefix=$(DESTDIR)
+
 
 .PHONY: all clean install

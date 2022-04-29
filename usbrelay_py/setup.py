@@ -1,10 +1,11 @@
-from setuptools import setup, Extension
+from setuptools import setuptools, setup, Extension
 
 module1 = Extension(
     'usbrelay_py',
     libraries= ['usbrelay'],
     library_dirs= ['./','/usr/lib','/usr/lib64','/usr/lib/x86_64-linux-gnu','/usr/lib/aarch64-linux-gnu','/usr/lib/arm-linux-gnueabihf'],
-    sources = ['libusbrelay_py.c']
+    include_dirs= ['../'],
+    sources = ['src/libusbrelay_py.c']
 )
 
 setup(
@@ -16,6 +17,10 @@ setup(
     author_email = "sean@malmoset.com",
     license = 'GPL-2.0',
     ext_modules = [module1],
+    package_dir={"": "src"},
+    packages=setuptools.find_packages(where="src"),
+    # packages = ['usbrelay_py'],
+
     classifiers = [
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: GNU General Public License v2 (GPLv2)',

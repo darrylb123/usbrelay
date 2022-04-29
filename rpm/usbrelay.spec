@@ -1,14 +1,11 @@
-%global fork fuller
-%global branch rpm
-
 Name:          usbrelay
 Version:       1.0
 Release:       %autorelease
 Summary:       USB-connected electrical relay control, based on hidapi
 License:       GPLv2
-URL:           https://github.com/%{fork}/%{name}/
-Source0:       %{url}archive/%{branch}.tar.gz
-Source1:       ./%{name}.sysusers
+URL:           https://github.com/darrylb123/%{name}/
+Source0:       %{url}archive/refs/tags/%{version}.tar.gz
+Source1:       %{name}.sysusers
 
 BuildRequires:  gcc
 BuildRequires:  git
@@ -57,7 +54,7 @@ Summary: Support for Home Assistant or nodered with usbrelay
 
 
 %prep
-%autosetup -n %{name}-%{branch}
+%autosetup -n %{name}-%{version}
 
 
 %build
@@ -73,8 +70,9 @@ install -d %{buildroot}%{_udevrulesdir}/
 install 50-usbrelay.rules %{buildroot}%{_udevrulesdir}/
 install -d %{buildroot}%{_sbindir}
 install usbrelayd %{buildroot}%{_sbindir}
-install -d %{buildroot}%{_sysconfdir}/systemd/system
-install usbrelayd.service %{buildroot}%{_sysconfdir}/systemd/system/
+install -d %{buildroot}%{_unitdir}/
+install usbrelayd.service %{buildroot}%{_unitdir}/
+install -d %{buildroot}%{_sysconfdir}/
 install usbrelayd.conf %{buildroot}%{_sysconfdir}/
 
 # install test function (since users need to test relay boards)
@@ -82,14 +80,30 @@ install -d %{buildroot}%{python3_sitearch}/%{name}
 install test.py %{buildroot}%{python3_sitearch}/%{name}/
 
 
+# Create and empty key file and pid file to be marked as a ghost file below.
+mkdir -p %{buildroot}%{_rundir}/usbrelay
+touch %{buildroot}%{_rundir}/usbrelay/usbrelayd.pid
+
+
 %check
 # verify that Python module imports
 # can't test here as this required hardware(?)
 
 
-
 %pre
 %sysusers_create_compat %{SOURCE1}
+
+
+%preun
+%systemd_preun usbrelayd.service
+
+
+%post
+%systemd_post usbrelayd.service
+
+
+%postun
+%systemd_postun_with_restart usbrelayd.service
 
 
 %files common
@@ -98,7 +112,6 @@ install test.py %{buildroot}%{python3_sitearch}/%{name}/
 %{_bindir}/usbrelay
 %{_libdir}/libusbrelay.so
 %{_udevrulesdir}/50-usbrelay.rules
-%{_sysusersdir}/%{name}.conf 
 
 
 %files -n python3-%{name}
@@ -109,8 +122,10 @@ install test.py %{buildroot}%{python3_sitearch}/%{name}/
 
 %files mqtt
 %{_sbindir}/usbrelayd
-%{_sysconfdir}/systemd/system/usbrelayd.service
+%{_unitdir}/usbrelayd.service
 %{_sysconfdir}/usbrelayd.conf
+%attr(0755,usbrelay,usbrelay) %ghost %dir %{_rundir}/usbrelay/
+%attr(0644,usbrelay,usbrelay) %ghost %{_rundir}/usbrelay/usbrelayd.pid
 
 
 %changelog

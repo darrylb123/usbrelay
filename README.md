@@ -259,7 +259,8 @@ This also optionally includes a python extension. In order to build the python e
 Debian:
 ```
 ##Install Python3 dev package
-# sudo apt install libpython3.5-dev
+# sudo apt install libpython3-dev python3-venv pip
+# sudo pip install build
 ```
 
 Fedora:
@@ -271,14 +272,15 @@ Fedora:
 With the dependency installed, the library can be built and installed with:
 ```
 ##Build libusbrelay_py.so
-$ make python
+$ cd usbrelay_py
+$ make
 ##Install to global python
-$ sudo make install_py
+$ sudo make install
 ```
 
 Once installed, the library can be used by any python script, assuming it is running as a user with suitable permissions per the changes to udev above.
 
-The following is a test script included as test.py, showing how to use the library:
+The following is a test script included as tests/usbrelay_test.py, showing how to use the library:
 ```
 import usbrelay_py
 import time
