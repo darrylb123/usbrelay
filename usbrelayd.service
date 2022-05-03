@@ -7,7 +7,9 @@ StartLimitIntervalSec=10
 Type=simple
 Restart=always
 RestartSec=1
-User=usbrelay
+DynamicUser=yes
+# SupplementaryGroups should match the group used in udev rules
+SupplementaryGroups=usbrelay
 ExecStart=/usr/bin/python3 /usr/sbin/usbrelayd
 StandardOutput=journal+console
 StandardError=journal+console
