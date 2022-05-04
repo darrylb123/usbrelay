@@ -1,5 +1,6 @@
 [Unit]
 Description=USB Relay MQTT service
+Documentation=man:usbrelayd(8)
 After=network.target
 StartLimitIntervalSec=10
 
