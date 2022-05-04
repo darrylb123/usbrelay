@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="console-application">
+  <id>io.github.darrylb123.usbrelay</id>
+
+  <name>usbrelay</name>
+  <summary>USB-connected electrical relay control, based on hidapi</summary>
+
+  <metadata_license>CC-BY-SA-4.0</metadata_license>
+  <project_license>GPL-2.0-or-later</project_license>
+
+  <description>
+    <p>
+      A small utility to control USB HID based relays that can be used
+      for home automation or other switching needs. The devices are
+      available from several sources and are able to handle up to 10A
+      250VAC.
+    </p>
+    <p>
+      An example application are USB controllable power switches. You
+      may use such a switch to control the power supply of an external
+      hard disk drive for backup purposes.
+    </p>
+  </description>
+
+  <icon type="stock">utilities-terminal</icon>
+
+  <categories>
+    <category>Utility</category>
+    <category>Electronics</category>
+  </categories>
+
+  <provides>
+    <binary>usbrelay</binary>
+    <modalias>hid:b0003g0001v000016C0p000005DF</modalias>
+    <modalias>hid:b0003g0001v00000519p00002018</modalias>
+  </provides>
+</component>
