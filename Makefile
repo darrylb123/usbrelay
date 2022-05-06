@@ -1,6 +1,6 @@
 CFLAGS += -O2 -Wall
 HIDAPI = hidraw
-LDFLAGS += -lhidapi-$(HIDAPI)
+LDLIBS += -lhidapi-$(HIDAPI)
 
 PREFIX=/usr
 
@@ -23,10 +23,10 @@ endif
 all: usbrelay libusbrelay.so 
 
 libusbrelay.so: libusbrelay.c libusbrelay.h 
-	$(CC) -shared -fPIC $(CPPFLAGS) $(CFLAGS)  $< $(LDFLAGS) -o $@ 
+	$(CC) -shared -fPIC $(CPPFLAGS) $(CFLAGS)  $< $(LDFLAGS) -o $@ $(LDLIBS)
 
 usbrelay: usbrelay.c libusbrelay.h libusbrelay.so
-	$(CC) $(CPPFLAGS) $(CFLAGS)  $< -lusbrelay -L./ $(LDFLAGS) -o $@
+	$(CC) $(CPPFLAGS) $(CFLAGS)  $< -lusbrelay -L./ $(LDFLAGS) -o $@ $(LDLIBS)
 
 # Command to generate version number if running from git repo
 DIR_VERSION = $(shell basename `pwd`)
