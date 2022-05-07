@@ -3,7 +3,7 @@ from setuptools import setuptools, setup, Extension
 module1 = Extension(
     'usbrelay_py',
     libraries= ['usbrelay'],
-    library_dirs= ['./','/usr/lib','/usr/lib64','/usr/lib/x86_64-linux-gnu','/usr/lib/aarch64-linux-gnu','/usr/lib/arm-linux-gnueabihf'],
+    library_dirs= ['./','/usr/lib','/usr/lib64','/usr/lib/x86_64-linux-gnu','/usr/lib/aarch64-linux-gnu','/usr/lib/arm-linux-gnueabihf','..'],
     include_dirs= ['../'],
     sources = ['src/libusbrelay_py.c']
 )
