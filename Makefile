@@ -20,7 +20,9 @@ ifneq ($(DEB_HOST_MULTIARCH),)
   endif
 endif
 
-all: usbrelay libusbrelay.so 
+all: usbrelay libusbrelay.so python
+
+install_all: install install_py
 
 libusbrelay.so: libusbrelay.c libusbrelay.h 
 	$(CC) -shared -fPIC $(CPPFLAGS) $(CFLAGS)  $< $(LDFLAGS) -o $@ $(LDLIBS)
@@ -28,6 +30,8 @@ libusbrelay.so: libusbrelay.c libusbrelay.h
 usbrelay: usbrelay.c libusbrelay.h libusbrelay.so
 	$(CC) $(CPPFLAGS) $(CFLAGS)  $< -lusbrelay -L./ $(LDFLAGS) -o $@ $(LDLIBS)
 
+python:
+	$(MAKE) -C usbrelay_py
 # Command to generate version number if running from git repo
 DIR_VERSION = $(shell basename `pwd`)
 GIT_VERSION = $(shell git describe --tags --match '[0-9].[0-9]*' --abbrev=10 --dirty)
@@ -45,6 +49,7 @@ clean:
 	rm -f usbrelay
 	rm -f libusbrelay.so
 	rm -f gitversion.h
+	$(MAKE) -C usbrelay_py clean
 
 
 install: usbrelay libusbrelay.so
@@ -54,5 +59,7 @@ install: usbrelay libusbrelay.so
 	install -m 0755 usbrelay $(DESTDIR)$(PREFIX)/bin
 
 
+install_py:
+	$(MAKE) -C usbrelay_py install
 
 .PHONY: all clean install
