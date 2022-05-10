@@ -20,9 +20,8 @@ ifneq ($(DEB_HOST_MULTIARCH),)
   endif
 endif
 
-all: usbrelay libusbrelay.so python
+all: usbrelay libusbrelay.so 
 
-install_all: install install_py
 
 libusbrelay.so: libusbrelay.c libusbrelay.h 
 	$(CC) -shared -fPIC $(CPPFLAGS) $(CFLAGS)  $< $(LDFLAGS) -o $@ $(LDLIBS)
