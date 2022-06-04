@@ -457,27 +457,57 @@ MQTT support provides capability of using Home Assistant or nodered with usbrela
 #### usbrelayd
 A python daemon using libusbrelay to connect to an MQTT server. When the daemon starts, it publishes the state of all usbrelay devices found and subscribes to command topics for each relay.
 To install:
+
+Debian
 ```
-sudo useradd usbrelay
-sudo apt-get install python-paho-mqtt (Debian)
-dnf install python3-paho-mqtt (Fedora)
+sudo apt-get install python3-paho-mqtt
 sudo cp usbrelayd /usr/sbin
 sudo cp usbrelayd.conf /etc/usbrelayd.conf
 
 ```
+Fedora
+```
+sudo useradd usbrelay
+sudo dnf install python3-paho-mqtt
+sudo cp usbrelayd /usr/sbin
+sudo cp usbrelayd.conf /etc/usbrelayd.conf
+```
+
 Modify /etc/usbrelayd.conf to suit your circumstances.
 #### usbrelay.service 
-A systemd unit for controlling and monitoring the usbrelayd daemon
-The systemd service file references your MQTT broker hostname as mymqttbroker. Either create that hostname in DNS or /etc/hosts. Alternatively, If you are using an external MQTT broker, modify the service file accordingly.
+A systemd unit for controlling and monitoring the usbrelayd daemon. The file comes configured for Fedora and needs to be modified for Debian. 
+
+
+Debian
+
+Edit usbrelayd.service and change
+```
+SupplementaryGroups=usbrelay
+```
+to
+```
+SupplementaryGroups=plugdev
+```
 To install:
+
 ```
 sudo cp usbrelayd.service /etc/systemd/system
 sudo systemctl daemon-reload
 ```
 
 #### 50-usbrelay.rules
-A udev rule file that reacts and starts/stops the usbrelayd.service when a module is pluggedin or removed. The file should be installed with the initial installation. 
+A udev rule file that reacts and starts/stops the usbrelayd.service when a module is pluggedin or removed. The file should be installed with the initial installation. The file comes configured for Fedora and needs to be modified for Debian. 
 
+Debian
+
+Edit 50-usbrelay.rules and change
+```
+GROUP="usbrelay"
+```
+to 
+```
+GROUP="plugdev"
+```
 To install:
 ```
 sudo cp 50-usbrelay.rules /etc/udev/rules.d
