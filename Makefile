@@ -1,3 +1,4 @@
+include LIBVER.in
 CFLAGS += -O2 -Wall
 HIDAPI = hidraw
 LDLIBS += -lhidapi-$(HIDAPI)
@@ -24,10 +25,11 @@ all: usbrelay libusbrelay.so
 
 
 libusbrelay.so: libusbrelay.c libusbrelay.h 
-	$(CC) -shared -fPIC $(CPPFLAGS) $(CFLAGS)  $< $(LDFLAGS) -o $@ $(LDLIBS)
+	$(CC) -shared -fPIC $(CPPFLAGS) $(CFLAGS)  $< $(LDFLAGS) -o $@.$(USBLIBVER) $(LDLIBS)
+	ln -s libusbrelay.so.$(USBLIBVER) libusbrelay.so
 
 usbrelay: usbrelay.c libusbrelay.h libusbrelay.so
-	$(CC) $(CPPFLAGS) $(CFLAGS)  $< -lusbrelay -L./ $(LDFLAGS) -o $@ $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CFLAGS)  $< -l:libusbrelay.so.$(USBLIBVER) -L./ $(LDFLAGS) -o $@ $(LDLIBS)
 
 python:
 	$(MAKE) -C usbrelay_py
@@ -54,6 +56,7 @@ usbrelay.c libusbrelay.c: gitversion.h
 
 clean:
 	rm -f usbrelay
+	rm -f libusbrelay.so.$(USBLIBVER)
 	rm -f libusbrelay.so
 	rm -f gitversion.h
 	$(MAKE) -C usbrelay_py clean
@@ -61,7 +64,8 @@ clean:
 
 install: usbrelay libusbrelay.so
 	install -d $(DESTDIR)$(LIBDIR)
-	install -m 0755 libusbrelay.so $(DESTDIR)$(LIBDIR)
+	install -m 0755 libusbrelay.so.$(USBLIBVER) $(DESTDIR)$(LIBDIR)
+	( cd $(DESTDIR)$(LIBDIR); ln -s libusbrelay.so.$(USBLIBVER) libusbrelay.so )
 	install -d $(DESTDIR)$(PREFIX)/bin
 	install -m 0755 usbrelay $(DESTDIR)$(PREFIX)/bin
 

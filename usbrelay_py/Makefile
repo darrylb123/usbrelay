@@ -1,3 +1,4 @@
+include ../LIBVER.in
 CFLAGS += -O2 -Wall
 HIDAPI = hidraw
 LDFLAGS += -lhidapi-$(HIDAPI)
@@ -22,13 +23,13 @@ ifneq ($(DEB_HOST_MULTIARCH),)
 endif
 
 
-all:  ../libusbrelay.so src/libusbrelay_py.so dist/
+all:  ../libusbrelay.so.$(USBLIBVER) src/libusbrelay_py.so dist/
 
 
 
 #We build this once directly for error checking purposes, then let python do the real build
 
-src/libusbrelay_py.so: src/libusbrelay_py.c ../libusbrelay.so
+src/libusbrelay_py.so: src/libusbrelay_py.c ../libusbrelay.so.$(USBLIBVER)
 	python3 -m build --wheel
 
 clean:

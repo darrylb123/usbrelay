@@ -266,7 +266,8 @@ Debian:
 Fedora:
 ```
 ##Install Python3 dev package
-# dnf install python3-devel
+# sudo dnf install python3-devel
+# sudo dnf install python3-build
 ```
 
 With the dependency installed, the library can be built and installed with:
