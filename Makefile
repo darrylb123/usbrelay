@@ -65,10 +65,13 @@ clean:
 install: usbrelay libusbrelay.so
 	install -d $(DESTDIR)$(LIBDIR)
 	install -m 0755 libusbrelay.so.$(USBLIBVER) $(DESTDIR)$(LIBDIR)
-	( cd $(DESTDIR)$(LIBDIR); ln -s libusbrelay.so.$(USBLIBVER) libusbrelay.so )
+	( cd $(DESTDIR)$(LIBDIR); ln -s libusbrelay.so.$(USBLIBVER) libusbrelay.so ; ln -s libusbrelay.so.$(USBLIBVER) libusbrelay.so.$(USBMAJOR) )
 	install -d $(DESTDIR)$(PREFIX)/bin
 	install -m 0755 usbrelay $(DESTDIR)$(PREFIX)/bin
 
+remove:
+	\rm $(DESTDIR)$(LIBDIR)/libusbrelay.so*
+	\rm $(DESTDIR)$(PREFIX)/bin/usbrelay
 
 install_py:
 	$(MAKE) -C usbrelay_py install
