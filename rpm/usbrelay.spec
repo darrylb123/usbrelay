@@ -32,7 +32,6 @@ BuildRequires:  systemd-rpm-macros
 %package common
 Requires: hidapi
 Summary: Common files needed for all usbrelay interfaces
-# Provides: libusbrelay.so()(64bit)
 %description common
 %{common_description}
 
@@ -54,7 +53,7 @@ Summary: Support for Home Assistant or nodered with usbrelay
 %{common_description}
  .
  This package provides the MQTT support for using usbrelay with Home Assistant
- or nodered.
+ or Node Red.
 
 
 %prep
@@ -69,13 +68,8 @@ cd usbrelay_py
 make
 cd usbrelay_py
 %pyproject_wheel
-# make python HIDAPI=libusb
 
 %install
-# make install DESTDIR=%{buildroot}
-cd usbrelay_py
-%pyproject_install
-cd ..
 # Install binaries
 install -d %{buildroot}%{_bindir}
 install usbrelay %{buildroot}%{_bindir}
@@ -90,18 +84,20 @@ install -d %{buildroot}%{_unitdir}/
 install usbrelayd.service %{buildroot}%{_unitdir}/
 install -d %{buildroot}%{_sysconfdir}/
 install usbrelayd.conf %{buildroot}%{_sysconfdir}/
+# Create the dynamic users/groups
+install -p -D -m 0644 rpm/usbrelay.sysusers %{buildroot}%{_sysusersdir}/usbrelay.conf
+# Create and empty key file and pid file to be marked as a ghost file below.
+mkdir -p %{buildroot}%{_rundir}/usbrelay
+touch %{buildroot}%{_rundir}/usbrelay/usbrelayd.pid
 
+# Install Python
+cd usbrelay_py
+%pyproject_install
+cd ..
 # install test function (since users need to test relay boards)
 install -d %{buildroot}%{python3_sitearch}/%{name}
 install usbrelay_py/tests/usbrelay_test.py %{buildroot}%{python3_sitearch}/%{name}/
 
-# Create the dynamic users/groups
-install -p -D -m 0644 rpm/usbrelay.sysusers %{buildroot}%{_sysusersdir}/usbrelay.conf
-
-
-# Create and empty key file and pid file to be marked as a ghost file below.
-mkdir -p %{buildroot}%{_rundir}/usbrelay
-touch %{buildroot}%{_rundir}/usbrelay/usbrelayd.pid
 
 
 
@@ -128,8 +124,6 @@ touch %{buildroot}%{_rundir}/usbrelay/usbrelayd.pid
 %postun
 %systemd_postun_with_restart usbrelayd.service
 /usr/sbin/ldconfig
-cd %{_libdir}
-ln -s libusbrelay.so.?.? libusbrelay.so
 
 %files common
 %license LICENSE.md
@@ -137,7 +131,6 @@ ln -s libusbrelay.so.?.? libusbrelay.so
 %{_bindir}/usbrelay
 %{_libdir}/libusbrelay.so.?.?
 %ghost %{_libdir}/libusbrelay.so.?
-%ghost %{_libdir}/libusbrelay.so
 %{_udevrulesdir}/50-usbrelay.rules
 %{_sysusersdir}/usbrelay.conf
 
@@ -145,7 +138,6 @@ ln -s libusbrelay.so.?.? libusbrelay.so
 %{python3_sitearch}/%{name}_py*.so
 %{python3_sitearch}/%{name}_py*.dist-info
 %{python3_sitearch}/%{name}/*
-%ghost %{_libdir}/libusbrelay.so
 
 
 %files mqtt
