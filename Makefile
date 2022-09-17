@@ -25,8 +25,8 @@ all: usbrelay libusbrelay.so
 
 
 libusbrelay.so: libusbrelay.c libusbrelay.h 
-	$(CC) -shared -fPIC $(CPPFLAGS) $(CFLAGS)  $< $(LDFLAGS) -o $@.$(USBLIBVER) $(LDLIBS)
-	ln -s libusbrelay.so.$(USBLIBVER) libusbrelay.so
+	$(CC) -shared -fPIC -Wl,-soname,$@.$(USBMAJOR) $(CPPFLAGS) $(CFLAGS)  $< $(LDFLAGS) -o $@.$(USBLIBVER) $(LDLIBS)
+	ln -s libusbrelay.so.$(USBLIBVER) libusbrelay.so.$(USBMAJOR)
 
 usbrelay: usbrelay.c libusbrelay.h libusbrelay.so
 	$(CC) $(CPPFLAGS) $(CFLAGS)  $< -l:libusbrelay.so.$(USBLIBVER) -L./ $(LDFLAGS) -o $@ $(LDLIBS)
@@ -57,7 +57,7 @@ usbrelay.c libusbrelay.c: gitversion.h
 clean:
 	rm -f usbrelay
 	rm -f libusbrelay.so.$(USBLIBVER)
-	rm -f libusbrelay.so
+	rm -f libusbrelay.so*
 	rm -f gitversion.h
 	$(MAKE) -C usbrelay_py clean
 

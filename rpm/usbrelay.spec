@@ -1,11 +1,12 @@
 Name:          usbrelay
-Version:       1.0
+Version:       1.0.1
 Release:       %autorelease
 Summary:       USB-connected electrical relay control, based on hidapi
 License:       GPLv2
 URL:           https://github.com/darrylb123/%{name}/
-Source0:       %{url}archive/refs/tags/%{version}.tar.gz
-Source1:       %{name}.sysusers
+Source0:       %{url}archive/refs/tags/usbrelay-%{version}.tar.gz
+
+
 
 BuildRequires:  gcc
 BuildRequires:  git
@@ -13,7 +14,8 @@ BuildRequires:  hidapi-devel
 BuildRequires:  make
 BuildRequires:  python3
 BuildRequires:  python3-devel
-BuildRequires:  python3-setuptools
+BuildRequires:  python3-wheel
+BuildRequires:  python3-tox-current-env
 BuildRequires:  systemd-rpm-macros
 
 
@@ -28,7 +30,9 @@ BuildRequires:  systemd-rpm-macros
 
 
 %package common
+Requires: hidapi
 Summary: Common files needed for all usbrelay interfaces
+# Provides: libusbrelay.so()(64bit)
 %description common
 %{common_description}
 
@@ -56,15 +60,27 @@ Summary: Support for Home Assistant or nodered with usbrelay
 %prep
 %autosetup -n %{name}-%{version}
 
+%generate_buildrequires
+cd usbrelay_py
+%pyproject_buildrequires
 
 %build
 %set_build_flags
-make python HIDAPI=libusb
+make
+cd usbrelay_py
+%pyproject_wheel
+# make python HIDAPI=libusb
 
 %install
-make install DESTDIR=%{buildroot}
-%py3_install
-
+# make install DESTDIR=%{buildroot}
+cd usbrelay_py
+%pyproject_install
+cd ..
+# Install binaries
+install -d %{buildroot}%{_bindir}
+install usbrelay %{buildroot}%{_bindir}
+install -d %{buildroot}%{_libdir}
+install libusbrelay.so.?.? %{buildroot}%{_libdir}
 # manual copy/install operations from README
 install -d %{buildroot}%{_udevrulesdir}/
 install 50-usbrelay.rules %{buildroot}%{_udevrulesdir}/
@@ -77,12 +93,16 @@ install usbrelayd.conf %{buildroot}%{_sysconfdir}/
 
 # install test function (since users need to test relay boards)
 install -d %{buildroot}%{python3_sitearch}/%{name}
-install test.py %{buildroot}%{python3_sitearch}/%{name}/
+install usbrelay_py/tests/usbrelay_test.py %{buildroot}%{python3_sitearch}/%{name}/
+
+# Create the dynamic users/groups
+install -p -D -m 0644 rpm/usbrelay.sysusers %{buildroot}%{_sysusersdir}/usbrelay.conf
 
 
 # Create and empty key file and pid file to be marked as a ghost file below.
 mkdir -p %{buildroot}%{_rundir}/usbrelay
 touch %{buildroot}%{_rundir}/usbrelay/usbrelayd.pid
+
 
 
 %check
@@ -91,7 +111,7 @@ touch %{buildroot}%{_rundir}/usbrelay/usbrelayd.pid
 
 
 %pre
-%sysusers_create_compat %{SOURCE1}
+%sysusers_create_compat rpm/usbrelay.sysusers
 
 
 %preun
@@ -100,24 +120,32 @@ touch %{buildroot}%{_rundir}/usbrelay/usbrelayd.pid
 
 %post
 %systemd_post usbrelayd.service
+/usr/sbin/ldconfig
+
+
 
 
 %postun
 %systemd_postun_with_restart usbrelayd.service
-
+/usr/sbin/ldconfig
+cd %{_libdir}
+ln -s libusbrelay.so.?.? libusbrelay.so
 
 %files common
 %license LICENSE.md
 %doc README.md
 %{_bindir}/usbrelay
-%{_libdir}/libusbrelay.so
+%{_libdir}/libusbrelay.so.?.?
+%ghost %{_libdir}/libusbrelay.so.?
+%ghost %{_libdir}/libusbrelay.so
 %{_udevrulesdir}/50-usbrelay.rules
-
+%{_sysusersdir}/usbrelay.conf
 
 %files -n python3-%{name}
 %{python3_sitearch}/%{name}_py*.so
-%{python3_sitearch}/%{name}_py*.egg-info
+%{python3_sitearch}/%{name}_py*.dist-info
 %{python3_sitearch}/%{name}/*
+%ghost %{_libdir}/libusbrelay.so
 
 
 %files mqtt
