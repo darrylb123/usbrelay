@@ -2,6 +2,7 @@ include LIBVER.in
 CFLAGS += -O2 -Wall
 HIDAPI = hidraw
 LDLIBS += -lhidapi-$(HIDAPI)
+LDCONFIG = /sbin/ldconfig
 
 PREFIX=/usr
 
@@ -12,6 +13,8 @@ LIBDIR = $(PREFIX)/lib
 ifneq ($(wildcard $(PREFIX)/lib64/.),)
     LIBDIR = $(PREFIX)/lib64
 endif
+
+__BINDIR = $(PREFIX)/bin
 
 #Catch debian machines
 DEB_HOST_MULTIARCH=$(shell dpkg-architecture -qDEB_HOST_MULTIARCH 2>/dev/null)
@@ -26,7 +29,7 @@ all: usbrelay libusbrelay.so
 
 libusbrelay.so: libusbrelay.c libusbrelay.h 
 	$(CC) -shared -fPIC -Wl,-soname,$@.$(USBMAJOR) $(CPPFLAGS) $(CFLAGS)  $< $(LDFLAGS) -o $@.$(USBLIBVER) $(LDLIBS)
-	ln -s libusbrelay.so.$(USBLIBVER) libusbrelay.so.$(USBMAJOR)
+	$(LDCONFIG) -n .
 
 usbrelay: usbrelay.c libusbrelay.h libusbrelay.so
 	$(CC) $(CPPFLAGS) $(CFLAGS)  $< -l:libusbrelay.so.$(USBLIBVER) -L./ $(LDFLAGS) -o $@ $(LDLIBS)
@@ -65,9 +68,10 @@ clean:
 install: usbrelay libusbrelay.so
 	install -d $(DESTDIR)$(LIBDIR)
 	install -m 0755 libusbrelay.so.$(USBLIBVER) $(DESTDIR)$(LIBDIR)
-	( cd $(DESTDIR)$(LIBDIR); ln -s libusbrelay.so.$(USBLIBVER) libusbrelay.so ; ln -s libusbrelay.so.$(USBLIBVER) libusbrelay.so.$(USBMAJOR) )
-	install -d $(DESTDIR)$(PREFIX)/bin
-	install -m 0755 usbrelay $(DESTDIR)$(PREFIX)/bin
+	$(LDCONFIG) -n $(DESTDIR)$(LIBDIR)
+	( cd $(DESTDIR)$(LIBDIR) ;ln -sr libusbrelay.so.$(USBLIBVER) libusbrelay.so )
+	install -d $(DESTDIR)$(__BINDIR)
+	install -m 0755 usbrelay $(DESTDIR)$(__BINDIR)
 
 remove:
 	\rm $(DESTDIR)$(LIBDIR)/libusbrelay.so*

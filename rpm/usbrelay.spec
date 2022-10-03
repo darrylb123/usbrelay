@@ -35,6 +35,13 @@ Summary: Common files needed for all usbrelay interfaces
 %description common
 %{common_description}
 
+%package devel
+Requires: hidapi-devel
+Requires: python3-devel
+Summary: Package for developing against libusbrelay
+%description devel
+%{common_description}
+
 
 %package -n python3-%{name}
 Requires: %{name}-common%{_isa} = %{version}-%{release}
@@ -71,10 +78,7 @@ cd usbrelay_py
 
 %install
 # Install binaries
-install -d %{buildroot}%{_bindir}
-install usbrelay %{buildroot}%{_bindir}
-install -d %{buildroot}%{_libdir}
-install libusbrelay.so.?.? %{buildroot}%{_libdir}
+make install PREFIX=%{buildroot} LIBDIR=%{buildroot}%{_libdir} __BINDIR=%{buildroot}%{_bindir}
 # manual copy/install operations from README
 install -d %{buildroot}%{_udevrulesdir}/
 install 50-usbrelay.rules %{buildroot}%{_udevrulesdir}/
@@ -84,6 +88,14 @@ install -d %{buildroot}%{_unitdir}/
 install usbrelayd.service %{buildroot}%{_unitdir}/
 install -d %{buildroot}%{_sysconfdir}/
 install usbrelayd.conf %{buildroot}%{_sysconfdir}/
+install -d %{buildroot}%{_mandir}/man8
+install -d %{buildroot}%{_mandir}/man1
+install usbrelay.1 %{buildroot}%{_mandir}/man1
+gzip %{buildroot}%{_mandir}/man1/usbrelay.1
+install usbrelayd.8 %{buildroot}%{_mandir}/man8
+gzip %{buildroot}%{_mandir}/man8/usbrelayd.8
+install -d %{buildroot}%{_includedir}
+install libusbrelay.h %{buildroot}%{_includedir}
 # Create the dynamic users/groups
 install -p -D -m 0644 rpm/usbrelay.sysusers %{buildroot}%{_sysusersdir}/usbrelay.conf
 # Create and empty key file and pid file to be marked as a ghost file below.
@@ -116,14 +128,12 @@ install usbrelay_py/tests/usbrelay_test.py %{buildroot}%{python3_sitearch}/%{nam
 
 %post
 %systemd_post usbrelayd.service
-/usr/sbin/ldconfig
 
 
 
 
 %postun
 %systemd_postun_with_restart usbrelayd.service
-/usr/sbin/ldconfig
 
 %files common
 %license LICENSE.md
@@ -133,6 +143,7 @@ install usbrelay_py/tests/usbrelay_test.py %{buildroot}%{python3_sitearch}/%{nam
 %ghost %{_libdir}/libusbrelay.so.?
 %{_udevrulesdir}/50-usbrelay.rules
 %{_sysusersdir}/usbrelay.conf
+%{_mandir}/man1/usbrelay.1.gz
 
 %files -n python3-%{name}
 %{python3_sitearch}/%{name}_py*.so
@@ -146,7 +157,11 @@ install usbrelay_py/tests/usbrelay_test.py %{buildroot}%{python3_sitearch}/%{nam
 %{_sysconfdir}/usbrelayd.conf
 %attr(0755,usbrelay,usbrelay) %ghost %dir %{_rundir}/usbrelay/
 %attr(0644,usbrelay,usbrelay) %ghost %{_rundir}/usbrelay/usbrelayd.pid
+%{_mandir}/man8/usbrelayd.8.gz
 
+%files devel
+%{_includedir}/libusbrelay.h
+%{_libdir}/libusbrelay.so
 
 %changelog
 %autochangelog
