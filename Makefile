@@ -30,6 +30,7 @@ all: usbrelay libusbrelay.so
 libusbrelay.so: libusbrelay.c libusbrelay.h 
 	$(CC) -shared -fPIC -Wl,-soname,$@.$(USBMAJOR) $(CPPFLAGS) $(CFLAGS)  $< $(LDFLAGS) -o $@.$(USBLIBVER) $(LDLIBS)
 	$(LDCONFIG) -n .
+	ln -sr libusbrelay.so.$(USBLIBVER) libusbrelay.so
 
 usbrelay: usbrelay.c libusbrelay.h libusbrelay.so
 	$(CC) $(CPPFLAGS) $(CFLAGS)  $< -l:libusbrelay.so.$(USBLIBVER) -L./ $(LDFLAGS) -o $@ $(LDLIBS)

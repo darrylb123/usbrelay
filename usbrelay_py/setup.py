@@ -1,10 +1,9 @@
 from setuptools import setuptools, setup, Extension
 exec(open('../LIBVER.in').read())
 
-
 module1 = Extension(
     'usbrelay_py',
-    libraries= [':libusbrelay.so.' + str(USBMAJOR)],
+    libraries= ['usbrelay'],
     library_dirs= ['../'],
     include_dirs= ['../'],
     sources = ['src/libusbrelay_py.c']
