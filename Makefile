@@ -70,7 +70,7 @@ install: usbrelay libusbrelay.so
 	install -d $(DESTDIR)$(LIBDIR)
 	install -m 0755 libusbrelay.so.$(USBLIBVER) $(DESTDIR)$(LIBDIR)
 	$(LDCONFIG) -n $(DESTDIR)$(LIBDIR)
-	( cd $(DESTDIR)$(LIBDIR) ;ln -sr libusbrelay.so.$(USBLIBVER) libusbrelay.so )
+	( cd $(DESTDIR)$(LIBDIR); rm -f libusbrelay.so ;ln -sr libusbrelay.so.$(USBLIBVER) libusbrelay.so )
 	install -d $(DESTDIR)$(__BINDIR)
 	install -m 0755 usbrelay $(DESTDIR)$(__BINDIR)
 
