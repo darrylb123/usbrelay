@@ -55,6 +55,7 @@ Summary: Python 3 user interface for usbrelay
 %package mqtt
 Requires: %{name}-common%{_isa} = %{version}-%{release}
 Requires: python3-%{name}%{_isa} = %{version}-%{release}
+Requires: python3-paho-mqtt
 Summary: Support for Home Assistant or nodered with usbrelay
 %description mqtt
 %{common_description}

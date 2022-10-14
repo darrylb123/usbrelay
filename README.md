@@ -96,7 +96,7 @@ $ sudo apt-get install usbrelay
 The packages are available in Fedora36+
 
 ```
-$ sudo dnf install usbrelay-common usbrelay-python3 usbrelay-mqtt
+$ sudo dnf install usbrelay-common python3-usbrelay usbrelay-mqtt
 ```
 
 Other Linux platforms will need to build the source, see below
