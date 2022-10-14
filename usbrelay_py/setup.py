@@ -1,5 +1,4 @@
 from setuptools import setuptools, setup, Extension
-exec(open('../LIBVER.in').read())
 
 module1 = Extension(
     'usbrelay_py',
