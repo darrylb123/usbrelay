@@ -1,5 +1,5 @@
 Name:          usbrelay
-Version:       1.0.1
+Version:       1.1
 Release:       %autorelease
 Summary:       USB-connected electrical relay control, based on hidapi
 License:       GPLv2
