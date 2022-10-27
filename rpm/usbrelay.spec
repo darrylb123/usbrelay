@@ -2,18 +2,17 @@ Name:          usbrelay
 Version:       1.1
 Release:       %autorelease
 Summary:       USB-connected electrical relay control, based on hidapi
-License:       GPLv2
-URL:           https://github.com/darrylb123/%{name}/
-Source0:       %{url}archive/refs/tags/usbrelay-%{version}.tar.gz
-
-
+License:       GPL-2.0-or-later
+URL:           https://github.com/darrylb123/%{name}/archive/%{version}
+Source0:       %{url}/%{name}-%{version}.tar.gz
 
 BuildRequires:  gcc
-BuildRequires:  git
 BuildRequires:  hidapi-devel
 BuildRequires:  make
 BuildRequires:  python3
 BuildRequires:  python3-devel
+BuildRequires:  python3-pip
+BuildRequires:  python3-toml
 BuildRequires:  python3-wheel
 BuildRequires:  python3-tox-current-env
 BuildRequires:  systemd-rpm-macros
@@ -27,33 +26,27 @@ BuildRequires:  systemd-rpm-macros
 
 %description
 %{common_description}
-
-
-%package common
-Requires: hidapi
-Summary: Common files needed for all usbrelay interfaces
-%description common
-%{common_description}
+Summary: A library and command line tool for controlling USB-connected relays
 
 %package devel
 Requires: hidapi-devel
-Requires: python3-devel
+Requires: %{name}%{_isa} = %{version}-%{release}
 Summary: Package for developing against libusbrelay
 %description devel
 %{common_description}
-
+.
+Headers for developing against libusbrelay
 
 %package -n python3-%{name}
-Requires: %{name}-common%{_isa} = %{version}-%{release}
+Requires: %{name}%{_isa} = %{version}-%{release}
 Summary: Python 3 user interface for usbrelay
 %description -n python3-%{name}
 %{common_description}
  .
  This package includes the usbrelay Python 3 module.
 
-
 %package mqtt
-Requires: %{name}-common%{_isa} = %{version}-%{release}
+Requires: %{name}%{_isa} = %{version}-%{release}
 Requires: python3-%{name}%{_isa} = %{version}-%{release}
 Requires: python3-paho-mqtt
 Summary: Support for Home Assistant or nodered with usbrelay
@@ -66,40 +59,41 @@ Summary: Support for Home Assistant or nodered with usbrelay
 
 %prep
 %autosetup -n %{name}-%{version}
+%py3_shebang_fix .
 
-%generate_buildrequires
 cd usbrelay_py
 %pyproject_buildrequires
 
+
 %build
 %set_build_flags
-make
+%{make_build}
 cd usbrelay_py
 %pyproject_wheel
 
+
 %install
 # Install binaries
-make install PREFIX=%{buildroot} LIBDIR=%{buildroot}%{_libdir} __BINDIR=%{buildroot}%{_bindir}
+%{make_install}
 # manual copy/install operations from README
 install -d %{buildroot}%{_udevrulesdir}/
-install 50-usbrelay.rules %{buildroot}%{_udevrulesdir}/
+cp --preserve=timestamps 50-usbrelay.rules %{buildroot}%{_udevrulesdir}/
 install -d %{buildroot}%{_sbindir}
-install usbrelayd %{buildroot}%{_sbindir}
+install --preserve-timestamps usbrelayd %{buildroot}%{_sbindir}
+
 install -d %{buildroot}%{_unitdir}/
-install usbrelayd.service %{buildroot}%{_unitdir}/
+cp --preserve=timestamps usbrelayd.service %{buildroot}%{_unitdir}/
 install -d %{buildroot}%{_sysconfdir}/
-install usbrelayd.conf %{buildroot}%{_sysconfdir}/
+cp --preserve=timestamps usbrelayd.conf %{buildroot}%{_sysconfdir}/
 install -d %{buildroot}%{_mandir}/man8
 install -d %{buildroot}%{_mandir}/man1
-install usbrelay.1 %{buildroot}%{_mandir}/man1
-gzip %{buildroot}%{_mandir}/man1/usbrelay.1
-install usbrelayd.8 %{buildroot}%{_mandir}/man8
-gzip %{buildroot}%{_mandir}/man8/usbrelayd.8
+cp --preserve=timestamps usbrelay.1 %{buildroot}%{_mandir}/man1
+cp --preserve=timestamps usbrelayd.8 %{buildroot}%{_mandir}/man8
 install -d %{buildroot}%{_includedir}
-install libusbrelay.h %{buildroot}%{_includedir}
+cp --preserve=timestamps libusbrelay.h %{buildroot}%{_includedir}
 # Create the dynamic users/groups
 install -p -D -m 0644 rpm/usbrelay.sysusers %{buildroot}%{_sysusersdir}/usbrelay.conf
-# Create and empty key file and pid file to be marked as a ghost file below.
+# Create an empty pid file to be marked as a ghost file below.
 mkdir -p %{buildroot}%{_rundir}/usbrelay
 touch %{buildroot}%{_rundir}/usbrelay/usbrelayd.pid
 
@@ -109,34 +103,27 @@ cd usbrelay_py
 cd ..
 # install test function (since users need to test relay boards)
 install -d %{buildroot}%{python3_sitearch}/%{name}
-install usbrelay_py/tests/usbrelay_test.py %{buildroot}%{python3_sitearch}/%{name}/
-
-
+cp --preserve=timestamps usbrelay_py/tests/usbrelay_test.py %{buildroot}%{python3_sitearch}/%{name}/
 
 
 %check
-# verify that Python module imports
-# can't test here as this required hardware(?)
+%py3_check_import %{name}
 
 
-%pre
+%pre -n %{name}-mqtt
 %sysusers_create_compat rpm/usbrelay.sysusers
 
-
-%preun
+%preun -n %{name}-mqtt
 %systemd_preun usbrelayd.service
 
-
-%post
+%post -n %{name}-mqtt
 %systemd_post usbrelayd.service
 
-
-
-
-%postun
+%postun -n %{name}-mqtt 
 %systemd_postun_with_restart usbrelayd.service
 
-%files common
+
+%files
 %license LICENSE.md
 %doc README.md
 %{_bindir}/usbrelay
@@ -144,25 +131,25 @@ install usbrelay_py/tests/usbrelay_test.py %{buildroot}%{python3_sitearch}/%{nam
 %ghost %{_libdir}/libusbrelay.so.?
 %{_udevrulesdir}/50-usbrelay.rules
 %{_sysusersdir}/usbrelay.conf
-%{_mandir}/man1/usbrelay.1.gz
+%{_mandir}/man1/usbrelay.1*
 
 %files -n python3-%{name}
 %{python3_sitearch}/%{name}_py*.so
 %{python3_sitearch}/%{name}_py*.dist-info
-%{python3_sitearch}/%{name}/*
-
+%{python3_sitearch}/%{name}
 
 %files mqtt
 %{_sbindir}/usbrelayd
 %{_unitdir}/usbrelayd.service
-%{_sysconfdir}/usbrelayd.conf
-%attr(0755,usbrelay,usbrelay) %ghost %dir %{_rundir}/usbrelay/
-%attr(0644,usbrelay,usbrelay) %ghost %{_rundir}/usbrelay/usbrelayd.pid
-%{_mandir}/man8/usbrelayd.8.gz
+%{_sysconfdir}/usbrelayd.conf %config(noreplace)
+%attr(0755,root,usbrelay) %ghost %dir %{_rundir}/usbrelay/
+%attr(0644,root,usbrelay) %ghost %{_rundir}/usbrelay/usbrelayd.pid
+%{_mandir}/man8/usbrelayd.8*
 
 %files devel
 %{_includedir}/libusbrelay.h
 %{_libdir}/libusbrelay.so
+
 
 %changelog
 %autochangelog
