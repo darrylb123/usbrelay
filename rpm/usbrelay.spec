@@ -3,8 +3,8 @@ Version:       1.1
 Release:       %autorelease
 Summary:       USB-connected electrical relay control, based on hidapi
 License:       GPL-2.0-or-later
-URL:           https://github.com/darrylb123/%{name}/archive/%{version}
-Source0:       %{url}/%{name}-%{version}.tar.gz
+URL:           https://github.com/darrylb123/%{name}
+Source0:       %{url}/archive/%{version}/%{name}-%{version}.tar.gz
 
 BuildRequires:  gcc
 BuildRequires:  hidapi-devel
@@ -26,10 +26,15 @@ BuildRequires:  systemd-rpm-macros
 
 %description
 %{common_description}
+
+Requires: hidapi
+Requires: systemd-udev
 Summary: A library and command line tool for controlling USB-connected relays
+
 
 %package devel
 Requires: hidapi-devel
+Requires: python3-devel
 Requires: %{name}%{_isa} = %{version}-%{release}
 Summary: Package for developing against libusbrelay
 %description devel
@@ -113,6 +118,7 @@ cp --preserve=timestamps usbrelay_py/tests/usbrelay_test.py %{buildroot}%{python
 %pre -n %{name}-mqtt
 %sysusers_create_compat rpm/usbrelay.sysusers
 
+
 %preun -n %{name}-mqtt
 %systemd_preun usbrelayd.service
 
@@ -137,6 +143,7 @@ cp --preserve=timestamps usbrelay_py/tests/usbrelay_test.py %{buildroot}%{python
 %{python3_sitearch}/%{name}_py*.so
 %{python3_sitearch}/%{name}_py*.dist-info
 %{python3_sitearch}/%{name}
+
 
 %files mqtt
 %{_sbindir}/usbrelayd
