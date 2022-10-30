@@ -6,13 +6,13 @@ License:       GPL-2.0-or-later
 URL:           https://github.com/darrylb123/%{name}
 Source0:       %{url}/archive/%{version}/%{name}-%{version}.tar.gz
 
-
-
 BuildRequires:  gcc
 BuildRequires:  hidapi-devel
 BuildRequires:  make
 BuildRequires:  python3
 BuildRequires:  python3-devel
+BuildRequires:  python3-pip
+BuildRequires:  python3-toml
 BuildRequires:  python3-wheel
 BuildRequires:  python3-tox-current-env
 BuildRequires:  systemd-rpm-macros
@@ -50,7 +50,6 @@ Summary: Python 3 user interface for usbrelay
  .
  This package includes the usbrelay Python 3 module.
 
-
 %package mqtt
 Requires: %{name}%{_isa} = %{version}-%{release}
 Requires: python3-%{name}%{_isa} = %{version}-%{release}
@@ -65,17 +64,18 @@ Summary: Support for Home Assistant or nodered with usbrelay
 
 %prep
 %autosetup -n %{name}-%{version}
-%generate_buildrequires
 %py3_shebang_fix .
 
 cd usbrelay_py
 %pyproject_buildrequires
 
+
 %build
 %set_build_flags
-make
+%{make_build}
 cd usbrelay_py
 %pyproject_wheel
+
 
 %install
 # Install binaries
@@ -111,27 +111,23 @@ install -d %{buildroot}%{python3_sitearch}/%{name}
 cp --preserve=timestamps usbrelay_py/tests/usbrelay_test.py %{buildroot}%{python3_sitearch}/%{name}/
 
 
-
-
 %check
+%py3_check_import %{name}
 
 
-%pre
+%pre -n %{name}-mqtt
 %sysusers_create_compat rpm/usbrelay.sysusers
 
 
 %preun -n %{name}-mqtt
 %systemd_preun usbrelayd.service
 
-
 %post -n %{name}-mqtt
 %systemd_post usbrelayd.service
 
-
-
-
 %postun -n %{name}-mqtt 
 %systemd_postun_with_restart usbrelayd.service
+
 
 %files
 %license LICENSE.md
@@ -149,7 +145,6 @@ cp --preserve=timestamps usbrelay_py/tests/usbrelay_test.py %{buildroot}%{python
 %{python3_sitearch}/%{name}
 
 
-
 %files mqtt
 %{_sbindir}/usbrelayd
 %{_unitdir}/usbrelayd.service
@@ -161,6 +156,7 @@ cp --preserve=timestamps usbrelay_py/tests/usbrelay_test.py %{buildroot}%{python
 %files devel
 %{_includedir}/libusbrelay.h
 %{_libdir}/libusbrelay.so
+
 
 %changelog
 %autochangelog
