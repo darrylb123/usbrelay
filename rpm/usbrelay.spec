@@ -1,7 +1,7 @@
 Name:          usbrelay
 Version:       1.1
 Release:       %autorelease
-Summary:       USB-connected electrical relay control, based on hidapi
+Summary:       A library and command line tool for controlling USB-connected relays based on hidapi
 License:       GPL-2.0-or-later
 URL:           https://github.com/darrylb123/%{name}
 Source0:       %{url}/archive/%{version}/%{name}-%{version}.tar.gz
@@ -16,7 +16,7 @@ BuildRequires:  python3-toml
 BuildRequires:  python3-wheel
 BuildRequires:  python3-tox-current-env
 BuildRequires:  systemd-rpm-macros
-
+Requires: 	systemd-udev
 
 %global common_description %{expand: \
  This package includes programs to operate some USB connected electrical relays.
@@ -26,11 +26,6 @@ BuildRequires:  systemd-rpm-macros
 
 %description
 %{common_description}
-
-Requires: hidapi
-Requires: systemd-udev
-Summary: A library and command line tool for controlling USB-connected relays
-
 
 %package devel
 Requires: hidapi-devel
@@ -42,18 +37,20 @@ Summary: Package for developing against libusbrelay
 .
 Headers for developing against libusbrelay
 
-%package -n python3-%{name}
+%package -n python3-%{name}-py
 Requires: %{name}%{_isa} = %{version}-%{release}
 Summary: Python 3 user interface for usbrelay
-%description -n python3-%{name}
+%description -n python3-%{name}-py
 %{common_description}
  .
  This package includes the usbrelay Python 3 module.
 
 %package mqtt
+Requires(pre): shadow-utils
 Requires: %{name}%{_isa} = %{version}-%{release}
-Requires: python3-%{name}%{_isa} = %{version}-%{release}
+Requires: python3-%{name}-py%{_isa} = %{version}-%{release}
 Requires: python3-paho-mqtt
+BuildArch: noarch
 Summary: Support for Home Assistant or nodered with usbrelay
 %description mqtt
 %{common_description}
@@ -64,7 +61,8 @@ Summary: Support for Home Assistant or nodered with usbrelay
 
 %prep
 %autosetup -n %{name}-%{version}
-%py3_shebang_fix .
+%py3_shebang_fix usbrelayd
+
 
 cd usbrelay_py
 %pyproject_buildrequires
@@ -114,20 +112,17 @@ cp --preserve=timestamps usbrelay_py/tests/usbrelay_test.py %{buildroot}%{python
 %check
 %py3_check_import %{name}
 
+%pre 
+%sysusers_create_compat usbrelay.sysusers
 
 %pre -n %{name}-mqtt
-%sysusers_create_compat rpm/usbrelay.sysusers
-
+groupadd --force --system usbrelay
 
 %preun -n %{name}-mqtt
 %systemd_preun usbrelayd.service
 
 %post -n %{name}-mqtt
 %systemd_post usbrelayd.service
-
-%postun -n %{name}-mqtt 
-%systemd_postun_with_restart usbrelayd.service
-
 
 %files
 %license LICENSE.md
@@ -139,7 +134,7 @@ cp --preserve=timestamps usbrelay_py/tests/usbrelay_test.py %{buildroot}%{python
 %{_sysusersdir}/usbrelay.conf
 %{_mandir}/man1/usbrelay.1*
 
-%files -n python3-%{name}
+%files -n python3-%{name}-py
 %{python3_sitearch}/%{name}_py*.so
 %{python3_sitearch}/%{name}_py*.dist-info
 %{python3_sitearch}/%{name}
