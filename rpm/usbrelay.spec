@@ -1,10 +1,10 @@
-Name:          usbrelay
-Version:       1.1.1
-Release:       %autorelease
-Summary:       A library and command line tool for controlling USB-connected relays based on hidapi
-License:       GPL-2.0-or-later
-URL:           https://github.com/darrylb123/%{name}
-Source0:       %{url}/archive/%{version}/%{name}-%{version}.tar.gz
+Name:           usbrelay
+Version:        1.1.1
+Release:        %autorelease
+Summary:        A library and command line tool to control USB-connected relays based on hidapi
+License:        GPL-2.0-or-later
+URL:            https://github.com/darrylb123/%{name}
+Source0:        %{url}/archive/%{version}/%{name}-%{version}.tar.gz
 
 BuildRequires:  gcc
 BuildRequires:  hidapi-devel
@@ -16,7 +16,7 @@ BuildRequires:  python3-toml
 BuildRequires:  python3-wheel
 BuildRequires:  python3-tox-current-env
 BuildRequires:  systemd-rpm-macros
-Requires: 	systemd-udev
+Requires:       systemd-udev
 
 %global common_description %{expand: \
  This package includes programs to operate some USB connected electrical relays.
@@ -47,8 +47,8 @@ Summary: Python 3 user interface for usbrelay
 
 %package mqtt
 Requires(pre): shadow-utils
-Requires: %{name}%{_isa} = %{version}-%{release}
-Requires: python3-%{name}-py%{_isa} = %{version}-%{release}
+Requires: %{name} = %{version}-%{release}
+Requires: python3-%{name}-py = %{version}-%{release}
 Requires: python3-paho-mqtt
 BuildArch: noarch
 Summary: Support for Home Assistant or nodered with usbrelay
@@ -63,7 +63,7 @@ Summary: Support for Home Assistant or nodered with usbrelay
 %autosetup -n %{name}-%{version}
 %py3_shebang_fix usbrelayd
 
-
+%generate_buildrequires
 cd usbrelay_py
 %pyproject_buildrequires
 
@@ -112,17 +112,20 @@ cp --preserve=timestamps usbrelay_py/tests/usbrelay_test.py %{buildroot}%{python
 %check
 %py3_check_import %{name}
 
-%pre 
-%sysusers_create_compat usbrelay.sysusers
+%pre
 
 %pre -n %{name}-mqtt
 groupadd --force --system usbrelay
+# --force means it's not an error if the group already exists.
 
 %preun -n %{name}-mqtt
 %systemd_preun usbrelayd.service
 
 %post -n %{name}-mqtt
 %systemd_post usbrelayd.service
+
+%postun -n %{name}-mqtt 
+%systemd_postun_with_restart usbrelayd.service
 
 %files
 %license LICENSE.md
