@@ -112,7 +112,6 @@ cp --preserve=timestamps usbrelay_py/tests/usbrelay_test.py %{buildroot}%{python
 %check
 %py3_check_import %{name}
 
-%pre
 
 %pre -n %{name}-mqtt
 groupadd --force --system usbrelay
