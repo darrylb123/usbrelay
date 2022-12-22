@@ -6,7 +6,9 @@ StartLimitIntervalSec=10
 
 [Service]
 Type=simple
-Restart=always
+# Daemon exits with EX_UNAVAILABLE (69) when there is no compatible hardware plugged in 
+Restart=on-failure
+RestartPreventExitStatus=69 
 RestartSec=1
 DynamicUser=yes
 # SupplementaryGroups should match the group used in udev rules

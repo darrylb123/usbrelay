@@ -87,7 +87,8 @@ count = usbrelay_py.board_count()
 
 if(count < 1):
     print("No usbrelay modules connected",flush=True)
-    exit()
+    # exit with EX_UNAVAILABLE
+    exit(69)
 else:
     print("Modules Connected: ",count,flush=True)
 
