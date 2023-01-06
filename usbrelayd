@@ -102,5 +102,10 @@ client.on_message=on_message
 while(True):
     client.loop_start()
     time.sleep(60)
+    count = usbrelay_py.board_count()
+    if(count < 1):
+        print("No usbrelay modules connected",flush=True)
+        # exit with EX_UNAVAILABLE
+        exit(69)
     publish_states(client)
 

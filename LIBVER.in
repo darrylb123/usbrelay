@@ -3,6 +3,6 @@
 # USBLIBVER variable is used to create the version number on the library
 # The major number is incremented on an API change
 # The minor number is incremented on a change
-USBLIBVER = 1.0
+USBLIBVER = 1.1
 USBMAJOR = 1
 

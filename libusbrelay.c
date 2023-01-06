@@ -51,6 +51,12 @@ int enumerate_relay_boards(const char *product, int verbose, int debug)
 	int result = 0, relay = 0;
 	struct hid_device_info *devs, *cur_dev;
 	int num_opened = 0, num_error = 0;
+	// Free previously enumerated board details
+	if(relay_board_count){
+		relay_board_count = 0;
+		if (relay_boards)
+			shutdown();
+	}
 	//Enumerate all HID USB devices 
 	devs = hid_enumerate(0, 0);
 

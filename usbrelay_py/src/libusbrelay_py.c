@@ -91,14 +91,8 @@ static PyObject *usbrelay_init(PyObject *self, PyObject *args)
 static PyObject *usbrelay_board_count(PyObject *self, PyObject *args)
 {
     int board_count = 0;
+    enumerate_relay_boards(NULL,0,0);
     board_count = get_relay_board_count();
-
-    //Just in case they didn't initialize, we'll try once to get a different result
-    if (board_count == 0)
-    {
-        enumerate_relay_boards(NULL,0,0);
-        board_count = get_relay_board_count();
-    }
 
     return Py_BuildValue("i", board_count);
 }
