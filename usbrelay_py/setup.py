@@ -14,39 +14,24 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from setuptools import setuptools, setup, Extension
-
-module1 = Extension(
-    'usbrelay_py',
-    libraries= ['usbrelay'],
-    library_dirs= ['../'],
-    include_dirs= ['../'],
-    sources = ['src/libusbrelay_py.c']
-)
+from setuptools import setuptools, setup
 
 setup(
     name = 'usbrelay_py',
-    version = '1.0',
+    version = '1.1',
     description = 'USB Relay board control from Python',
     url = 'https://github.com/darrylb123/usbrelay',
     author = "Sean Mollet",
     author_email = "sean@malmoset.com",
     license = 'GPL-2.0-or-later',
-    ext_modules = [module1],
-    package_dir={"": "src"},
-    packages=setuptools.find_packages(where="src"),
-    # packages = ['usbrelay_py'],
+    packages = ['usbrelay_py'],
+    package_dir={'usbrelay_py': 'src'},
+    package_data = {'usbrelay_py': ['src/*']},
 
     classifiers = [
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: GNU General Public License v2 (GPLv2)',
         'Operating System :: POSIX :: Linux',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
-        'Programming Language :: Python :: 3.9',
-        'Programming Language :: Python :: 3.10',
     ],
 
 )
