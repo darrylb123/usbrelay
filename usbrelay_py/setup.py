@@ -26,7 +26,7 @@ module1 = Extension(
 
 setup(
     name = 'usbrelay_py',
-    version = '1.0',
+    version = '1.1',
     description = 'USB Relay board control from Python',
     url = 'https://github.com/darrylb123/usbrelay',
     author = "Sean Mollet",
