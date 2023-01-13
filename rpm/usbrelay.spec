@@ -31,6 +31,7 @@ Requires:       systemd-udev
 Requires: hidapi-devel
 Requires: python3-devel
 Requires: %{name}%{_isa} = %{version}-%{release}
+BuildArch: noarch
 Summary: Package for developing against libusbrelay
 %description devel
 %{common_description}
