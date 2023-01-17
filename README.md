@@ -235,15 +235,16 @@ $ sudo usbrelay 0001:0015:00_1=0
 Change the serial permanently
 
 Use the fictitious relay 0 to set the serial permanently. If you have duplicate serials, make sure only one is plugged in when you change it.
-Maximum of 5 character serial. It is probably sensible to change one module at a time to avoid serial collisions.
-You may also use the device path to set the serial as above
+Maximum of 5 character serial (A-Z0-9 only). It is probably sensible to change one module at a time to avoid serial collisions. If the serial contains characters that are not A-Z0-9 and therefore an illegal ID, you may also use the device path to set the serial as above
+
 
 ```
 $ sudo usbrelay
 ZXCV_1=0
 ZXCV_2=0
 
-$ sudo usbrelay ZXCV_0=ZAQ12 # or /dev/hidraw4_0=ZAQ12
+$ sudo usbrelay ZXCV_0=ZAQ12 
+( or sudo usbrelay /dev/hidraw4_0=ZAQ12 )
 ZXCV_1=0
 ZXCV_2=0
 Setting new serial

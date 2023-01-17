@@ -19,8 +19,16 @@ eg:
 
 usbrelay REL0A_1=0 REL0A_2=1 REL0B_2=0...
 
+Note that the RELID must only contain the characters A-Z0-9.
+Change the RELID using the device file as the RELID if the relay has illegal characters (See below).
+
 The Relay module ID can be changed on DCTTECH relays:
+
 RELID_0=NEWID sets the relay RELID to NEWID
+
+alternatively
+
+/dev/hidrawX_0=NEWID (Substitute X for the device path shown with the -d option)
 
 .SH OPTIONS
 .TP
