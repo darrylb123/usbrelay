@@ -148,6 +148,7 @@ $ sudo udevadm control -R
 ```
 
 Add users that need to operate the relays to the usbrelay group
+
 Fedora:
 ```
 sudo usermod -a -G usbrelay <user name>
