@@ -140,15 +140,21 @@ The usbrelay binary, libusbrelay.so and libusbrelay_py.so libraries will be buil
 
 ### Usage:
 The code needs to access the device. This can be achieved either by running the program with root privileges (so sudo is your friend) or by copying 
-50-usbrelay.rules to /etc/udev/rules.d
+50-usbrelay.rules to /etc/udev/rules.d, note Debian derivatives have a group 'plugdev' designed for this function.
+Edit 50-usbrelay.rules and substitute GROUP="plugdev" for GROUP="usbrelay"
 ```
 $ sudo cp 50-usbrelay.rules /etc/udev/rules.d
 $ sudo udevadm control -R
 ```
 
-Add users that need to operate the relays to the usbrelay group:
+Add users that need to operate the relays to the usbrelay group
+Fedora:
 ```
 sudo usermod -a -G usbrelay <user name>
+```
+Debian/Ubuntu:
+```
+sudo usermod -a -G plugdev <user name>
 ```
 
 ```
