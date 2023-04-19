@@ -1,5 +1,5 @@
 # USB Relay Driver For Linux
-Latest Stable Release 0.9 ([Zip](https://github.com/darrylb123/usbrelay/archive/refs/tags/0.9.zip), [tar.gz](https://github.com/darrylb123/usbrelay/archive/refs/tags/0.9.tar.gz))
+
 
 ![alt text](usbrelay.jpg "USB Relay")
 
