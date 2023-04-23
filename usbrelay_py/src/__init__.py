@@ -21,3 +21,5 @@ eg usbrelay_board_control('ABCDE',2,0)
 
 __version__ = "1.0"
 __author__ = "Sean Mollet"
+
+from .libusbrelay import *
