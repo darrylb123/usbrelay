@@ -6,8 +6,6 @@ LDCONFIG ?= /sbin/ldconfig
 
 PREFIX ?= /usr
 
-__BINDIR ?= $(PREFIX)/bin
-
 DEB_HOST_MULTIARCH=$(shell dpkg-architecture -qDEB_HOST_MULTIARCH 2>/dev/null)
 ifeq ($(and \
            $(if $(DEB_HOST_MULTIARCH),"true"), \
@@ -23,8 +21,11 @@ else
     LIBDIR ?= $(PREFIX)/lib
 endif
 
-all: usbrelay libusbrelay.so 
+__BINDIR ?= $(PREFIX)/bin
+INCLUDEDIR ?= ${PREFIX}/include
+PKGCONFDIR ?= ${LIBDIR}/pkgconfig
 
+all: usbrelay libusbrelay.so libusbrelay.pc
 
 libusbrelay.so: libusbrelay.c libusbrelay.h 
 	$(CC) -shared -fPIC -Wl,-soname,$@.$(USBMAJOR) $(CPPFLAGS) $(CFLAGS)  $< $(LDFLAGS) -o $@.$(USBLIBVER) $(LDLIBS)
@@ -56,26 +57,45 @@ gitversion.h: $(wildcard .git/HEAD .git/index)
 
 usbrelay.c libusbrelay.c: gitversion.h
 
+libusbrelay.pc:
+	echo "prefix=${PREFIX}" > libusbrelay.pc
+	echo "libdir=${LIBDIR}" >> libusbrelay.pc
+	echo "includedir=${INCLUDEDIR}" >> libusbrelay.pc
+	echo "" >> libusbrelay.pc
+	echo "Name: libusbrelay" >> libusbrelay.pc
+	echo "Description: A library to manipulate hidraw USB relay" >> libusbrelay.pc
+	echo "Version: ${USBLIBVER}" >> libusbrelay.pc
+	echo "Requires:" >> libusbrelay.pc
+	echo "Conflicts:" >> libusbrelay.pc
+	echo "Libs: -L${LIBDIR} -lusbrelay" >> libusbrelay.pc
+	echo "Cflags: -I${INCLUDEDIR}" >> libusbrelay.pc
 
 clean:
 	rm -f usbrelay
 	rm -f libusbrelay.so.$(USBLIBVER)
 	rm -f libusbrelay.so*
 	rm -f gitversion.h
+	rm -f libusbrelay.pc
 	$(MAKE) -C usbrelay_py clean
 
 
-install: usbrelay libusbrelay.so
+install: usbrelay libusbrelay.so libusbrelay.pc
 	install -d $(DESTDIR)$(LIBDIR)
 	install -m 0755 libusbrelay.so.$(USBLIBVER) $(DESTDIR)$(LIBDIR)
 	$(LDCONFIG) -n $(DESTDIR)$(LIBDIR)
 	( cd $(DESTDIR)$(LIBDIR); rm -f libusbrelay.so ;ln -sr libusbrelay.so.$(USBLIBVER) libusbrelay.so )
 	install -d $(DESTDIR)$(__BINDIR)
 	install -m 0755 usbrelay $(DESTDIR)$(__BINDIR)
+	install -d $(DESTDIR)$(INCLUDEDIR)
+	install -m 0644 libusbrelay.h ${DESTDIR}${INCLUDEDIR}
+	install -d $(DESTDIR)$(PKGCONFDIR)
+	install -m 0644 libusbrelay.pc ${DESTDIR}${PKGCONFDIR}
 
 remove:
 	\rm $(DESTDIR)$(LIBDIR)/libusbrelay.so*
 	\rm $(DESTDIR)$(PREFIX)/bin/usbrelay
+	\rm $(DESTDIR)$(INCLUDEDIR)/libusbrelay.h
+	\rm $(DESTDIR)$(PKGCONFDIR)/libusbrelay.pc
 
 install_py:
 	$(MAKE) -C usbrelay_py install
