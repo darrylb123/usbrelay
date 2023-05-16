@@ -1,26 +1,8 @@
 include LIBVER.in
-CFLAGS += -O2 -Wall
-HIDAPI = hidraw
+include Makefile.in
+
 LDLIBS += -lhidapi-$(HIDAPI)
 LDCONFIG ?= /sbin/ldconfig
-
-PREFIX ?= /usr
-
-DEB_HOST_MULTIARCH=$(shell dpkg-architecture -qDEB_HOST_MULTIARCH 2>/dev/null)
-ifeq ($(and \
-           $(if $(DEB_HOST_MULTIARCH),"true"), \
-		   $(if $(wildcard $(PREFIX)/lib/$(DEB_HOST_MULTIARCH)/.),"true")\
-	   ),"true")
-    # Catch debian machines
-    LIBDIR ?= $(PREFIX)/lib/$(DEB_HOST_MULTIARCH)
-else ifneq ($(wildcard $(PREFIX)/lib64/.),)
-    # Catch x86_64 machines that use /usr/lib64 (RedHat)
-    LIBDIR ?= $(PREFIX)/lib64
-else
-    # Default 32 bit x86, raspberry pi, etc..
-    LIBDIR ?= $(PREFIX)/lib
-endif
-
 __BINDIR ?= $(PREFIX)/bin
 INCLUDEDIR ?= ${PREFIX}/include
 PKGCONFDIR ?= ${LIBDIR}/pkgconfig
