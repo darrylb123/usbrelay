@@ -153,6 +153,7 @@ groupadd --force --system usbrelay
 %files devel
 %{_includedir}/libusbrelay.h
 %{_libdir}/libusbrelay.so
+%{_libdir}/pkgconfig/libusbrelay.pc
 
 
 %changelog
