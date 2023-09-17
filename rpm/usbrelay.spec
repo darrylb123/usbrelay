@@ -1,5 +1,5 @@
 Name:           usbrelay
-Version:        1.3
+Version:        1.2.1
 Release:        %autorelease
 Summary:        A library and command line tool to control USB-connected relays based on hidapi
 License:        GPL-2.0-or-later
