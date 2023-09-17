@@ -293,6 +293,8 @@ The following is a test script included as tests/usbrelay_test.py, showing how t
 ```
 import usbrelay_py
 import time
+# Note that a call to count() is required to enumerate the attached relays
+# before attempting to operate the relays
 
 count = usbrelay_py.board_count()
 print("Count: ",count)
