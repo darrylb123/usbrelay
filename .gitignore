@@ -5,3 +5,5 @@ usbrelay
 *.so
 *.egg
 *.egg-info
+
+.vscode/tasks.json
