@@ -4,4 +4,4 @@
 # The major number is incremented on an API change
 # The minor number is incremented on a change
 USBMAJOR = 1
-USBLIBVER = $(USBMAJOR).1
+USBLIBVER = $(USBMAJOR).2
