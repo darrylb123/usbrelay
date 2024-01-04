@@ -27,8 +27,12 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #define CMD_ON 0xff
 #define CMD_OFF 0xfd
 #define CMD_SET_SERIAL 0xfa
-#define DCTTECH 1
-#define UCREATE 2
+typedef enum
+{
+	DCTTECH = 1,
+	UCREATE = 2,
+	LCUS = 3
+} RELAY_TYPE;
 
 #define Serial_Length 5
 
@@ -41,7 +45,7 @@ typedef struct relay_board {
 	unsigned char relay_count;
 	unsigned char state;
 	char *path;
-	int module_type;
+	RELAY_TYPE module_type;
 } relay_board;
 
 //Public methods
