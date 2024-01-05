@@ -213,14 +213,12 @@ int operate_relay(const char *serial, unsigned char relay,
 					}
 					break;
 				case UCREATE:
-					unsigned char ucreate;
-					if (target_state == 0xFF)
-						ucreate = 0xF0;
-					else
-						ucreate = 0x00;
-					ucreate += relay;
 					buf[0] = 0;  // report number
-					buf[1] = ucreate;
+					if (target_state == 0xFF)
+						buf[1] = 0xF0;
+					else
+						buf[1] = 0x00;
+					buf[1] += relay;
 					buf[2] = 0x00;
 					buf[3] = 0x00;
 					buf[5] = 0x00;
