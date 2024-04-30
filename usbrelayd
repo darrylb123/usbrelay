@@ -95,7 +95,12 @@ else:
 # connect to the mqtt broker
 
 
-client = mqtt.Client(clientName)
+if "CallbackAPIVersion" in dir(mqtt):
+    # paho-mqtt >= 2.0.0
+    client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1, clientName)
+else:
+    # paho-mqtt < 2.0.0
+    client = mqtt.Client(clientName)
 client.connect(mqttBroker) 
 publish_states(client)
 client.on_message=on_message 
