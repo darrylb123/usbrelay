@@ -42,15 +42,20 @@ def publish_states(client):
                 relay_state = "ON"
             else:
                 relay_state = "OFF"
+
+            topic = "{0}/{1}/{2}"
             
             if mqtttopic:
-                topic = mqtttopic + "/{0}/{1}/{2}"
+                topic_str = topic.format(mqtttopic + "/stat",board[0],relay)
             else:
-                topic = mqtttopic + "{0}/{1}/{2}"
-            topic_str = topic.format("stat",board[0],relay)
+                topic_str = topic.format("stat",board[0],relay)
+
             print("State: ", topic_str, relay_state,flush=True)
             client.publish(topic_str, relay_state, qos=0, retain=True)
-            topic_str = topic.format("cmnd",board[0],relay)
+            if mqtttopic:
+                topic_str = topic.format(mqtttopic + "/cmnd",board[0],relay)
+            else:
+                topic_str = topic.format("cmnd",board[0],relay)
             print("Subscribed: ", topic_str,flush=True)
             client.subscribe(topic_str)
             relay += 1
@@ -66,14 +71,14 @@ def on_message(client, userdata, message):
         relay_cmd = 0
     
     content = re.split("/",message.topic)
-    result = usbrelay_py.board_control(content[1],int(content[2]),relay_cmd)
+    result = usbrelay_py.board_control(content[-2],int(content[-1]),relay_cmd)
 #    print("COntent: ", content , result)
     if mqtttopic:
-        pub_str = mqtttopic + "/{0}/{1}"
+        pub_str = mqtttopic + "/stat/{0}/{1}"
     else:
         pub_str = "stat/{0}/{1}"
 
-    client.publish(pub_str.format(content[1],content[2]), msg_state)
+    client.publish(pub_str.format(content[-2],content[-1]), msg_state)
 
 # read the server name or IP address from the command lin
 
