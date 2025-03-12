@@ -68,7 +68,11 @@ def on_message(client, userdata, message):
     content = re.split("/",message.topic)
     result = usbrelay_py.board_control(content[1],int(content[2]),relay_cmd)
 #    print("COntent: ", content , result)
-    pub_str = "stat/{0}/{1}"
+    if mqtttopic:
+        pub_str = mqtttopic + "/{0}/{1}"
+    else:
+        pub_str = "stat/{0}/{1}"
+
     client.publish(pub_str.format(content[1],content[2]), msg_state)
 
 # read the server name or IP address from the command lin
