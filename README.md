@@ -7,7 +7,7 @@ A cheap USB relay available from Ebay with 1,2,4 or 8 relay output.
 The double throw relay ratings are 10A 250VAC each.
 
 The USB device is HID compatible and comes with Windows control software.
-This code can control the relay vi HIDAPI which is a cross platform library. 
+This code can control the relay via HIDAPI which is a cross platform library.
 This code was tested under linux both on x86 and Raspberry Pi ARM.
 The program is command line only as it is likely to be used by shell scripts.
 
