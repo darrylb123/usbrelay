@@ -42,13 +42,20 @@ def publish_states(client):
                 relay_state = "ON"
             else:
                 relay_state = "OFF"
-            
-            
+
             topic = "{0}/{1}/{2}"
-            topic_str = topic.format("stat",board[0],relay)
+            
+            if mqtttopic:
+                topic_str = topic.format(mqtttopic + "/stat",board[0],relay)
+            else:
+                topic_str = topic.format("stat",board[0],relay)
+
             print("State: ", topic_str, relay_state,flush=True)
             client.publish(topic_str, relay_state, qos=0, retain=True)
-            topic_str = topic.format("cmnd",board[0],relay)
+            if mqtttopic:
+                topic_str = topic.format(mqtttopic + "/cmnd",board[0],relay)
+            else:
+                topic_str = topic.format("cmnd",board[0],relay)
             print("Subscribed: ", topic_str,flush=True)
             client.subscribe(topic_str)
             relay += 1
@@ -64,18 +71,28 @@ def on_message(client, userdata, message):
         relay_cmd = 0
     
     content = re.split("/",message.topic)
-    result = usbrelay_py.board_control(content[1],int(content[2]),relay_cmd)
+    result = usbrelay_py.board_control(content[-2],int(content[-1]),relay_cmd)
 #    print("COntent: ", content , result)
-    pub_str = "stat/{0}/{1}"
-    client.publish(pub_str.format(content[1],content[2]), msg_state)
+    if mqtttopic:
+        pub_str = mqtttopic + "/stat/{0}/{1}"
+    else:
+        pub_str = "stat/{0}/{1}"
+
+    client.publish(pub_str.format(content[-2],content[-1]), msg_state)
 
 # read the server name or IP address from the command lin
 
 
 config = configparser.ConfigParser()
 config.read('/etc/usbrelayd.conf')
+
 mqttBroker = config['MQTT']['BROKER']
 clientName = config['MQTT']['CLIENTNAME']
+mqttTLS    = bool(config['MQTT']['TLS'])
+mqttuser   = config['MQTT']['USER']
+mqttpass   = config['MQTT']['PASS']
+mqttport   = int(config['MQTT']['PORT'])
+mqtttopic  = config['MQTT']['TOPIC']
 
 print("MQTT Broker: ", mqttBroker)
 print("MQTT Client: ", clientName)
@@ -84,7 +101,6 @@ print("MQTT Client: ", clientName)
 #
 # Count connected usbrelay modules, exit if none 
 count = usbrelay_py.board_count()
-
 if(count < 1):
     print("No usbrelay modules connected",flush=True)
     # exit with EX_UNAVAILABLE
@@ -101,7 +117,12 @@ if "CallbackAPIVersion" in dir(mqtt):
 else:
     # paho-mqtt < 2.0.0
     client = mqtt.Client(clientName)
-client.connect(mqttBroker) 
+if mqttuser or mqttpass:
+    client.username_pw_set(username=mqttuser, password=mqttpass)
+if mqttTLS:
+    client.tls_set()
+
+client.connect(mqttBroker, port=mqttport) 
 publish_states(client)
 client.on_message=on_message 
 while(True):
