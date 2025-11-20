@@ -1,5 +1,7 @@
 # Base image.
-FROM debian:10
+FROM debian:latest-slim
+
+COPY * .
 
 # Install dependencies.
 RUN apt update && apt install -y \

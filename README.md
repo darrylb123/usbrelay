@@ -558,4 +558,24 @@ mosquitto_sub -h your_mqtt_broker -t stat/OMG12/1
 mosquitto_pub -h your_mqtt_broker -t cmnd/OMG12/1 -m ON
  
 ```
+#### Running usbrelayd in docker
+Build the image
+```
+git clone https://github.com/darrylb123/usbrelay.git
+cd usbrelay
+docker build -f Dockerfile.usbrelayd -t usbrelayd .
+```
+
+Run the docker container
+
+Note the container needs to run in privileged mode to access the USB device.
+```
+docker run -rm -it --privileged usbrelayd
+```
+To substitute an alternative usbrelay.conf file
+```
+docker run --rm -it --privileged -v "$PWD/myusbrelayd.conf":/etc/usbrelayd.conf usbrelayd
+```
+
+
 Enjoy
