@@ -416,13 +416,17 @@ int known_relay(struct hid_device_info *thisdev)
 	char product[255];
 	if (thisdev == NULL)
 		return 0;
-	sprintf(product, "%ls", thisdev->product_string);
+	// LCUS boards have no USB string descriptors (product_string == NULL).
+	// sprintf("%ls", NULL) is UB: glibc prints "(null)", musl (Alpine)
+	// segfaults.
+	if (thisdev->product_string == NULL) {
+		return LCUS;
+	}
+	snprintf(product, sizeof(product), "%ls", thisdev->product_string);
 	if (!strncmp(product, "USBRelay", 8)) {
 		return DCTTECH;
 	} else if (!strncmp(product, "HIDRelay", 8)) {
 		return UCREATE;
-	} else if (!strncmp(product, "(null)", 8)) {
-		return LCUS;
 	}
 	return 0;
 }

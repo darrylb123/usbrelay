@@ -3,6 +3,12 @@ HIDAPI = hidraw
 
 PREFIX ?= /usr
 
+# musl (Alpine) lacks glibc's argp; link the standalone lib (apk add
+# argp-standalone). Detected via the compiler triple, e.g. *-linux-musl.
+ifneq (,$(findstring musl,$(shell $(CC) -dumpmachine)))
+    LDLIBS += -largp
+endif
+
 DEB_HOST_MULTIARCH=$(shell dpkg-architecture -qDEB_HOST_MULTIARCH 2>/dev/null)
 ifeq ($(and \
            $(if $(DEB_HOST_MULTIARCH),"true"), \
