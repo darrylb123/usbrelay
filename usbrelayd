@@ -92,10 +92,18 @@ def on_message(client, userdata, message):
 # read the server name or IP address from the command lin
 def hostname_resolves(hostname):
     try:
-        socket.gethostbyname(hostname)
-        return 1
+        infos = socket.getaddrinfo(
+            hostname,
+            None,
+            family=socket.AF_UNSPEC,
+            type=socket.SOCK_STREAM,
+        )
+        if len(infos) > 0:
+            return infos[0]
     except socket.error:
-        return 0
+        pass
+
+    return None
 
 
 config = configparser.ConfigParser()
@@ -113,10 +121,11 @@ print("MQTT Broker: ", mqttBroker)
 print("MQTT Client: ", clientName)
 
 # Check is the mqtt broker is available
-if hostname_resolves(mqttBroker) == 0:
+addr = hostname_resolves(mqttBroker)
+if addr is None:
     print("Mqtt broker host name",mqttBroker,"unknown - Correct in /etc/usbrelayd.conf")
     exit()
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock = socket.socket(addr[0], addr[1])
 sock.settimeout(2) 
 result = sock.connect_ex((mqttBroker,mqttport))
 if result != 0:
