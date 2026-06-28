@@ -30,6 +30,7 @@ import re
 import sys
 import configparser
 import socket
+import json
 
 def publish_states(client):
     boards = usbrelay_py.board_details()
@@ -45,22 +46,48 @@ def publish_states(client):
                 relay_state = "OFF"
 
             topic = "{0}/{1}/{2}"
-            
-            if mqtttopic:
-                topic_str = topic.format(mqtttopic + "/stat",board[0],relay)
-            else:
-                topic_str = topic.format("stat",board[0],relay)
+            unique_id = "{0}_{1}"
+            model = "Relays: {0}"
 
-            print("State: ", topic_str, relay_state,flush=True)
-            client.publish(topic_str, relay_state, qos=0, retain=True)
             if mqtttopic:
-                topic_str = topic.format(mqtttopic + "/cmnd",board[0],relay)
+                stat_topic_str = topic.format(mqtttopic + "/stat",board[0],relay)
             else:
-                topic_str = topic.format("cmnd",board[0],relay)
-            print("Subscribed: ", topic_str,flush=True)
-            client.subscribe(topic_str)
+                stat_topic_str = topic.format("stat",board[0],relay)
+
+            print("State: ", stat_topic_str, relay_state,flush=True)
+
+            client.publish(stat_topic_str, relay_state, qos=0, retain=True)
+            unique_id_str = unique_id.format(board[0],relay)
+            model_str = model.format(board[1])
+
+            if mqtttopic:
+                cmnd_topic_str = topic.format(mqtttopic + "/cmnd",board[0],relay)
+            else:
+                cmnd_topic_str = topic.format("cmnd",board[0],relay)
+
+            if homeassistant_topic is not None:
+              config_topic_str = "{0}/switch/{1}_{2}/config".format(homeassistant_topic, board[0],relay)
+              payload={"unique_id": unique_id_str,
+                "name": "USB Relay "+unique_id_str,
+                "device":  { "identifiers": board[0], "name": board[0], "manufacturer": "USBRELAY" ,"model": model_str },
+                "state_topic": stat_topic_str,
+                "command_topic": cmnd_topic_str,
+                # "availability_topic":"home/bedroom/bedroom_socket_switch/available",
+                "payload_on": "ON",
+                "payload_off": "OFF",
+                "state_on": "ON",
+                "state_off": "OFF",
+                "optimistic": False,
+                "qos": 0,
+                "retain": True
+              }
+              payload=json.dumps(payload, indent=2)
+              client.publish(config_topic_str, payload, qos=0, retain=True)
+
+            print("Subscribed: ", cmnd_topic_str,flush=True)
+            client.subscribe(cmnd_topic_str)
             relay += 1
-        
+
 
 # on_connect signature:
 def on_connect(client, userdata, flags, reason_code, properties):
@@ -119,6 +146,11 @@ mqtttopic  = config['MQTT']['TOPIC']
 
 print("MQTT Broker: ", mqttBroker)
 print("MQTT Client: ", clientName)
+
+homeassistant_topic = config.get('HOMEASSISTANT', 'TOPIC', fallback=None)
+
+if homeassistant_topic is not None:
+    print("HomeAssistant enabled, topic: ", homeassistant_topic)
 
 # Check is the mqtt broker is available
 addr = hostname_resolves(mqttBroker)
