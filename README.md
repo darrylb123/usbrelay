@@ -577,6 +577,19 @@ To make the usbrelayd container start on boot and restart on failure
 ```
 docker run -d --restart unless-stopped --privileged -v "/path/to/myusbrelayd.conf":/etc/usbrelayd.conf usbrelayd
 ``` 
+#### Home Assistant Auto Configuration
+The usbrelayd mqtt daemon can register all it's connected relay modules with Home Assistant.
+
+Add the topic name that your instance of HomeAssistant is configured to listen for in /etc/usbrelayd.conf
+```
+[HOMEASSISTANT]
+# Set this to get usbrelayd to publish the relays with HomeAssistant's
+# discovery protocol.
+# The default value for HA is "homeassistant"
+TOPIC = homeassistant
+```
+Each relay module will register as a device under the MQTT integration in HomeAssistant with a switch for each relay.
+This only really works well for dcttech relays which can read the relay state.
 
 
 Enjoy
