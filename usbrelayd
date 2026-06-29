@@ -178,6 +178,8 @@ else:
 # connect to the mqtt broker
 
 
+# If the CLIENTNAME is not defined in /etc/usbrelayd.conf then a unique name is automatically generated
+# This is preferable as duplicate mqtt client names are verboten
 if "CallbackAPIVersion" in dir(mqtt):
     # paho-mqtt >= 2.0.0
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, clientName)
