@@ -449,7 +449,7 @@ target fd ucreate 2 f0 f0
 
 Serial: /dev/usbrelay3-10.1:1.0, Relay: 1 State: ff --- Found
 Serial: /dev/usbrelay3-10.3:1.0, Relay: 2 State: fd --- Found
-Serial: /dev/husbrelay3-9:1.0, Relay: 2 State: fd --- Found
+Serial: /dev/usbrelay3-9:1.0, Relay: 2 State: fd --- Found
 
 
 ```
@@ -558,6 +558,21 @@ mosquitto_sub -h your_mqtt_broker -t stat/OMG12/1
 mosquitto_pub -h your_mqtt_broker -t cmnd/OMG12/1 -m ON
  
 ```
+#### Home Assistant Auto Configuration
+The usbrelayd mqtt daemon can register all it's connected relay modules with Home Assistant.
+
+Add the topic name that your instance of HomeAssistant is configured to listen for in /etc/usbrelayd.conf
+```
+[HOMEASSISTANT]
+# Set this to get usbrelayd to publish the relays with HomeAssistant's
+# discovery protocol.
+# The default value for HA is "homeassistant"
+TOPIC = homeassistant
+```
+Each relay module will register as a device under the MQTT integration in HomeAssistant with a switch for each relay.
+This only really works well for dcttech relays which can read the relay state.
+
+
 #### Running usbrelayd in docker
 Build the image
 ```
@@ -577,19 +592,6 @@ To make the usbrelayd container start on boot and restart on failure
 ```
 docker run -d --restart unless-stopped --privileged -v "/path/to/myusbrelayd.conf":/etc/usbrelayd.conf usbrelayd
 ``` 
-#### Home Assistant Auto Configuration
-The usbrelayd mqtt daemon can register all it's connected relay modules with Home Assistant.
-
-Add the topic name that your instance of HomeAssistant is configured to listen for in /etc/usbrelayd.conf
-```
-[HOMEASSISTANT]
-# Set this to get usbrelayd to publish the relays with HomeAssistant's
-# discovery protocol.
-# The default value for HA is "homeassistant"
-TOPIC = homeassistant
-```
-Each relay module will register as a device under the MQTT integration in HomeAssistant with a switch for each relay.
-This only really works well for dcttech relays which can read the relay state.
 
 
 Enjoy
