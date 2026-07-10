@@ -1,7 +1,7 @@
 # Base image.
-FROM debian:latest-slim
+FROM debian:stable-slim
 
-COPY * .
+COPY * ./
 
 # Install dependencies.
 RUN apt update && apt install -y \
@@ -10,4 +10,6 @@ RUN apt update && apt install -y \
     git-core \
     libhidapi-dev \
     python3-dev \
-    python3
+    python3 \
+    python3-venv \ 
+    python3-build
